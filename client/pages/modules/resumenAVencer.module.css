@@ -1,0 +1,49 @@
+.container{
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4rem;
+    color: black;
+}
+
+.container h1{
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.container table{
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    border: 2px solid #3a3838;
+}
+
+.container th{
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 1rem;
+    text-align: center;
+    background-color: #b2d4f3;
+    border: 1px solid #3a3838;
+}
+
+.container td{
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: #f2f2f2;
+    border: 1px solid #3a3838;
+}
+
+.form{
+    width: 90vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    color: #3a3838;
+}

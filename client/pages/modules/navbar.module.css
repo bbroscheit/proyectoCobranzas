@@ -1,0 +1,39 @@
+.container{
+    height: 100vh;
+    position: sticky;
+}
+
+.logo{
+    margin: 0%;
+    padding: 30px;
+    color: black;
+}
+
+.ul{
+    /* padding: 10px 20px 20px 20px; */
+    background-color: #fff;
+    height: 100vh;
+    color: rgb(126, 125, 125);
+    font-weight: 600;
+}
+
+.ul li{
+    padding: 10px 10px 10px 30px;
+}
+
+.links{
+    padding: 10px 10px 10px 30px;
+    width: 100%;
+}
+
+.links:hover{
+    padding: 10px 10px 10px 30px;
+    background-color: rgb(240, 241, 241);
+    color: black;
+}
+
+.ul li:hover{
+    padding: 10px 10px 10px 30px;
+    background-color: rgb(240, 241, 241);
+    color: black;
+}

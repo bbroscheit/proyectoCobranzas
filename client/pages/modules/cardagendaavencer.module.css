@@ -1,0 +1,42 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 130%;
+    border-radius:5px;
+    background-color: rgb(223, 220, 220);
+}
+
+.containerBackground{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 130%;
+    border-radius:5px;
+    background-color: rgb(253, 211, 97);
+}
+
+.number{
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.numberBackground{
+    font-weight: 600;
+    font-size: 1rem;
+    color: rgb(145, 106, 1);
+}
+
+.paragraph{
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.paragraphBackground{
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: rgb(145, 106, 1);
+}
+

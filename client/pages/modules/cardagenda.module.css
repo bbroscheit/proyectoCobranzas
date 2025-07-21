@@ -1,0 +1,40 @@
+.container{
+    margin-top: 8px;
+    border-radius: 8px;
+    background-color: white;
+    padding: 15px 10px;
+    display: grid; 
+    grid-template-columns: 60% 1fr 5% 1fr; 
+    grid-template-rows: 1fr; 
+    gap: 8px; 
+    align-items: center;
+    justify-content: center;
+}
+
+
+.containerClient{
+    display: flex;
+    flex-direction: row;
+    color: rgb(48, 78, 211);
+    margin-bottom: 5px;
+    gap: 5px;
+}
+
+.containerContact{
+    display: flex;
+    flex-direction: row;
+    gap: 2%;
+    font-size: 0.9rem;
+}
+
+.containerCuit{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.addicon{
+    margin: auto;
+}

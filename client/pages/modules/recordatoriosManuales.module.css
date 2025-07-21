@@ -1,0 +1,59 @@
+.container{
+    padding: 25px 25px 25px 25px;
+    color: black;
+    /* background-color: black; */
+}
+
+.sectorContainer{
+    background-color: #fff;
+    color: rgb(44, 44, 223);
+    font-weight: 600;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    gap:10px;
+    border-left: 5px solid blue;
+}
+
+.buttonRecordatorio{
+    background-color: rgb(44, 44, 223);
+    position: relative;
+    /* float: right; */
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+}
+
+.sectionLink{
+    margin-left: 15px;
+}
+
+.title{
+    font-size: 1.5rem;
+    font-weight: 600; 
+    margin-bottom: 1rem;
+}
+
+.subtitle{
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+
+.sectionTitle{
+    background-color: rgb(240, 241, 241);
+    padding: 10px 10px 10px 10px;
+    width: fit-content;
+}
+
+.cardContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    
+}

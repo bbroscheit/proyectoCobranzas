@@ -1,0 +1,20 @@
+.container{
+    padding: 25px;
+    display: grid;
+    grid-template-columns: 1fr 40%;
+    color: black;
+}
+
+.notification{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+    gap: 16px;
+    padding-right: 2rem;
+}
+
+.input{
+    border-radius: 5px;
+    padding: 5px 5px 5px 15px;
+}

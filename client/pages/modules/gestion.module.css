@@ -1,0 +1,185 @@
+.timeline {
+    position: relative;
+    margin: auto ;
+    padding: 20px 0;
+    list-style: none;
+    color: black;
+  }
+  
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #C5C5C5;
+    left: 17%; /* Ajusta esta propiedad para mover la línea a la posición deseada */
+  }
+  
+  .timelineItem {
+    position: relative;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 3%;
+  }
+  
+  .timelineDate {
+    width: 10%; /* Ajusta esta propiedad para el ancho de la fecha */
+    text-align: center;
+    font-weight: 700;
+    margin-left: 6%;
+  }
+
+  .timelineIcon {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 15.25%; /* Ajusta esta propiedad para alinear el icono con la línea */
+    transform: translateY(-50%);
+    font-size: 20px; /* Ajusta el tamaño del icono */
+    color: #3f3e3e; /* Color del icono */
+    /* background-color: #ffffff; */
+    background-size:contain;
+    border-radius: 9999px;
+    padding: 1px 5px;
+  }
+
+  .menuicon{
+    background-color: rgb(207, 86, 38);
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #ffffff;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+
+  .reciboicon{
+    background-color: green;
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #ffffff;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+
+  .facturasicon{
+    background-color: rgb(84, 84, 85);
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #ffffff;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+
+  .alarmasicon{
+    background-color: rgb(235, 186, 25);
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #ffffff;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+
+  .notasicon{
+    background-color: rgb(78, 103, 243);
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #ffffff;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+  
+  .timelineContent {
+    width: 70%; /* Ajusta esta propiedad para el ancho de la tarjeta */
+    padding: 20px;
+    background: #f9f9f9;
+    position: relative;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 20px; /* Ajusta esta propiedad para separar la tarjeta de la línea */
+  }
+
+  .timelineContentFirst {
+    width: 70%; /* Ajusta esta propiedad para el ancho de la tarjeta */
+    position: relative;
+    margin-left: 20px; /* Ajusta esta propiedad para separar la tarjeta de la línea */
+  }
+  
+  .timelineContent p {
+    margin: 0;
+    padding: 5px 0;
+  }
+
+  .button {
+    margin: 5px 10px 5px 0px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: rgb(8, 8, 8);
+    cursor: pointer;
+    width: 18%;
+  }
+
+  .button:hover {
+    background-color:rgb(91, 91, 247);
+    color: white;
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    width: 400px;
+    max-width: 90%;
+  }
+  
+  .textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .checkboxGroup {
+    margin-bottom: 10px;
+  }
+  
+  .checkboxGroup label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .buttonIcon{
+    background-color: #ffffff;
+    border-radius: 9999px;
+    padding: 1px 5px;
+    color: #000000;
+    font-size: 2rem; /* Ajusta el tamaño del icono */
+  }
+
+  .buttonText{
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .timelineTitle{
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .timelineText{
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }

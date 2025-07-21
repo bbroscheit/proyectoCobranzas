@@ -1,0 +1,27 @@
+.container{
+    background-color: aquamarine;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 18px;
+    padding: 1rem;
+}
+
+.divContainer{
+    background-color: blueviolet;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    margin: 1rem;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 5px;
+    width: 80%;
+}
+
+.background{
+    background-color: blue;
+}

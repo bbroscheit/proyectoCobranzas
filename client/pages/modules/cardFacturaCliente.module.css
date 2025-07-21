@@ -1,0 +1,58 @@
+.container{
+    margin: auto;
+    border-left: 3px solid black; 
+    background-color: white;
+    padding: 10px;
+    margin: 10px;
+    margin-bottom: 3px;
+    color: black; 
+    width: 90%;
+    display: grid;
+    grid-template-columns: 5% 1fr 20% 20%; 
+    align-items: center;
+    justify-content: center;
+    grid-column-gap: 0px;
+}
+
+.icon{
+    color: rgb(241, 238, 14);
+}
+
+.nombreCliente{
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.numeroCliente{
+    font-size: 0.8rem;
+}
+
+.fechaDocumento{
+    font-size: 1rem;
+}
+
+.estadoDocumento{
+    font-size: 0.8rem;
+}
+
+.montoDocumento{
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.montoPendiente{
+    font-size: 0.8rem;
+}
+
+.pagada {
+
+    border-left-color: green;
+  }
+  
+  .vence {
+    border-left-color: yellow;
+  }
+  
+  .vencio {
+    border-left-color: red;
+  }
