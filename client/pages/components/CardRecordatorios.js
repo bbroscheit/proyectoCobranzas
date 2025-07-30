@@ -7,7 +7,7 @@ function CardRecordatorios() {
   const [notas , setNotas] = useState(0)
 
   useEffect(() => {
-    fetch(`http://localhost:3001/allNotesInMonth`)
+    fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allNotesInMonth`)
     .then(res => res.json())
     .then(data => {
       setNotas(data.length)

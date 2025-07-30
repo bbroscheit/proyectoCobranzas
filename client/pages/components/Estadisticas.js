@@ -24,7 +24,7 @@ function Estadisticas({clienteId}) {
   useEffect(() => {
     async function fetchNombreCliente() {
       try {
-        const response = await fetch(`http://localhost:3001/clientName?clienteId=${clienteId}`)
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientName?clienteId=${clienteId}`)
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }

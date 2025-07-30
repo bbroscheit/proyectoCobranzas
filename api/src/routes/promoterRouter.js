@@ -37,6 +37,7 @@ promoterRouter.get("/allDocuments", async ( req, res ) => {
 promoterRouter.get("/allClients", async ( req, res ) => {
     try {
         let results = await getAllClients()
+        //console.log("soy los clientes", results)
         results ? res.status(200).json(results) : res.status(400).json( { state:"failure" } )
     } catch (e) {
         console.log( "error en ruta allDocuments", e.message )

@@ -1,7 +1,7 @@
 export async function postAlarm(alarmaData) {
    
     try {
-        const response = await fetch(`http://localhost:3001/newAlarm`, {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/newAlarm`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

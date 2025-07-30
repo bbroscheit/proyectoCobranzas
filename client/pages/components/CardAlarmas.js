@@ -7,7 +7,7 @@ function CardAlarmas() {
   const [alarmas, setAlarmas] = useState(0)
 
   useEffect(() => {
-    fetch(`http://localhost:3001/allAlarmsInMonth`)
+    fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allAlarmsInMonth`)
     .then(res => res.json())
     .then(data => {
       setAlarmas(data.length)

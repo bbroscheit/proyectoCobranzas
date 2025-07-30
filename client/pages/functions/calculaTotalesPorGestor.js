@@ -11,7 +11,7 @@ export async function calculaTotalesPorGestor(documentos) {
     let gestor = "Belen Soria";
 
     // Obtener clientes del gestor
-    const response = await fetch(`http://localhost:3001/clientsByGestor?gestor=${gestor}`);
+    const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientsByGestor?gestor=${gestor}`);
     const clientes = await response.json();
     const clientesIds = clientes.map(cliente => cliente.id.toString().trim());
     //console.log("id de clientes calculaTotales", clientesIds);

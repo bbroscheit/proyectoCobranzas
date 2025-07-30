@@ -1,7 +1,7 @@
 export async function postNote(noteData) {
    
     try {
-        const response = await fetch(`http://localhost:3001/newNote`, {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/newNote`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

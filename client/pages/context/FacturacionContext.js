@@ -27,10 +27,10 @@ export const FacturacionProvider = ({ children }) => {
     const [clientes, setClientes] = useState([])
 
     useEffect(() => {
-        const fetchDocuments = fetch(`http://localhost:3001/allDocuments`).then((res) => res.json());
-        const fetchClientes = fetch(`http://localhost:3001/allClients`).then((res) => res.json());
-        const fetchAlarmas = fetch(`http://localhost:3001/allAlarms`).then((res) => res.json());
-        const fetchNotas = fetch(`http://localhost:3001/allNotes`).then((res) => res.json());
+        const fetchDocuments = fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allDocuments`).then((res) => res.json());
+        const fetchClientes = fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allClients`).then((res) => res.json());
+        const fetchAlarmas = fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allAlarms`).then((res) => res.json());
+        const fetchNotas = fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/allNotes`).then((res) => res.json());
 
         Promise.all([fetchDocuments, fetchClientes, fetchAlarmas, fetchNotas])
             .then(([documentsData, clientesData, alarmasData, notasData ]) => {
@@ -59,6 +59,7 @@ export const FacturacionProvider = ({ children }) => {
 
                 const clientesMap = {};
 
+                
                 clientesData.forEach((cliente) => {
                     clientesMap[cliente.id] = {
                         ...cliente,
@@ -69,7 +70,9 @@ export const FacturacionProvider = ({ children }) => {
                         estado: true
                     };
                 });
+                
 
+                //console.log('ClientesData:', clientesData);
                 documentsData.forEach((documento) => {
                     const clienteId = documento.NumeroCliente.trim();
                     const fechaVencimiento = new Date(documento.FechaVencimiento);
@@ -106,19 +109,38 @@ export const FacturacionProvider = ({ children }) => {
                     }
                 });
 
-                // Agregar alarmas a los clientes correspondientes
-                alarmasData.forEach((alarma) => {
+                if(!alarmasData.state){
+                    // Agregar alarmas a los clientes correspondientes, si alarmaData.state existe es porque hay alarmas
+                        alarmasData.forEach((alarma) => {
+                        if (clientesMap[alarma.clientId]) {
+                            clientesMap[alarma.clientId].documentos.push(alarma);
+                        }
+                    });
+                }
+                
+                if(!notasData.state){
+                    alarmasData.forEach((alarma) => {
                     if (clientesMap[alarma.clientId]) {
                         clientesMap[alarma.clientId].documentos.push(alarma);
                     }
                 });
+                }
+                    // Agregar notas a los clientes correspondientes, si notasData.state existe es porque hay notas
+                //console.log("alarmData:", alarmasData);
+                //console.log("notasData:", notasData);
+                // // Agregar alarmas a los clientes correspondientes
+                // alarmasData.forEach((alarma) => {
+                //     if (clientesMap[alarma.clientId]) {
+                //         clientesMap[alarma.clientId].documentos.push(alarma);
+                //     }
+                // });
 
-                // Agregar notas a los clientes correspondientes
-                notasData.forEach((nota) => {
-                    if (clientesMap[nota.clientId]) { 
-                        clientesMap[nota.clientId].documentos.push(nota);
-                    }
-                });
+                // // Agregar notas a los clientes correspondientes
+                // notasData.forEach((nota) => {
+                //     if (clientesMap[nota.clientId]) { 
+                //         clientesMap[nota.clientId].documentos.push(nota);
+                //     }
+                // });
 
                 // Ordenar los documentos, notas y alarmas del más nuevo al más viejo
                 Object.values(clientesMap).forEach((cliente) => {
@@ -129,6 +151,7 @@ export const FacturacionProvider = ({ children }) => {
                     });
                 });
 
+                console.log('ClientesData:', clientesMap);
                 setClientes(Object.values(clientesMap));
 
                 setTotalesPorCliente(totalesSinVencer);
@@ -189,7 +212,7 @@ export const FacturacionProvider = ({ children }) => {
             .catch((error) => console.error('Error al obtener datos:', error));
     }, []);
 
-    //console.log('Cleintes:', clientes);
+    //console.log('Clientes:', totalesPorCliente, totalesVencidosPorCliente);
 
     return (
         <FacturacionContext.Provider value={{
