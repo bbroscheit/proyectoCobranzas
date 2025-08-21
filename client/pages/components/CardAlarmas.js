@@ -20,13 +20,19 @@ function CardAlarmas() {
             <FaBell className={style.iconos}/>
             <div className={style.gestiones}>
                 <div className={style.numerogestion}>
-                    <h1>{alarmas}</h1>
+                  {
+                    alarmas > 0 ? <h1>{alarmas}</h1> : <h1>0</h1>
+                  }
+                    
                     <FaArrowUp className={style.icononumerogestionup}/>
                 </div>
                 <p> .</p>
             </div>
         </div>
-        <p className={style.piedepagina}> {alarmas} Alarmas este mes</p>
+        { 
+          alarmas > 0 ? <p className={style.piedepagina}> {alarmas} Alarmas este mes</p> : <p className={style.piedepagina}> No hay alarmas este mes</p>
+        }
+        
     </div>
   )
 }

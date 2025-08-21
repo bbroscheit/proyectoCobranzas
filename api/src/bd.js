@@ -37,7 +37,8 @@ const {
         Client, 
         Note,
         Alarma,
-        Tarea 
+        Tarea,
+        Document 
          } = sequelize.models;
 
 // Relacionamos las tablas
@@ -47,6 +48,9 @@ Note.belongsTo(Client, { foreignKey: 'clientId', as: 'clientnote' });
 
 Client.hasMany(Alarma, { foreignKey: 'clientId', as: 'alarma' });
 Alarma.belongsTo(Client, { foreignKey: 'clientId', as: 'clientalarma' });
+
+Client.hasMany(Document, { foreignKey: 'clientId', as: 'documento' });
+Document.belongsTo(Client, { foreignKey: 'clientId', as: 'clientdocumento' });
   
 // Autenticamos y conectamos
 

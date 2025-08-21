@@ -27,16 +27,17 @@ module.exports = ( sequelize ) => {
         //     defaultValue: " nombre de usuario sin definir ",
         //     allowNull:false
         // },
-        // email:{
-        //     type: DataTypes.STRING,
-        //     defaultValue: " nombre de usuario sin definir ",
-        //     allowNull:false
-        // },
+        email:{
+            type: DataTypes.STRING,
+            defaultValue: " sin definir",
+            allowNull:false
+        },
         // phonenumber:{
         //     type: DataTypes.INTEGER,
         //     defaultValue: " nombre de usuario sin definir ",
         //     allowNull:false
         // },
         
+  
     })
 }

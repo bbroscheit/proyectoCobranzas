@@ -27,14 +27,12 @@ export default function AgendaDeLlamadas() {
       currentDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
   
       if (storedDate.getTime() === currentDate.getTime() && storedData.clients.length > 0 ) {
-        // La fecha es la misma, recuperamos el array de documentos del localStorage
+        
         clientesFiltrados = storedData.clients;
       } else {
-        // La fecha es anterior, obtenemos los clientes filtrados y actualizamos el localStorage
         clientesFiltrados = getClientesPorGestor(clientes);
       }
     } else {
-      // No hay datos en el localStorage, obtenemos los clientes filtrados
       clientesFiltrados = getClientesPorGestor(clientes);
     }
   

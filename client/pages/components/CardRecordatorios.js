@@ -22,13 +22,18 @@ function CardRecordatorios() {
             <FaTelegramPlane className={style.iconos}/>
             <div className={style.gestiones}>
                 <div className={style.numerogestion}>
-                    <h1>{notas}</h1>
+                  {
+                    notas > 0 ? <h1>{notas}</h1> : <h1>0</h1>
+                  }<h1>{notas}</h1>
                     <FaArrowUp className={style.icononumerogestionup}/>
                 </div>
                 <p>.</p>
             </div>
         </div>
-        <p className={style.piedepagina}> {notas} Notas este mes</p>
+        { 
+notas > 0 ? <p className={style.piedepagina}> {notas} Notas este mes</p> : <p className={style.piedepagina}> No hay notas este mes</p>
+        }
+        
     </div>
   )
 }

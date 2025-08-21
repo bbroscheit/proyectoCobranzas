@@ -18,7 +18,7 @@ let recordatorioPorVencer = {
     title : "Factura por Vencer",
     momento : "Vencimiento Factura",
     periodicidad:"3 dia(s) previo",
-    horario:"9:00",
+    //horario:"9:00",
     recurrente: false,
     activado:false
 }
@@ -27,7 +27,7 @@ let recordatorioVencida = {
     title : "Factura Vencida",
     momento : "Vencimiento Factura",
     periodicidad:"1 dia(s) posterior",
-    horario:"9:00",
+    //horario:"9:00",
     recurrente: true,
     activado:true,
 }
@@ -36,7 +36,7 @@ let recordatorioEstadoDeCuenta = {
     title : "Estado de Cuenta",
     momento : "1 vez al mes",
     periodicidad:"",
-    horario:"Lunes 9:00",
+    //horario:"Lunes 9:00",
     recurrente: false,
     activado:true
 }

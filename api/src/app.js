@@ -5,11 +5,11 @@ const morgan = require('morgan');
 let cors = require('cors');
 const cron = require('node-cron');
 const fetchClientsFromCRM = require('./routes/functions/fetchClientsFromCRM.js');
-
 require('./bd.js')
 
 // se cargan las rutas 
-const promoterRouter = require ('../src/routes/promoterRouter.js')
+const promoterRouter = require ('../src/routes/promoterRouter.js');
+const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
 
 // fetchClientsFromCRM().then(() => {
 //     console.log('Clientes iniciales cargados desde CRM');
@@ -17,11 +17,19 @@ const promoterRouter = require ('../src/routes/promoterRouter.js')
 //     console.error('Error al cargar clientes iniciales desde CRM:', err);
 // });
 
+fetchDocumentFromGP().then(() => {
+    console.log('Documentos iniciales cargados desde GP');
+}).catch((err) => {
+    console.error('Error al cargar documentos iniciales desde GP:', err);
+});
+
 // Tareas con programacion
 
 //todos los días a las 4 de la mañana trae todos los clientes de CRM
-cron.schedule('0 4 * * *', fetchClientsFromCRM);
+cron.schedule('0 3 * * *', fetchClientsFromCRM);
 
+//todos los días a las 5 de la mañana trae todos documentos de Dynamics
+cron.schedule('0 5 * * *', fetchDocumentFromGP);
 
 const server = express();
 server.name = 'API';

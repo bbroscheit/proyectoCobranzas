@@ -11,7 +11,7 @@ const Navbar = () => {
               <li><Link href={"/Principal"} >Inicio</Link></li>
               <li><Link href={"/Clientes"}>Gestión</Link></li>
               <li><Link href={"/AgendaDeLlamadas"}>Agenda</Link></li>
-              {/* <li><Link href={"/Recordatorios"} >Recordatorios</Link></li> */}
+              <li><Link href={"/Recordatorios"} >Recordatorios</Link></li>
             </ul>
         </div>
     </div>
