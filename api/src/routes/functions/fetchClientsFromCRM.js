@@ -35,13 +35,14 @@ const fetchClientsFromCRM = async () => {
     });
 
     const existingMap = new Map()
-    existingClients.ferEach(c => existingMap.set(c.id , c ))
+    existingClients.forEach(c => existingMap.set(c.id , c ))
 
     let toCreate = []
     let toUpdate = []
 
     for (const client of result.recordset) {
-      const existing = existingMap.get(client.codigocliente)
+      const clientId = String(client.codigocliente).trim();
+      const existing = existingMap.get(clientId);
       if(!existing){
         toCreate.push({
           id: client.codigocliente,

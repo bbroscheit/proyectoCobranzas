@@ -4,6 +4,7 @@ module.exports = ( sequelize ) => {
     sequelize.define( "document" , {
         id:{
             type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true,
             allowNull: false
         },
@@ -42,6 +43,10 @@ module.exports = ( sequelize ) => {
             defaultValue: 0,
             allowNull:false
         },
+        clientId: {   // 👈 este es el foreign key
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
             
     })
 }

@@ -12,39 +12,60 @@ const fetchDocumentFromGP =  async () => {
     // 1. Obtener documentos de GP
     const docs = await getAllDocuments();
     console.log(`Documentos obtenidos: ${docs.length}`);
+    //console.log('Muestra de documento obtenido:', docs[0]);
 
     // 2. Obtener clientes de la BD
     const clientes = await getAllClients()
     console.log(`Clientes obtenidos: ${clientes.length}`);
-    console.log('Muestra de cliente obtenido:', clientes[0]);
+    //console.log('Muestra de cliente obtenido:', clientes[0]);
     
     // const mapClientes = new Map(clientes.map(c => [ c.id]));
 
-    const mapClientes = new Set(clientes.map(c => c.id));
+    //const mapClientes = new Set(clientes.map(c => c.id));
+    const mapClientes = new Set(clientes.map(c => String(c.id).trim()));
 
     //console.log(`Clientes mapeados: ${mapClientes.size}`);
     // 3. Mapear documentos a formato de inserción
     const docsParaGuardar = docs
-      .filter(d => mapClientes.has(d.NumeroCliente)) // solo clientes que existen
+      //.filter(d => mapClientes.has(d.NumeroCliente)) // solo clientes que existen
+      .filter(d => mapClientes.has(String(d.NumeroCliente).trim()))
       .map(d => ({
-        numerocliente: d.NumeroCliente,
+         clientId: parseInt(String(d.NumeroCliente).trim(), 10),
+        numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento,
-        tipodocumento: d.TipoDocumento,
+        tipodocumento: parseInt(d.TipoDocumento),
         fechadocumento: d.FechaDocumento,
-        montooriginal: d.MontoOriginal,
-        montopendiente: d.MontoPendiente,
+        montooriginal: parseFloat(d.MontoOriginal),
+        montopendiente: parseFloat(d.MontoPendiente),
         fechavencimiento: d.FechaVencimiento,
-      }));
+       })); 
 
     console.log(`Documentos a guardar: ${docsParaGuardar.length}`);
 
-    // 4. Guardar / Actualizar en bloque
+    //4. Guardar / Actualizar en bloque
     if (docsParaGuardar.length > 0) {
       await Document.bulkCreate(docsParaGuardar, {
-        updateOnDuplicate: ['fecha', 'monto', 'saldo'],
+        updateOnDuplicate: [
+          'numerodocumento',
+          'fechadocumento',
+          'fechavencimiento',
+          'numerocliente',
+          'montopendiente',
+          'montooriginal',
+          'tipodocumento',
+          'clientId',],
         transaction: t
       });
     }
+
+//     for (const doc of docsParaGuardar) {
+//   try {
+//     await Document.create(doc, { transaction: t });
+//   } catch (err) {
+//     console.error('Error al guardar documento:', doc, err);
+//     // Puedes decidir si quieres continuar o abortar aquí
+//   }
+// }
 
     // 5. Limpieza anual
     const hoy = new Date();
