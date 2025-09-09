@@ -27,7 +27,7 @@ export default function Home() {
         sucursal: login.sucursal,
       };
       localStorage.setItem("userCobranzas", JSON.stringify(userCobranzas));
-      Router.push("/Principal.js");
+      Router.push("/Espera");
     } else {
       setErrorLogin({ state: true });
     }
