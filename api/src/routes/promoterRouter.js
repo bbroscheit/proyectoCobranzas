@@ -15,6 +15,18 @@ const getAllNotesInMonth = require("./controllers/getAllNotesInMonth.js")
 const getAllAlarmsInMonth = require("./controllers/getAllAlarmsInMonth.js")
 const postAlarm = require("./controllers/postAlarm.js")
 const postNote = require("./controllers/postNote.js")
+const loginUser = require('./controllers/loginUser.js')
+
+promoterRouter.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+    
+  try {
+    let login = await loginUser( username, password );
+    login ? res.status(200).json(login) : res.status(400).json({state:"failure"});;
+  } catch (e) {
+    console.log("error en ruta post user ", e.message);
+  }
+});
 
 promoterRouter.get("/clientByPromoter", async ( req, res ) => {
     try {

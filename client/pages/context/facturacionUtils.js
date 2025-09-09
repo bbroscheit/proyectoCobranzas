@@ -9,7 +9,6 @@ export function getTotalesPorCliente ( documentsData, hoy ){
     return totales
 }
 
-
 export function getFacturasPorCliente (documentsData, hoy){
     const facturas = {}
     documentsData.forEach(doc => {

@@ -9,16 +9,16 @@ const { API_KEY, MAILGUN_DOMAIN } = process.env;
 // =====================
 
 const CONFIG = {
-  domain: "mail.basani.com.ar",         
+  domain: "basani.com.ar",         
   apiKey: process.env.API_KEY,                
-  from: 'Carlos Broscheit <bernardo.broscheit@basani.com.ar>',
+  from: 'Carlos Bernardo Broscheit <bernardo.broscheit@basani.com.ar>',
   subject: "Cuenta corriente del mes",
   // Control de envío
   batchSize: 100,        // cuántos correos por lote
   concurrency: 15,       // cuántos correos a la vez dentro del lote (10–25 es razonable)
   maxRetries: 5,         // reintentos por destinatario en errores transitorios
   initialBackoffMs: 1500,// backoff inicial (ms)
-  dryRun: true,         // true => no envía, solo simula
+  dryRun: false,         // true => no envía, solo simula
 };
 
 // =====================

@@ -1,7 +1,7 @@
 const { DataTypes } = require ('sequelize');
 
 module.exports = ( sequelize ) => {
-    sequelize.define( "client" , {
+    sequelize.define( "clientecobahia" , {
         id:{
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -13,12 +13,12 @@ module.exports = ( sequelize ) => {
             allowNull:false
         },
         gestor:{
-            type: DataTypes.STRING(1000),
+            type: DataTypes.STRING,
             defaultValue: " gestor sin ingresar ",
             allowNull:true
          },
         contacto1:{
-            type: DataTypes.STRING(1500),
+            type: DataTypes.STRING,
             defaultValue: " nombre de usuario sin definir ",
             allowNull:true
         },
@@ -28,7 +28,7 @@ module.exports = ( sequelize ) => {
         //     allowNull:false
         // },
         email:{
-            type: DataTypes.STRING(1500),
+            type: DataTypes.STRING,
             defaultValue: " sin definir",
             allowNull:false
         },

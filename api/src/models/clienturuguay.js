@@ -1,19 +1,19 @@
 const { DataTypes } = require ('sequelize');
 
 module.exports = ( sequelize ) => {
-    sequelize.define( "client" , {
+    sequelize.define( "clienturuguay" , {
         id:{
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false
         },
         name:{
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1500),
             defaultValue: " nombre de usuario sin definir ",
             allowNull:false
         },
         gestor:{
-            type: DataTypes.STRING(1000),
+            type: DataTypes.STRING,
             defaultValue: " gestor sin ingresar ",
             allowNull:true
          },

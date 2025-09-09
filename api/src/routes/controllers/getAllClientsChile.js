@@ -1,15 +1,15 @@
 require("dotenv").config();
 const sql = require("mssql");
-const { Client } = require('../../bd');
+const { Clientchile } = require('../../bd');
 
-const { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE } = process.env;
+const { CRM_USER, CRM_PASSWORD, CRM_SERVER_CHILE, CRM_DATABASE_CHILE } = process.env;
 
 // Configuración de la base de datos CRM
 const crmConfig = {
   user: CRM_USER,
   password: CRM_PASSWORD,
-  server: CRM_SERVER,
-  database: CRM_DATABASE,
+  server: CRM_SERVER_CHILE,
+  database: CRM_DATABASE_CHILE,
   options: {
     encrypt: true,
     enableArithAbort: true,
@@ -18,7 +18,7 @@ const crmConfig = {
 };
 
 // Función para obtener todos los clientes de la base de datos CRM
-const fetchClientsFromCRM = async () => {
+const getAllClientsChile = async () => {
   try {
     const pool = await sql.connect(crmConfig);
     const result = await pool
@@ -28,7 +28,7 @@ const fetchClientsFromCRM = async () => {
       ); 
     //console.log("Clientes obtenidos:", result.recordset);
 
-    const existingClients = await Client.findAll({
+    const existingClients = await Clientchile.findAll({
       where: {
         id: result.recordset.map(client => client.codigocliente)
       }
@@ -53,12 +53,12 @@ const fetchClientsFromCRM = async () => {
         })
       } else {
         if(
-          existing.email !== (client.email || "Sin asignar") ||
+          existing.mail !== (client.mail || "Sin asignar") ||
           existing.gestor !== (client.gestor || "Sin asignar") 
         ){
           toUpdate.push({
             id: client.codigocliente,
-            email: client.email || "Sin asignar",
+            name: client.mail || "Sin asignar",
             gestor: client.gestor || "Sin asignar",
           })
         }
@@ -66,14 +66,12 @@ const fetchClientsFromCRM = async () => {
     }
 
     if(toCreate.length > 0){
-  await Client.bulkCreate(toCreate, {
-    updateOnDuplicate: ["name", "gestor", "contacto1", "email"]
-  });
-  console.log(`Clientes creados/actualizados: ${toCreate.length}`);
-}
+      await Clientchile.bulkCreate(toCreate)
+      console.log(`Clientes creados: ${toCreate.length}`);
+    }
 
     for(const update of toUpdate){
-      await Client.update(
+      await Clientchile.update(
         { email: update.email, gestor: update.gestor },
         { where: { id: update.id } }
       );
@@ -82,10 +80,8 @@ const fetchClientsFromCRM = async () => {
   
     await pool.close();
   } catch (err) {
-    console.error("Error al obtener clientes del CRM:", err);
+    console.error("Error al obtener clientes del CRM Chile:", err);
   }
 };
 
-module.exports = fetchClientsFromCRM;
-
-
+module.exports = getAllClientsChile;

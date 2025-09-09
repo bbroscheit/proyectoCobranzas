@@ -24,7 +24,7 @@ function CardRecordatorios() {
                 <div className={style.numerogestion}>
                   {
                     notas > 0 ? <h1>{notas}</h1> : <h1>0</h1>
-                  }<h1>{notas}</h1>
+                  }
                     <FaArrowUp className={style.icononumerogestionup}/>
                 </div>
                 <p>.</p>

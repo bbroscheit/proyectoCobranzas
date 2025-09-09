@@ -5,6 +5,7 @@ const fs = require ( 'fs' );
 const path = require ( 'path' );
 const { DB_HOST, DB_PASSWORD, DB_USER, DB_PORT} = process.env
 
+console.log(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/cobranzas`)
 const sequelize = new Sequelize(`postgres://${DB_HOST}:${DB_PASSWORD}@${DB_USER}:${DB_PORT}/cobranzas` , {
     logging : false,
     native: false,
@@ -35,10 +36,25 @@ sequelize.models = Object.fromEntries(capEntries);
 
 const { 
         Client, 
+        Clientrosario,
+        Clienturuguay,
+        Clientchile,
+        Clientecopatagonico,
+        Clientecobahia,
+        Clientcordoba,
         Note,
         Alarma,
         Tarea,
-        Document 
+        Document,
+        Documentrosario,
+        Documenturuguay,
+        Documentchile,
+        Documentecopatagonico,
+        Documentecobahia,
+        Documentcordoba,
+        Listadellamada,
+        Gestion,
+        Usuario
          } = sequelize.models;
 
 // Relacionamos las tablas
@@ -51,6 +67,30 @@ Alarma.belongsTo(Client, { foreignKey: 'clientId', as: 'clientalarma' });
 
 Client.hasMany(Document, { foreignKey: 'clientId', as: 'documento' });
 Document.belongsTo(Client, { foreignKey: 'clientId', as: 'clientdocumento' });
+
+Clientrosario.hasMany(Documentrosario, { foreignKey: 'clientId', as: 'documentorosario' });
+Documentrosario.belongsTo(Clientrosario, { foreignKey: 'clientId', as: 'clientdocumentorosario' });
+
+Clienturuguay.hasMany(Documenturuguay, { foreignKey: 'clientId', as: 'documentouruguay' });
+Documenturuguay.belongsTo(Clienturuguay, { foreignKey: 'clientId', as: 'clientdocumentouruguay' });
+
+Clientchile.hasMany(Documentchile, { foreignKey: 'clientId', as: 'documentochile' });
+Documentchile.belongsTo(Clientchile, { foreignKey: 'clientId', as: 'clientdocumentochile' });
+
+// Clientecopatagonico.hasMany(Documentecopatagonico, { foreignKey: 'clientId', as: 'documento' });
+// Documentecopatagonico.belongsTo(Clientecopatagonico, { foreignKey: 'clientId', as: 'clientdocumento' });
+
+// Clientecobahia.hasMany(Documentecobahia, { foreignKey: 'clientId', as: 'documento' });
+// Documentecobahia.belongsTo(Clientecobahia, { foreignKey: 'clientId', as: 'clientdocumento' });
+
+// Clientcordoba.hasMany(Documentcordoba, { foreignKey: 'clientId', as: 'documento' });
+// Documentcordoba.belongsTo(Clientcordoba, { foreignKey: 'clientId', as: 'clientdocumento' });
+
+Usuario.hasMany(Listadellamada, { foreignKey: "usuarioId", as: "agendas" });
+Listadellamada.belongsTo(Usuario, { foreignKey: "usuarioId", as: "usuarioagenda" });
+
+Usuario.hasMany(Gestion, { foreignKey: "usuarioId", as: "gestion" });
+Gestion.belongsTo(Usuario, { foreignKey: "usuarioId", as: "usuariogestion" });
   
 // Autenticamos y conectamos
 

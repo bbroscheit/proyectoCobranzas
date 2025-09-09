@@ -5,11 +5,16 @@ const morgan = require('morgan');
 let cors = require('cors');
 const cron = require('node-cron');
 const fetchClientsFromCRM = require('./routes/functions/fetchClientsFromCRM.js');
+const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
+const seedUsuarios = require('./routes/functions/seedUsuarios.js');
+const syncAllSources = require('./services/syncAllSources.js');
 require('./bd.js')
+// require("./jobs/syncJob.js")
 
 // se cargan las rutas 
 const promoterRouter = require ('../src/routes/promoterRouter.js');
-const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
+
+
 
 // fetchClientsFromCRM().then(() => {
 //     console.log('Clientes iniciales cargados desde CRM');
@@ -17,11 +22,20 @@ const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
 //     console.error('Error al cargar clientes iniciales desde CRM:', err);
 // });
 
-fetchDocumentFromGP().then(() => {
-    console.log('Documentos iniciales cargados desde GP');
-}).catch((err) => {
-    console.error('Error al cargar documentos iniciales desde GP:', err);
-});
+// fetchDocumentFromGP().then(() => {
+//     console.log('Documentos iniciales cargados desde GP');
+// }).catch((err) => {
+//     console.error('Error al cargar documentos iniciales desde GP:', err);
+// });
+
+// Carga inicial de usuarios
+//seedUsuarios();
+
+// syncAllSources().then(() => {
+//     console.log('Documentos iniciales cargados desde GP');
+// }).catch((err) => {
+//     console.error('Error al cargar documentos iniciales desde GP:', err);
+// });
 
 // Tareas con programacion
 
