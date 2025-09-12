@@ -1,4 +1,4 @@
-export async function calculaTotalesPorGestor(documentos) {
+export async function calculaTotalesPorGestor(documentos, gestor) {
 
     if (documentos === null || documentos === undefined) {
       return {
@@ -8,17 +8,24 @@ export async function calculaTotalesPorGestor(documentos) {
         facturasMes: 0,
       };
     }
-    let gestor = "Belen Soria";
 
+    let gestorName = "";
+
+    if (!gestor || !gestor.firstname || !gestor.lastname) {
+        console.warn("Gestor inválido o incompleto:", gestor);
+        return gestorName
+    } else {
+        gestorName = `${gestor.firstname} ${gestor.lastname}`;
+    }
+    
     // Obtener clientes del gestor
-    const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientsByGestor?gestor=${gestor}`);
+    const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientsByGestor?gestor=${gestorName}`);
     const clientes = await response.json();
     const clientesIds = clientes.map(cliente => cliente.id.toString().trim());
-    //console.log("id de clientes calculaTotales", clientesIds);
+    
     // Filtrar documentos por clientes del gestor
     const documentosFiltrados = documentos.filter(doc => clientesIds.includes(doc.NumeroCliente.trim()));
     
-    //console.log("documentos filtrados", documentosFiltrados);
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     const mesActual = hoy.getMonth();

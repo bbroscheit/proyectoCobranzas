@@ -28,6 +28,11 @@ module.exports = ( sequelize ) => {
             defaultValue: "usuario sin ingresar",
             allowNull:true
         },
+        mail:{
+            type: DataTypes.STRING,
+            defaultValue: "mail faltante",
+            allowNull:true
+        },
         sucursal:{
             type: DataTypes.INTEGER,
             defaultValue:0,

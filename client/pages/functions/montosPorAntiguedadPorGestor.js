@@ -1,10 +1,16 @@
-export async function montosPorAntiguedadPorGestor(documentos) {
+export async function montosPorAntiguedadPorGestor(documentos, gestor) {
+    console.log("gestor en montosPorAntiguedadPorGestor:", gestor);
     const hoy = new Date();
-    let gestor = "Belen Soria"; // por el momento, el gestor es fijo
 
-    //console.log("facturas en montosPorAntiguedadPorGestor", documentos);
-
-
+    let gestorName = "";
+    
+    if (!gestor || !gestor.firstname || !gestor.lastname) {
+        console.warn("Gestor inválido o incompleto:", gestor);
+        return [0, 0, 0, 0, 0, 0, 0, 0];
+    } else {
+        gestorName = `${gestor.firstname} ${gestor.lastname}`;
+    }
+    
     if (documentos === null || documentos === undefined) {
         return [0, 0, 0, 0, 0, 0, 0, 0];
       }
@@ -22,7 +28,7 @@ export async function montosPorAntiguedadPorGestor(documentos) {
     let totalSinVencer = 0;
 
     // Obtener clientes del gestor
-    const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientsByGestor?gestor=${gestor}`);
+    const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientsByGestor?gestor=${gestorName}`);
     const clientes = await response.json();
     const clientesIds = clientes.map(cliente => cliente.id.toString().trim());
     

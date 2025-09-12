@@ -9,7 +9,7 @@ const Layout = ({children}) => {
   const router = useRouter();
 
   // creamos una lista de las rutas donde NO quiero que aparezca el navbar
-  const noNavbarRoutes = ['/', '/ResumenAVencer', '/ResumenVencido'];
+  const noNavbarRoutes = ['/', '/Espera' , '/ResumenAVencer', '/ResumenVencido'];
 
   // verificamos si la ruta actual esta dentro de la lista de rutas condicionadas
   const hideNavbar = noNavbarRoutes.includes(router.pathname);

@@ -1,44 +1,72 @@
 import React, { useState, useEffect, useContext } from "react";
-import styles from "./modules/agendadellamadas.module.css";
+import styles from "@/pages/modules/agendadellamadas.module.css";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CardAgenda from "./components/CardAgenda";
 import { FacturacionContext } from "../pages/context/FacturacionContext";
 import { getClientesPorGestor } from "../pages/functions/filtraClientesPorGestor";
+import useUser from "./hooks/useUser";
 
 export default function AgendaDeLlamadas() {
+  const [user, setUser] = useUser("");
   const { clientes } = useContext(FacturacionContext);
+  const [lista, setLista] = useState(null); // Lista de llamadas
   const [cliente, setCliente] = useState(null);
   const [filteredClientes, setFilteredClientes] = useState(null); // Clientes filtrados
+
+
   const [searchQuery, setSearchQuery] = useState(""); // Texto del input de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const recordsPerPage = 20; // Número de registros por página
 
   const { totalesPorCliente, totalesVencidosPorCliente } = useContext(FacturacionContext);
 
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('filteredClientsData'));
-    let clientesFiltrados;
+  // useEffect(() => {
+  //   // const storedData = JSON.parse(localStorage.getItem('filteredClientsData'));
+  //   // let clientesFiltrados;
   
-    if (storedData) {
-      let storedDate = new Date(storedData.date);
-      storedDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
-      let currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
+  //   // if (storedData) {
+  //   //   let storedDate = new Date(storedData.date);
+  //   //   storedDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
+  //   //   let currentDate = new Date();
+  //   //   currentDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
   
-      if (storedDate.getTime() === currentDate.getTime() && storedData.clients.length > 0 ) {
+  //   //   if (storedDate.getTime() === currentDate.getTime() && storedData.clients.length > 0 ) {
         
-        clientesFiltrados = storedData.clients;
-      } else {
-        clientesFiltrados = getClientesPorGestor(clientes);
-      }
-    } else {
-      clientesFiltrados = getClientesPorGestor(clientes);
-    }
+  //   //     clientesFiltrados = storedData.clients;
+  //   //   } else {
+  //   //     clientesFiltrados = getClientesPorGestor(clientes);
+  //   //   }
+  //   // } else {
+  //   //   clientesFiltrados = getClientesPorGestor(clientes);
+  //   // }
   
-    setCliente(clientesFiltrados);
-    setFilteredClientes(clientesFiltrados);
-  }, [clientes]);
+  //   // setCliente(clientesFiltrados);
+  //   // setFilteredClientes(clientesFiltrados);
+
+  // }, [clientes]);
+
+  useEffect(() => {
+  const fetchLista = async () => {
+    try {
+      const res = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/lista-llamadas?usuarioId=${user.id}`); 
+      if (!res.ok) throw new Error("Error al traer lista");
+
+      const data = await res.json();
+      console.log("✅ Lista de llamadas:", data);
+
+      if (data?.clientes) {
+        setCliente(data.clientes);
+        setFilteredClientes(user, data.clientes);
+        setLista(data);
+      }
+    } catch (error) {
+      console.error("❌ Error cargando lista de llamadas:", error);
+    }
+  };
+
+  fetchLista();
+}, [user]);
 
   const handleSearchChange = (e) => {
     const query = e.target.value.toLowerCase();
@@ -176,6 +204,8 @@ export default function AgendaDeLlamadas() {
     return buttons;
   };
 
+  console.log("Clientes para agenda de llamadas:", cliente);
+
   return (
     <>
       <div className={styles.sectorContainer}>
@@ -183,7 +213,11 @@ export default function AgendaDeLlamadas() {
       </div>
       <div className={styles.container}>
         <div>
-          <h1 className={styles.title}>Hola Usuario</h1>
+          {
+            user ? <h1 className={styles.title}>{`Hola ${user.firstname}`}</h1> 
+            : <h1 className={styles.title}>Hola Invitado</h1>
+          }
+          
           <p className={styles.subtitle}>
             Revisa el estado de tu empresa a continuacion
           </p>

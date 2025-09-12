@@ -5,11 +5,17 @@ const fs = require ( 'fs' );
 const path = require ( 'path' );
 const { DB_HOST, DB_PASSWORD, DB_USER, DB_PORT} = process.env
 
-console.log(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/cobranzas`)
+//console.log(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/cobranzas`)
 const sequelize = new Sequelize(`postgres://${DB_HOST}:${DB_PASSWORD}@${DB_USER}:${DB_PORT}/cobranzas` , {
     logging : false,
     native: false,
-    timezone: '-03:00'
+    timezone: '-03:00',
+    pool: {
+    max: 20,       // número máximo de conexiones simultáneas
+    min: 0,
+    acquire: 60000, // tiempo máximo para adquirir una conexión (ms)
+    idle: 10000
+  }
 });
 
 const basename = path.basename ( __filename);

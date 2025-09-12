@@ -26,6 +26,7 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.1",
     "nodemon": "^3.1.10",
+    "p-map": "^4.0.0",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "react-router-dom": "^7.7.0",

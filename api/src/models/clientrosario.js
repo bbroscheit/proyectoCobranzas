@@ -37,7 +37,11 @@ module.exports = ( sequelize ) => {
         //     defaultValue: " nombre de usuario sin definir ",
         //     allowNull:false
         // },
-        
+        nuevo:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            allowNull:false
+        }
   
     })
 }
