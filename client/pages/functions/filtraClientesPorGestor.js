@@ -1,10 +1,14 @@
-export function getClientesPorGestor(clientes) {
-  let nombreGestor = "Belen Soria"; // debemos buscar el nombre de gestor en algun lado, ahora esta hardcodeado
+export function getClientesPorGestor( user, clientes) {
+  let nombreGestor = `${user.firstname} ${user.lastname}`
+  let sucursal = user.sucursal
 
-  // filtramos los clientes que pertenecen al gestor
+  // nos traemos del back toda la informacion que tenemos guardada de cada cliente
+  
   let filteredClientes = clientes.filter(
     (cliente) => cliente.gestor === nombreGestor
   );
+
+
   // filtramos los clientes que no tienen deuda
   let clientWithoutDebt = filteredClientes.filter(
     (cliente) =>
