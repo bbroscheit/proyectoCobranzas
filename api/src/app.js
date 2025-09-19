@@ -112,14 +112,14 @@ cron.schedule('0 7 * * *', async () => {
     }
 });
 
-// Ejecutar creacionLista manualmente al iniciar el server (opcional)
-// (async () => {
-//     try {
-//         await creacionLista();
-//         console.log('Lista de llamadas inicial creada al iniciar server');
-//     } catch (err) {
-//         console.error('Error creando lista de llamadas inicial:', err);
-//     }
-// })();
+//Ejecutar creacionLista manualmente al iniciar el server (opcional)
+(async () => {
+    try {
+        await creacionLista();
+        console.log('Lista de llamadas inicial creada al iniciar server');
+    } catch (err) {
+        console.error('Error creando lista de llamadas inicial:', err);
+    }
+})();
 
 module.exports = server;

@@ -57,7 +57,7 @@ export default function AgendaDeLlamadas() {
 
       if (data?.clientes) {
         setCliente(data.clientes);
-        setFilteredClientes(user, data.clientes);
+        setFilteredClientes(data.clientes);
         setLista(data);
       }
     } catch (error) {

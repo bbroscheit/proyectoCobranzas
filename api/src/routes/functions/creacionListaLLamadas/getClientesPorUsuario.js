@@ -28,7 +28,7 @@ const getClientesPorUsuario = async (usuario) => {
     // Buscar todos los clientes donde el campo gestor coincida con el username del usuario
     const clientes = await clientesModel.findAll({
       where: { gestor: gestorNombre },
-      attributes: ["id"]
+      attributes: ["id","name","contacto1","email","nuevo"]
     });
 
     return {
