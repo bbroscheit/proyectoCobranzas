@@ -19,18 +19,13 @@ const fetchDocumentFromGP =  async () => {
     console.log(`Clientes obtenidos: ${clientes.length}`);
     //console.log('Muestra de cliente obtenido:', clientes[0]);
     
-    // const mapClientes = new Map(clientes.map(c => [ c.id]));
-
-    //const mapClientes = new Set(clientes.map(c => c.id));
     const mapClientes = new Set(clientes.map(c => String(c.id).trim()));
-
-    //console.log(`Clientes mapeados: ${mapClientes.size}`);
+        
     // 3. Mapear documentos a formato de inserción
     const docsParaGuardar = docs
-      //.filter(d => mapClientes.has(d.NumeroCliente)) // solo clientes que existen
       .filter(d => mapClientes.has(String(d.NumeroCliente).trim()))
       .map(d => ({
-         clientId: parseInt(String(d.NumeroCliente).trim(), 10),
+        clientId: parseInt(String(d.NumeroCliente).trim(), 10),
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento,
         tipodocumento: parseInt(d.TipoDocumento),
@@ -47,25 +42,10 @@ const fetchDocumentFromGP =  async () => {
       await Document.bulkCreate(docsParaGuardar, {
         updateOnDuplicate: [
           'numerodocumento',
-          'fechadocumento',
-          'fechavencimiento',
-          'numerocliente',
-          'montopendiente',
-          'montooriginal',
-          'tipodocumento',
-          'clientId',],
+          'montopendiente'],
         transaction: t
       });
     }
-
-//     for (const doc of docsParaGuardar) {
-//   try {
-//     await Document.create(doc, { transaction: t });
-//   } catch (err) {
-//     console.error('Error al guardar documento:', doc, err);
-//     // Puedes decidir si quieres continuar o abortar aquí
-//   }
-// }
 
     // 5. Limpieza anual
     const hoy = new Date();

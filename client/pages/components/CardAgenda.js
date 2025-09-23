@@ -6,8 +6,10 @@ import { IoMdAdd } from "react-icons/io";
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import CardAgendaAVencer from './CardAgendaAVencer';
 import CardAgendaVencido from './CardAgendaVencido';
+import CardAgendaAFavor from './CardAgendaAFavor';
 
-function CardAgenda({ numCliente, clientes, cuit, contacto, deudaAVencer, deudaVencida }) {
+function CardAgenda({ numCliente, clientes, cuit, contacto, deudaAVencer, deudaVencida, deudaTotal }) {
+    //console.log("card agenda: ", deudaAVencer)
     const router = useRouter();
 
   return (
@@ -15,16 +17,25 @@ function CardAgenda({ numCliente, clientes, cuit, contacto, deudaAVencer, deudaV
         <div>
             <div className={styles.containerClient} onClick={(e) => router.push(`/detalle/[id]`, `/detalle/${numCliente}`)}>
                 <AccountBoxIcon />
-                <h1>{clientes}</h1>
+                <h1 className={styles.cardTitle }>{clientes}</h1>
             </div>
             <div className={styles.containerContact}>
                 <div className={styles.containerCuit}><PermContactCalendarIcon /><h3>{cuit}</h3></div>
-                <h3>{contacto}</h3>
+                <h3 className={styles.cardContact}>{contacto}</h3>
             </div>
         </div>
-        <CardAgendaAVencer cliente={numCliente} deuda={deudaAVencer}/>
-        <IoMdAdd className={styles.addicon}/>
-        <CardAgendaVencido cliente={numCliente} deuda={deudaVencida}/>
+        {
+            deudaTotal && deudaTotal > 0 ? 
+                <>
+                    <CardAgendaAVencer cliente={numCliente} deuda={deudaAVencer}/>
+                    <IoMdAdd className={styles.addicon}/>
+                    <CardAgendaVencido cliente={numCliente} deuda={deudaVencida}/>
+                </> :
+                <>
+                    <CardAgendaAFavor cliente={numCliente} deuda={deudaTotal}/>
+                </>
+        }
+        
     </div>
   )
 }

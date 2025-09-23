@@ -28,7 +28,7 @@ module.exports = ( sequelize ) => {
         //     allowNull:false
         // },
         email:{
-            type: DataTypes.STRING(1500),
+            type: DataTypes.STRING(1500), 
             defaultValue: " sin definir",
             allowNull:false
         },

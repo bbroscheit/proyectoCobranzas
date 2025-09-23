@@ -1,4 +1,5 @@
 import React,{useState , useContext} from "react";
+import useUser from "./hooks/useUser";
 import { FacturacionContext } from './context/FacturacionContext';
 import { procesarDocumentos } from './functions/procesarDocumentos'
 import { montosPorAntiguedad } from './functions/montosPorAntiguedad';
@@ -7,8 +8,10 @@ import CardIndex from "./components/CardIndex";
 import Anticuacion from "./charts/Anticuacion";
 import DiasCalle from "./charts/DiasCalle";
 import VentasVsCobranzas from "./charts/VentasVsCobranzas";
+
  
 export default function Principal() {
+  const [gestor, setGestor] = useUser("")
   const { facturas } = useContext(FacturacionContext)
   const facturasTotales = procesarDocumentos(facturas)
   const facturasVencidas = montosPorAntiguedad(facturas)
@@ -25,11 +28,14 @@ export default function Principal() {
     </div>
     <div className={styles.container}>
       <div>
-        <h1 className={styles.title}>Hola Usuario</h1>
+        {
+          gestor && gestor !== "" ?
+            <h1 className={styles.title}>Hola { `${gestor.firstname}`}</h1>
+            :
+            <h1 className={styles.title}>Bienvenido</h1>
+        }
+        
         <p className={styles.subtitle}>Revisa el estado de tu empresa a continuacion</p>
-      </div>
-      <div className={styles.positionContainer}>
-        <div className={styles.position}>Ejecutivo</div>
       </div>
       <div className={styles.cardContainer}>
         {

@@ -3,10 +3,9 @@ import styles from '../modules/cardagendaavencer.module.css'
 import { FacturacionContext } from '../context/FacturacionContext';
 import { formatNumber } from '../functions/formatNumber';
 
-function CardAgendaAVencer({cliente, deuda}) {
-    console.log("deuda a vencer : ", deuda)
+function CardAgendaAFavor({cliente, deuda}) {
     const idCliente = cliente;
-    const totalSinVencer = deuda || 0;
+    const totalSinVencer = 1;
 
     const handleClick = () => {
       if (idCliente) {
@@ -19,9 +18,9 @@ function CardAgendaAVencer({cliente, deuda}) {
   return (
     <div className={totalSinVencer === 0 ? styles.container : styles.containerBackground} onClick={handleClick}>
         <h1 className={totalSinVencer === 0 ? styles.number : styles.numberBackground}>$ {formatNumber(deuda)}</h1>
-        <p className={totalSinVencer === 0 ? styles.paragraph : styles.paragraphBackground}>Por Pagar</p>
+        <p className={totalSinVencer === 0 ? styles.paragraph : styles.paragraphBackground}>A Favor</p>
     </div>
   )
 }
 
-export default CardAgendaAVencer
+export default CardAgendaAFavor

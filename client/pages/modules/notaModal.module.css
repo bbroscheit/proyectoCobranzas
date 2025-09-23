@@ -28,6 +28,11 @@
 
   .radioGroup {
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10%;
+    justify-content:space-around;
+    align-items: center;
   }
   
   .radioGroup label {

@@ -7,6 +7,7 @@ const prellenarClientesHoy = require("./creacionListaLLamadas/prellenarlista");
 const agregarClientesNuevosConDeuda = require("./creacionListaLLamadas/agregarClientesNuevosConDeuda");
 const agregarClientesConDeuda = require("./creacionListaLLamadas/agregarClientesConDeuda");
 const limpiarClientesSinDeuda = require("./creacionListaLLamadas/limpiarClientesSinDeuda");
+const crearGestionDelDia = require ("../functions/crearGestionDelDia")
 
 
 const creacionLista = async () => {
@@ -37,8 +38,11 @@ const creacionLista = async () => {
         //buscamos si hay clientes con deuda que no esten en la lista, ni en listas posteriores y los agregamos
         await agregarClientesConDeuda(usuario, listadoHoy, datosConDocumentos);
 
-        //por ultimo , repasamos la lista y limpiamos los clientes que ya no tienen deuda
+        //repasamos la lista y limpiamos los clientes que ya no tienen deuda
         await limpiarClientesSinDeuda(listadoHoy, datosConDocumentos);
+
+        //creamos la gestion del dia
+        await crearGestionDelDia(usuario, listadoHoy);
     }
    
 }

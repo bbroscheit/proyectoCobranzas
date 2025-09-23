@@ -9,20 +9,22 @@ import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from '@mui/icons-material/Add';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import NotaModal from '../modals/NotaModal'
-import AlarmaModal from '../modals/AlarmaModal'
-import { postAlarm } from '../api/postAlarm'
-import { postNote } from '../api/postNote'
+import AvisosModal from '../modals/AvisosModal';
+import { postAvisos } from '../api/postAvisos'
+import useUser from '../hooks/useUser';
 
 function Gestion({clienteId}) {
+  const [ user, setUser ] = useUser("")
   const { clientes } = useContext(FacturacionContext)
   const [ facturasCliente, setFacturasCliente ] = useState([])
   const [visibleFacturas, setVisibleFacturas] = useState(10)
-  const [showNotaModal, setShowNotaModal] = useState(false)
-  const [showAlarmaModal, setShowAlarmaModal] = useState(false)
+  const [showAvisosModal, setShowAvisosModal] = useState(false)
   const [nota, setNota] = useState('')
   const [comunicacion, setComunicacion] = useState([])
-
+  const [ emailText, setEmailText] = useState("")
+  const [ cuentaCorriente, setCuentaCorriente ] = useState(false)
+  const [ reprogram, setReprogram ] = useState (false)
+  
   useEffect(() => {
     setFacturasCliente(filterFacturasByCliente(clientes, clienteId));
   }, [clientes, clienteId]);
@@ -40,119 +42,91 @@ function Gestion({clienteId}) {
 
   const currentFacturas = facturasCliente.slice(0, visibleFacturas)
 
-  const handleNotaSubmit = ({ nota, comunicacion, alarma }) => {
-    if (alarma) {
-      const noteData = {
-        nota,
-        comunicacion,
-        numeroCliente: clienteId,
-        user : "Belen Soria"
-      };
-      const alarmaData = {
-        texto: alarma.texto,
-        fecha: alarma.fecha,
-        hora: alarma.hora,
-        numeroCliente: clienteId,
-        user : "Belen Soria"
-      }
-      postNote(noteData)
-        .then((res) => {
-          if (res.state === 'success') {
-            postAlarm(alarmaData)
-              .then((res) => {
-                if (res.state === 'success') {
-                  Swal.fire(({
-                    icon: "success",
-                    title: "Tu Nota y Alarma fueron creadas con éxito!",
-                    showConfirmButton: false,
-                    timer: 1000
-                  }));
-                } else {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Error al crear la alarma",
-                    text: "Por favor, intenta nuevamente"
-                  })
-                }
-              })
-              setFacturasCliente([noteData, alarmaData , ...facturasCliente])
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Error al crear la nota",
-              text: "Por favor, intenta nuevamente"
-            })
-          }
-        })
-
-    } else {
-      const noteData = {
-        nota,
-        comunicacion,
-        numeroCliente: clienteId,
-        user : "Belen Soria"
-      };
-      postNote(noteData)
-      .then((res) => {
-        if (res.state === 'success') {
-          Swal.fire(({
-            icon: "success",
-            title: "Tu Nota fue creada con éxito!",
-            showConfirmButton: false,
-            timer: 1000
-          }));
-          setFacturasCliente([noteData, ...facturasCliente])
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error al crear la nota",
-            text: "Por favor, intenta nuevamente"
-          })
-        }
-      })
-    }
-    setShowNotaModal(false)
-  }
-
-  const handleAlarmaSubmit = ({ texto, fecha, hora }) => {
-    const alarmaData = {
-      texto,
-      fecha,
-      hora,
+  const handleAvisosSubmit = ({ nota, comunicacion, emailText, cuentaCorriente, reprogram }) => {
+    const avisosData= {
+      nota,
+      comunicacion,
+      emailText,
+      cuentaCorriente,
+      reprogram,
       numeroCliente: clienteId,
-      user : "Belen Soria"
-    };
-    postAlarm(alarmaData)
-      .then((res) => {
-        if (res.state === 'success') {
-          
-          Swal.fire(({
-            icon: "success",
-            title: "Tu alarma fue creada con éxito!",
-            showConfirmButton: false,
-            timer: 1000
-          }));
-          setFacturasCliente([alarmaData , ...facturasCliente])
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error al crear la alarma",
-            text: "Por favor, intenta nuevamente"
-          })
-        }
-      })
-    setShowAlarmaModal(false)
+      user : user.id
+    }
+
+    postAvisos(avisosData)
+    // if (alarma) {
+    //   const noteData = {
+    //     nota,
+    //     comunicacion,
+    //     emailText,
+    //     cuentaCorriente,
+    //     reprogram,
+    //     numeroCliente: clienteId,
+    //     user : userName
+    //   };
+      
+    //   postNote(noteData)
+    //     .then((res) => {
+    //       if (res.state === 'success') {
+    //         postAlarm(alarmaData)
+    //           .then((res) => {
+    //             if (res.state === 'success') {
+    //               Swal.fire(({
+    //                 icon: "success",
+    //                 title: "Tu Nota y Alarma fueron creadas con éxito!",
+    //                 showConfirmButton: false,
+    //                 timer: 1000
+    //               }));
+    //             } else {
+    //               Swal.fire({
+    //                 icon: "error",
+    //                 title: "Error al crear la alarma",
+    //                 text: "Por favor, intenta nuevamente"
+    //               })
+    //             }
+    //           })
+    //           setFacturasCliente([noteData, alarmaData , ...facturasCliente])
+    //       } else {
+    //         Swal.fire({
+    //           icon: "error",
+    //           title: "Error al crear la nota",
+    //           text: "Por favor, intenta nuevamente"
+    //         })
+    //       }
+    //     })
+
+    // } else {
+    //   const noteData = {
+    //     nota,
+    //     comunicacion,
+    //     numeroCliente: clienteId,
+    //     user :userName
+    //   };
+    //   // postNote(noteData)
+    //   // .then((res) => {
+    //   //   if (res.state === 'success') {
+    //   //     Swal.fire(({
+    //   //       icon: "success",
+    //   //       title: "Tu Nota fue creada con éxito!",
+    //   //       showConfirmButton: false,
+    //   //       timer: 1000
+    //   //     }));
+    //   //     setFacturasCliente([noteData, ...facturasCliente])
+    //   //   } else {
+    //   //     Swal.fire({
+    //   //       icon: "error",
+    //   //       title: "Error al crear la nota",
+    //   //       text: "Por favor, intenta nuevamente"
+    //   //     })
+    //   //   }
+    //   // })
+    // }
+    setShowAvisosModal(false)
   }
 
-  const openNotaModal = () => {
-    setShowNotaModal(true)
+  const openAvisosModal = () => {
+    setShowAvisosModal(true)
   }
-
-  const openAlarmaModal = () => {
-    setShowAlarmaModal(true)
-  }
-
-  console.log('facturasCliente', facturasCliente)
 
   return (
     <div className={styles.timeline}>
@@ -162,17 +136,10 @@ function Gestion({clienteId}) {
           <AddIcon className={styles.menuicon}/>
         </div>
         <div className={styles.timelineContentFirst}>
-          <button className={styles.button} onClick={openAlarmaModal}>
-            <NotificationsActiveIcon className={styles.buttonIcon}/> 
-            <p className={styles.buttonText}>Alarma</p>
-          </button>
-          <button className={styles.button} onClick={openNotaModal}>
+          <button className={styles.button} onClick={openAvisosModal}>
             <TextSnippetIcon className={styles.buttonIcon}/>
-            <p className={styles.buttonText}>Nota</p>
+            <p className={styles.buttonText}>Avisos</p>
           </button>
-          {/* <button className={styles.button}>
-            Manual
-          </button> */}
         </div>
       </div>
       {currentFacturas.map((documento, index) => {
@@ -226,21 +193,21 @@ function Gestion({clienteId}) {
       })}
 
             
-        <NotaModal
-          showModal={showNotaModal}
-          setShowModal={setShowNotaModal}
+        <AvisosModal
+          showModal={showAvisosModal}
+          setShowModal={setShowAvisosModal}
           nota={nota}
           setNota={setNota}
           comunicacion={comunicacion}
           setComunicacion={setComunicacion}
-          handleSubmit={handleNotaSubmit}
+          emailText = { emailText }
+          setEmailText = {setEmailText}
+          cuentaCorriente = {cuentaCorriente}
+          setCuentaCorriente = {setCuentaCorriente}
+          reprogram = {reprogram}
+          setReprogram = {setReprogram}
+          handleSubmit={handleAvisosSubmit}
         /> 
-      
-        <AlarmaModal
-          showModal={showAlarmaModal}
-          setShowModal={setShowAlarmaModal}
-          handleSubmit={handleAlarmaSubmit}
-        />
       
     </div>
   )

@@ -12,7 +12,7 @@ const creacionLista = require('./routes/functions/creacionLista.js');
 require('./bd.js')
 // require("./jobs/syncJob.js")
 
-// se cargan las rutas 
+// se cargan las rutas
 const promoterRouter = require ('../src/routes/promoterRouter.js');
 
 
@@ -113,13 +113,13 @@ cron.schedule('0 7 * * *', async () => {
 });
 
 //Ejecutar creacionLista manualmente al iniciar el server (opcional)
-(async () => {
-    try {
-        await creacionLista();
-        console.log('Lista de llamadas inicial creada al iniciar server');
-    } catch (err) {
-        console.error('Error creando lista de llamadas inicial:', err);
-    }
-})();
+// (async () => {
+//     try {
+//         await creacionLista();
+//         console.log('Lista de llamadas inicial creada al iniciar server');
+//     } catch (err) {
+//         console.error('Error creando lista de llamadas inicial:', err);
+//     }
+// })();  
 
 module.exports = server;

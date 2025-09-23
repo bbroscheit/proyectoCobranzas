@@ -11,3 +11,4 @@ conn.sync({force:false, alter: true}) //cambiar a true para que altere la base d
             console.log(`Listening on port ${PORT}, server connected`)
         })
     })
+    

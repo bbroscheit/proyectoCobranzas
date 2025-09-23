@@ -1,6 +1,6 @@
 const { Client, Clienturuguay, Clientchile } = require("../../../bd");
 
-// Devolvemos todos los clientes de un usuario por sucursal 
+// Devolvemos todos los clientes de un usuario por sucursal
 const getClientesPorUsuario = async (usuario) => {
   try {
     let clientesModel;
@@ -21,28 +21,39 @@ const getClientesPorUsuario = async (usuario) => {
         return {
           gestor: `${usuario.firstname} ${usuario.lastname}`,
           clientes: [],
-          sucursal: sucursal
+          sucursal: sucursal,
         };
     }
 
     // Buscar todos los clientes donde el campo gestor coincida con el username del usuario
     const clientes = await clientesModel.findAll({
       where: { gestor: gestorNombre },
-      attributes: ["id","name","contacto1","email","nuevo"]
+      attributes: ["id", "name", "contacto1", "email", "nuevo"],
     });
 
+    //console.log(" listado de clientes: ", clientes);
+
+     
     return {
       gestor: gestorNombre,
-      clientes: clientes.map((c) => c.id),
-      sucursal: sucursal
+      // clientes: clientes.map((c) => c.id, c.name, c.contacto1, c.email),
+      clientes: clientes.map((c) => ({
+        id: c.id,
+        name: c.name,
+        contacto: c.contacto1,
+        email: c.email,
+      })),
+      sucursal: sucursal,
     };
-
   } catch (error) {
-    console.error(`❌ Error obteniendo clientes para usuario ${gestorNombre}:`, error);
+    console.error(
+      `❌ Error obteniendo clientes para usuario ${gestorNombre}:`,
+      error
+    );
     return {
       gestor: gestorNombre,
       clientes: [],
-      sucursal: sucursal
+      sucursal: sucursal,
     };
   }
 };

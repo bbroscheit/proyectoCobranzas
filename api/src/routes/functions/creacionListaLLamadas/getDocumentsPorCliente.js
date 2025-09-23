@@ -3,10 +3,10 @@ const pMap = require("p-map");
 const { Sequelize } = require("sequelize");
 
 // Busca documentos para todos los clientes de un gestor en su sucursal
-const getDocumentosPorClientes = async ( gestorData ) => {
+const getDocumentosPorClientes = async (gestorData) => {
   try {
     let documentosModel;
-    
+
     switch (gestorData.sucursal) {
       case 1:
         documentosModel = Document;
@@ -27,20 +27,22 @@ const getDocumentosPorClientes = async ( gestorData ) => {
     }
 
     if (!documentosModel) {
-  console.error(`❌ No se encontró modelo de documentos para la sucursal ${gestorData.sucursal}`);
-  return { ...gestorData, clientes: [] };
-}
+      console.error(
+        `❌ No se encontró modelo de documentos para la sucursal ${gestorData.sucursal}`
+      );
+      return { ...gestorData, clientes: [] };
+    }
 
     // Recorremos todos los clientes y buscamos sus documentos
     const clientesConDocs = await pMap(
       gestorData.clientes,
-      async (clienteId) => {
+      async (cliente) => {
         const documentos = await documentosModel.findAll({
-          where: { numerocliente: clienteId }
+          where: { numerocliente: cliente.id },
         });
 
         return {
-          id: clienteId,
+          ...cliente,
           documents: documentos.map((doc) => doc.toJSON()),
         };
       },
@@ -53,7 +55,10 @@ const getDocumentosPorClientes = async ( gestorData ) => {
       sucursal: gestorData.sucursal,
     };
   } catch (error) {
-    console.error(`❌ Error obteniendo documentos para gestor ${gestorData.gestor}:`, error);
+    console.error(
+      `❌ Error obteniendo documentos para gestor ${gestorData.gestor}:`,
+      error
+    );
     return {
       gestor: gestorData.gestor,
       clientes: [],

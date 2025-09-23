@@ -17,6 +17,8 @@ const postAlarm = require("./controllers/postAlarm.js");
 const postNote = require("./controllers/postNote.js");
 const loginUser = require("./controllers/loginUser.js");
 const getListaDeLlamadas = require("./controllers/getListaDeLlamadas.js");
+const getGestionesByGestor = require("./controllers/getGestionesByGestor.js")
+
 
 promoterRouter.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -44,7 +46,7 @@ promoterRouter.get("/clientByPromoter", async (req, res) => {
 
 promoterRouter.get("/lista-llamadas", async (req, res) => {
   const { usuarioId } = req.query;
-    
+
   if (!usuarioId) {
     return res.status(400).json({ error: "Falta usuarioId" });
   }
@@ -59,7 +61,6 @@ promoterRouter.get("/lista-llamadas", async (req, res) => {
     console.log("error en ruta getListaDeLlamadas", e.message);
   }
 });
-  
 
 promoterRouter.get("/allDocuments", async (req, res) => {
   try {
@@ -138,6 +139,19 @@ promoterRouter.get("/clientsByGestor", async (req, res) => {
     const clients = await getClientsByGestor(gestor);
     clients
       ? res.status(200).json(clients)
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
+promoterRouter.get("/gestionesByGestor", async (req, res) => {
+  const { gestor } = req.query;
+
+  try {
+    const gestiones = await getGestionesByGestor(gestor);
+    gestiones
+      ? res.status(200).json(gestiones)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
     res.status(500).json({ state: "error", message: e.message });
@@ -243,6 +257,36 @@ promoterRouter.post("/newNote", async (req, res) => {
       : res.status(400).json({ state: "failure" });
   } catch (error) {
     console.error("Error al crear la nota:", error);
+    res.status(500).json({ error: "Error al crear la nota" });
+  }
+});
+
+promoterRouter.post("/newAvisos", async (req, res) => {
+  const {
+    nota,
+    comunicacion,
+    emailText,
+    cuentaCorriente,
+    reprogram,
+    numeroCliente,
+    user,
+  } = req.body;
+
+  try {
+    let results = await postNewAvisos(
+      nota,
+      comunicacion,
+      emailText,
+      cuentaCorriente,
+      reprogram,
+      numeroCliente,
+      user
+    );
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (error) {
+    console.log("Error en /newAvisos : ", error);
     res.status(500).json({ error: "Error al crear la nota" });
   }
 });

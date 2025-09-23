@@ -219,12 +219,12 @@ export default function AgendaDeLlamadas() {
           }
           
           <p className={styles.subtitle}>
-            Revisa el estado de tu empresa a continuacion
+            Revisa el estado de tu cartera a continuación
           </p>
         </div>
-        <div className={styles.positionContainer}>
+        {/* <div className={styles.positionContainer}>
           <div className={styles.position}>Ejecutivo</div>
-        </div>
+        </div> */}
         <div className={styles.positionContainer2}>
         <input
             type="search"
@@ -251,8 +251,9 @@ export default function AgendaDeLlamadas() {
                                                         clientes={e.name} 
                                                         cuit={e.cuit} 
                                                         contacto={e.contacto} 
-                                                        deudaAVencer={e.totalFacturasSinVencer}
-                                                        deudaVencida={e.totalFacturasVencidas}
+                                                        deudaAVencer={e.deudaNoVencida}
+                                                        deudaVencida={e.deudaVencida}
+                                                        deudaTotal={e.deudaTotal}
                                                         /> )
         ) : (
           <p>No hay registros para mostrar</p>

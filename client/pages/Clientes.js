@@ -27,6 +27,8 @@ const Clientes = () => {
     facturasMes: 0,
   });
   const [flag, setFlag] = useState(1);
+  const [ gestiones , setGestiones ] = useState(0)
+  const [ gestionesCompletadas, setGestionesCompletadas ] = useState(0)
   const facturasTotales = procesarDocumentos(facturas);
 
   useEffect(() => {
@@ -45,6 +47,17 @@ const Clientes = () => {
 
     fetchData();
   }, [facturas, gestor]);
+
+  useEffect(() => {
+      fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor`)
+      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor`)
+        .then((res) => res.json())
+        .then((data) => {
+          setGestiones(data.gestion);
+          setGestionesCompletadas(data.gestioncompletada)
+        });
+
+  }, [gestionesCompletadas])
 
   function handleChange(condition) {
     condition === 1 ? setFlag(1) : condition === 2 ? setFlag(2) : setFlag(3);
@@ -86,8 +99,8 @@ const Clientes = () => {
       )}
 
       <div className={styles.cardGestionesContainer}>
-        <CardGestiones />
-        <CardGestionesTerminadas />
+        <CardGestiones total={gestiones}/>
+        <CardGestionesTerminadas total={gestionesCompletadas}/>
         <CardAlarmas />
         <CardRecordatorios />
       </div>
