@@ -1,59 +1,76 @@
-import React, { useState, useContext, useEffect } from 'react'
-import styles from '../modules/gestion.module.css'
+import React, { useState, useContext, useEffect } from "react";
+import styles from "../modules/gestion.module.css";
 import Swal from "sweetalert2";
-import { FacturacionContext } from '../context/FacturacionContext'
-import { formatNumber } from '../functions/formatNumber'
-import { filterFacturasByCliente } from '../functions/filterFacturasByCliente'
-import LocalAtmIcon from '@mui/icons-material/LocalAtm';
-import CreateIcon from '@mui/icons-material/Create';
-import AddIcon from '@mui/icons-material/Add';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import AvisosModal from '../modals/AvisosModal';
-import { postAvisos } from '../api/postAvisos'
-import useUser from '../hooks/useUser';
+import { FacturacionContext } from "../context/FacturacionContext";
+import { formatNumber } from "../functions/formatNumber";
+import { filterFacturasByCliente } from "../functions/filterFacturasByCliente";
+import LocalAtmIcon from "@mui/icons-material/LocalAtm";
+import CreateIcon from "@mui/icons-material/Create";
+import AddIcon from "@mui/icons-material/Add";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import AvisosModal from "../modals/AvisosModal";
+import { postAvisos } from "../api/postAvisos";
+import useUser from "../hooks/useUser";
 
-function Gestion({clienteId}) {
-  const [ user, setUser ] = useUser("")
-  const { clientes } = useContext(FacturacionContext)
-  const [ facturasCliente, setFacturasCliente ] = useState([])
-  const [visibleFacturas, setVisibleFacturas] = useState(10)
-  const [showAvisosModal, setShowAvisosModal] = useState(false)
-  const [nota, setNota] = useState('')
-  const [comunicacion, setComunicacion] = useState([])
-  const [ emailText, setEmailText] = useState("")
-  const [ cuentaCorriente, setCuentaCorriente ] = useState(false)
-  const [ reprogram, setReprogram ] = useState (false)
-  
+function Gestion({ clienteId }) {
+  const [user, setUser] = useUser("");
+  const { clientes } = useContext(FacturacionContext);
+  const [facturasCliente, setFacturasCliente] = useState([]);
+  const [visibleFacturas, setVisibleFacturas] = useState(10);
+  const [showAvisosModal, setShowAvisosModal] = useState(false);
+  const [nota, setNota] = useState("");
+  const [comunicacion, setComunicacion] = useState([]);
+  const [emailText, setEmailText] = useState("");
+  const [cuentaCorriente, setCuentaCorriente] = useState(false);
+  const [reprogram, setReprogram] = useState(false);
+
   useEffect(() => {
     setFacturasCliente(filterFacturasByCliente(clientes, clienteId));
   }, [clientes, clienteId]);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
-        setVisibleFacturas(prevVisibleFacturas => prevVisibleFacturas + 10)
+      if (
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight
+      ) {
+        setVisibleFacturas((prevVisibleFacturas) => prevVisibleFacturas + 10);
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const currentFacturas = facturasCliente.slice(0, visibleFacturas)
+  const currentFacturas = facturasCliente.slice(0, visibleFacturas);
 
-  const handleAvisosSubmit = ({ nota, comunicacion, emailText, cuentaCorriente, reprogram }) => {
-    const avisosData= {
+  const handleAvisosSubmit = ({
+    nota,
+    comunicacion,
+    emailText,
+    cuentaCorriente,
+    reprogram,
+  }) => {
+    const avisosData = {
       nota,
       comunicacion,
       emailText,
       cuentaCorriente,
       reprogram,
       numeroCliente: clienteId,
-      user : user.id
-    }
+      user: user.id,
+    };
 
-    postAvisos(avisosData)
+    postAvisos(avisosData);
+    if (res.state === "success") {
+      Swal.fire({
+        icon: "success",
+        title: "Tu aviso fue creado con éxito!",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
     // if (alarma) {
     //   const noteData = {
     //     nota,
@@ -64,7 +81,7 @@ function Gestion({clienteId}) {
     //     numeroCliente: clienteId,
     //     user : userName
     //   };
-      
+
     //   postNote(noteData)
     //     .then((res) => {
     //       if (res.state === 'success') {
@@ -121,31 +138,35 @@ function Gestion({clienteId}) {
     //   //   }
     //   // })
     // }
-    setShowAvisosModal(false)
-  }
+    setShowAvisosModal(false);
+  };
 
   const openAvisosModal = () => {
-    setShowAvisosModal(true)
-  }
+    setShowAvisosModal(true);
+  };
 
   return (
     <div className={styles.timeline}>
       <div className={styles.timelineItem}>
         <div className={styles.timelineDate}>.</div>
         <div className={styles.timelineIcon}>
-          <AddIcon className={styles.menuicon}/>
+          <AddIcon className={styles.menuicon} />
         </div>
         <div className={styles.timelineContentFirst}>
           <button className={styles.button} onClick={openAvisosModal}>
-            <TextSnippetIcon className={styles.buttonIcon}/>
+            <TextSnippetIcon className={styles.buttonIcon} />
             <p className={styles.buttonText}>Avisos</p>
           </button>
         </div>
       </div>
       {currentFacturas.map((documento, index) => {
-        const fecha = new Date(documento.FechaDocumento || documento.createdAt || documento.fecha);
-        const dia = fecha.getDate().toString().padStart(2, '0')
-        const mes = fecha.toLocaleString('es-ES', { month: 'short' }).toUpperCase()
+        const fecha = new Date(
+          documento.FechaDocumento || documento.createdAt || documento.fecha
+        );
+        const dia = fecha.getDate().toString().padStart(2, "0");
+        const mes = fecha
+          .toLocaleString("es-ES", { month: "short" })
+          .toUpperCase();
 
         const today = new Date();
         const currentDay = today.getDate();
@@ -158,59 +179,63 @@ function Gestion({clienteId}) {
               <p>{mes ? mes : currentMonth}</p>
             </div>
             <div className={styles.timelineIcon}>
-                    {documento.TipoDocumento === 9 
-                      ? <LocalAtmIcon className={styles.reciboicon}/>
-                      : documento.TipoDocumento 
-                        ? <CreateIcon className={styles.facturasicon}/> 
-                        : documento.typecontact 
-                          ? <TextSnippetIcon className={styles.notasicon}/>
-                          : <NotificationsActiveIcon className={styles.alarmasicon}/>
-                    }
+              {documento.TipoDocumento === 9 ? (
+                <LocalAtmIcon className={styles.reciboicon} />
+              ) : documento.TipoDocumento ? (
+                <CreateIcon className={styles.facturasicon} />
+              ) : documento.typecontact ? (
+                <TextSnippetIcon className={styles.notasicon} />
+              ) : (
+                <NotificationsActiveIcon className={styles.alarmasicon} />
+              )}
             </div>
             <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}> 
-                    {documento.TipoDocumento === 9 
-                      ? 'Pago Recibido' 
-                      : documento.TipoDocumento 
-                        ? `Documento emitido N° ${documento.NumeroDocumento?.trim() || documento.id}` 
-                        : documento.typecontact || documento.comunicacion
-                          ? 'Nota' 
-                          : 'Alarma'
-                    }
-                </h3>
-                <p className={styles.timelineText}>
-                    {documento.TipoDocumento === 9
-                        ? `Monto total pagado: $ ${formatNumber(documento.MontoOriginal)}`
-                        : documento.TipoDocumento
-                            ? `Monto del Documento: $ ${formatNumber(documento.MontoOriginal)}`
-                            : documento.typecontact || documento.comunicacion
-                                ? `Nota: ${documento.detail || documento.nota}`
-                                : `Alarma: ${documento.detail || documento.texto}`}
-                </p>
+              <h3 className={styles.timelineTitle}>
+                {documento.TipoDocumento === 9
+                  ? "Pago Recibido"
+                  : documento.TipoDocumento
+                  ? `Documento emitido N° ${
+                      documento.NumeroDocumento?.trim() || documento.id
+                    }`
+                  : documento.typecontact || documento.comunicacion
+                  ? "Nota"
+                  : "Alarma"}
+              </h3>
+              <p className={styles.timelineText}>
+                {documento.TipoDocumento === 9
+                  ? `Monto total pagado: $ ${formatNumber(
+                      documento.MontoOriginal
+                    )}`
+                  : documento.TipoDocumento
+                  ? `Monto del Documento: $ ${formatNumber(
+                      documento.MontoOriginal
+                    )}`
+                  : documento.typecontact || documento.comunicacion
+                  ? `Nota: ${documento.detail || documento.nota}`
+                  : `Alarma: ${documento.detail || documento.texto}`}
+              </p>
             </div>
           </div>
-        )
+        );
       })}
 
-            
-        <AvisosModal
-          showModal={showAvisosModal}
-          setShowModal={setShowAvisosModal}
-          nota={nota}
-          setNota={setNota}
-          comunicacion={comunicacion}
-          setComunicacion={setComunicacion}
-          emailText = { emailText }
-          setEmailText = {setEmailText}
-          cuentaCorriente = {cuentaCorriente}
-          setCuentaCorriente = {setCuentaCorriente}
-          reprogram = {reprogram}
-          setReprogram = {setReprogram}
-          handleSubmit={handleAvisosSubmit}
-        /> 
-      
+      <AvisosModal
+        showModal={showAvisosModal}
+        setShowModal={setShowAvisosModal}
+        nota={nota}
+        setNota={setNota}
+        comunicacion={comunicacion}
+        setComunicacion={setComunicacion}
+        emailText={emailText}
+        setEmailText={setEmailText}
+        cuentaCorriente={cuentaCorriente}
+        setCuentaCorriente={setCuentaCorriente}
+        reprogram={reprogram}
+        setReprogram={setReprogram}
+        handleSubmit={handleAvisosSubmit}
+      />
     </div>
-  )
+  );
 }
 
-export default Gestion
+export default Gestion;

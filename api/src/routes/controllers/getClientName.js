@@ -7,7 +7,7 @@ const getClientName = async (clienteId) => {
       });
   
       if (clients.length > 0) {
-        return { nombre: clients[0].name }; // Asegúrate de que 'name' es la propiedad correcta
+        return { nombre: clients[0].name }; 
       } else {
         return null;
       }

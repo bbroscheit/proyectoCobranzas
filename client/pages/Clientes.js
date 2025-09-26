@@ -49,15 +49,19 @@ const Clientes = () => {
   }, [facturas, gestor]);
 
   useEffect(() => {
-      fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor`)
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor`)
+      const userLogin = localStorage.getItem("userCobranzas")
+      const userParse = JSON.parse(userLogin)
+      
+
+      fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userParse.id}`)
+      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userLogin.id}`)
         .then((res) => res.json())
         .then((data) => {
           setGestiones(data.gestion);
           setGestionesCompletadas(data.gestioncompletada)
         });
 
-  }, [gestionesCompletadas])
+  }, [gestionesCompletadas, gestor])
 
   function handleChange(condition) {
     condition === 1 ? setFlag(1) : condition === 2 ? setFlag(2) : setFlag(3);

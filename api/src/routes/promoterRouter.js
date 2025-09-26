@@ -18,6 +18,7 @@ const postNote = require("./controllers/postNote.js");
 const loginUser = require("./controllers/loginUser.js");
 const getListaDeLlamadas = require("./controllers/getListaDeLlamadas.js");
 const getGestionesByGestor = require("./controllers/getGestionesByGestor.js")
+const postNewAvisos = require("./controllers/postNewAvisos.js")
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -145,9 +146,11 @@ promoterRouter.get("/clientsByGestor", async (req, res) => {
   }
 });
 
-promoterRouter.get("/gestionesByGestor", async (req, res) => {
-  const { gestor } = req.query;
+promoterRouter.get("/gestionesByGestor/:gestor", async (req, res) => {
+  const { gestor } = req.params;
 
+  console.log("gestor en ruta ", gestor)
+  
   try {
     const gestiones = await getGestionesByGestor(gestor);
     gestiones

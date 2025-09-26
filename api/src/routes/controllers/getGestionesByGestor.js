@@ -2,6 +2,7 @@ const { Gestion, Usuario } = require('../../bd');
 const { Op } = require('sequelize');
 
 const getGestionesByGestor = async (gestor) => {
+    console.log("gestor: ", gestor)
   try {
     // Primero buscamos el usuario por su identificador (puede ser id o username según tu caso)
     const usuario = await Usuario.findOne({ where: { id: gestor } }); 

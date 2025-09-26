@@ -3,48 +3,19 @@ import styles from "@/pages/modules/agendadellamadas.module.css";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CardAgenda from "./components/CardAgenda";
-import { FacturacionContext } from "../pages/context/FacturacionContext";
-import { getClientesPorGestor } from "../pages/functions/filtraClientesPorGestor";
+import { FacturacionContext } from "../pages/context/FacturacionContext"
 import useUser from "./hooks/useUser";
 
 export default function AgendaDeLlamadas() {
   const [user, setUser] = useUser("");
-  const { clientes } = useContext(FacturacionContext);
   const [lista, setLista] = useState(null); // Lista de llamadas
   const [cliente, setCliente] = useState(null);
   const [filteredClientes, setFilteredClientes] = useState(null); // Clientes filtrados
-
-
   const [searchQuery, setSearchQuery] = useState(""); // Texto del input de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const recordsPerPage = 20; // Número de registros por página
 
   const { totalesPorCliente, totalesVencidosPorCliente } = useContext(FacturacionContext);
-
-  // useEffect(() => {
-  //   // const storedData = JSON.parse(localStorage.getItem('filteredClientsData'));
-  //   // let clientesFiltrados;
-  
-  //   // if (storedData) {
-  //   //   let storedDate = new Date(storedData.date);
-  //   //   storedDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
-  //   //   let currentDate = new Date();
-  //   //   currentDate.setHours(0, 0, 0, 0); // Ignorar la hora para la comparación
-  
-  //   //   if (storedDate.getTime() === currentDate.getTime() && storedData.clients.length > 0 ) {
-        
-  //   //     clientesFiltrados = storedData.clients;
-  //   //   } else {
-  //   //     clientesFiltrados = getClientesPorGestor(clientes);
-  //   //   }
-  //   // } else {
-  //   //   clientesFiltrados = getClientesPorGestor(clientes);
-  //   // }
-  
-  //   // setCliente(clientesFiltrados);
-  //   // setFilteredClientes(clientesFiltrados);
-
-  // }, [clientes]);
 
   useEffect(() => {
   const fetchLista = async () => {
@@ -56,9 +27,12 @@ export default function AgendaDeLlamadas() {
       console.log("✅ Lista de llamadas:", data);
 
       if (data?.clientes) {
-        setCliente(data.clientes);
-        setFilteredClientes(data.clientes);
-        setLista(data);
+        
+        const clientesSinLlamar = data.clientes.filter(c => !c.llamado);
+
+        setCliente(clientesSinLlamar);
+        setFilteredClientes(clientesSinLlamar);
+        setLista({ ...data, clientes: clientesSinLlamar });
       }
     } catch (error) {
       console.error("❌ Error cargando lista de llamadas:", error);
@@ -204,7 +178,7 @@ export default function AgendaDeLlamadas() {
     return buttons;
   };
 
-  console.log("Clientes para agenda de llamadas:", cliente);
+  //console.log("Clientes para agenda de llamadas:", cliente);
 
   return (
     <>

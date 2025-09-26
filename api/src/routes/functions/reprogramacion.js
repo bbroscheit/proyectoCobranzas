@@ -1,7 +1,7 @@
 const { Listadellamadas } = require("../../bd");
 const { Op } = require("sequelize");
 
-const reprogramacion = async (client, reprogram) => {
+const reprogramacion = async (client, reprogram, usuarioId) => {
   try {
     let targetDate;
 
@@ -17,11 +17,12 @@ const reprogramacion = async (client, reprogram) => {
     const dayEnd = new Date(targetDate.setHours(23, 59, 59, 999));
 
     // Buscar lista existente para ese día
-    let lista = await Listadellamadas.findOne({
+    const lista = await Listadellamadas.findOne({
       where: {
         fecha: {
           [Op.between]: [dayStart, dayEnd],
         },
+        usuarioId, // 👈 se ajusta al campo real de la relación
       },
     });
 

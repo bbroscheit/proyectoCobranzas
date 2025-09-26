@@ -112,7 +112,7 @@ cron.schedule('0 7 * * *', async () => {
     }
 });
 
-//Ejecutar creacionLista manualmente al iniciar el server (opcional)
+// Ejecutar creacionLista manualmente al iniciar el server (opcional)
 // (async () => {
 //     try {
 //         await creacionLista();

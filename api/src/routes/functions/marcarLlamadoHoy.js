@@ -1,7 +1,7 @@
 const { Listadellamadas } = require("../../bd");
 const { Op } = require("sequelize");
 
-const marcarLlamadoHoy = async (clienteId) => {
+const marcarLlamadoHoy = async (clienteId, usuarioId) => {
   try {
     const hoy = new Date();
     const dayStart = new Date(hoy.setHours(0, 0, 0, 0));
@@ -13,6 +13,7 @@ const marcarLlamadoHoy = async (clienteId) => {
         fecha: {
           [Op.between]: [dayStart, dayEnd],
         },
+        usuarioId, // 👈 se ajusta al campo real de la relación
       },
     });
 

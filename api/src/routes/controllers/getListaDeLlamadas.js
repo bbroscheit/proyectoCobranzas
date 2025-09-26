@@ -2,7 +2,7 @@ const { Listadellamada, Usuario } = require("../../bd");
 const { Op } = require("sequelize");
 
 const getListaDeLlamadas = async (usuarioId) => {
-  console.log("usuarioId recibido en controlador:", usuarioId);
+  //console.log("usuarioId recibido en controlador:", usuarioId);
 
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0); 
@@ -12,7 +12,9 @@ const getListaDeLlamadas = async (usuarioId) => {
 
   try {
     const listado = await Listadellamada.findOne({
-      where: { usuarioId, fecha: { [Op.gte]: hoy, [Op.lt]: manana } }, 
+      where: {  usuarioId, 
+                fecha: { [Op.gte]: hoy, [Op.lt]: manana } 
+              }, 
       order: [["createdAt", "DESC"]],
       //include: ["clientes"],
     });

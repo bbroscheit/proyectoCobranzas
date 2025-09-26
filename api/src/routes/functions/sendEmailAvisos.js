@@ -12,15 +12,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/**
- * Envía un aviso por email a un cliente (y copia al usuario).
- * @param {string} emailText Texto principal del email
- * @param {boolean} cuentaCorriente Si true, adjunta tabla con documentos pendientes
- * @param {number} numeroCliente ID del cliente
- * @param {number} userId ID del usuario que envía
- */
-
-const sendEmailAvisos = async (emailText, cuentaCorriente, numeroCliente, user) => {
+const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) => {
   try {
     if (!emailText || String(emailText).trim() === '') {
       console.log('📭 No se envía email: emailText vacío');
@@ -29,17 +21,17 @@ const sendEmailAvisos = async (emailText, cuentaCorriente, numeroCliente, user) 
 
     // 1. Buscar cliente y usuario
     const cliente = await Client.findByPk(numeroCliente, {
-      include: [{ model: Document, as: 'documents' }],
+      include: [{ model: Document, as: 'documento' }],
     });
     if (!cliente) throw new Error(`Cliente ${numeroCliente} no encontrado`);
 
     const usuario = await Usuario.findByPk(user);
     if (!usuario) throw new Error(`Usuario ${user} no encontrado`);
 
-    if (!cliente.contacto?.email) {
+    if (!cliente.email) {
       throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
     }
-    if (!usuario.email) {
+    if (!usuario.mail) {
       throw new Error(`Usuario ${user} no tiene email registrado`);
     }
 
@@ -85,7 +77,7 @@ const sendEmailAvisos = async (emailText, cuentaCorriente, numeroCliente, user) 
     // 3. Enviar mail con nodemailer
     const mailOptions = {
       from: `"${usuario.name || 'Usuario'}" <${process.env.MAIL_USER}>`, // usuario que envía
-      to: cliente.contacto.email, // destinatario cliente
+      to: cliente.email, // destinatario cliente
       cc: usuario.email, // copia al usuario
       subject: 'Aviso de Cuenta',
       html: bodyHtml,
