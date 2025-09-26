@@ -178,7 +178,7 @@ export default function AgendaDeLlamadas() {
     return buttons;
   };
 
-  //console.log("Clientes para agenda de llamadas:", cliente);
+  console.log("Clientes para agenda de llamadas:", cliente);
 
   return (
     <>

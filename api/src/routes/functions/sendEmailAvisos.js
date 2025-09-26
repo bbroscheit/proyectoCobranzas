@@ -1,4 +1,5 @@
-const { Client, Usuario, Document } = require('../../bd');
+const { Usuario, Listadellamada } = require('../../bd');
+const { Op } = require('sequelize');
 const nodemailer = require('nodemailer');
 
 
@@ -19,27 +20,39 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
       return null;
     }
 
-    // 1. Buscar cliente y usuario
-    const cliente = await Client.findByPk(numeroCliente, {
-      include: [{ model: Document, as: 'documento' }],
-    });
-    if (!cliente) throw new Error(`Cliente ${numeroCliente} no encontrado`);
-
+    // Buscamos usuario
     const usuario = await Usuario.findByPk(user);
     if (!usuario) throw new Error(`Usuario ${user} no encontrado`);
+    if (!usuario.mail) throw new Error(`Usuario ${user} no tiene email registrado`);
 
-    if (!cliente.email) {
-      throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
-    }
-    if (!usuario.mail) {
-      throw new Error(`Usuario ${user} no tiene email registrado`);
+    //Buscamos Lista de LLamadas de hoy del usuario recibido
+    const hoy = new Date();
+    const dayStart = new Date(hoy.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(hoy.setHours(23, 59, 59, 999));
+
+    const listaHoy = await Listadellamada.findOne({
+      where: {
+        fecha: { [Op.between]: [dayStart, dayEnd] },
+        usuarioId: user,
+      },
+    });
+
+    if (!listaHoy) {
+      throw new Error(`No existe lista de llamadas para hoy del usuario ${user}`);
     }
 
-    // 2. Construir cuerpo del mensaje
+    //console.log("lista de llamadas", listaHoy)
+    //Buscamos cliente dentro de la lista de llamadas de hoy
+    const cliente = listaHoy.clientes.find((c) => String(c.id).trim() === String(numeroCliente).trim());
+    if (!cliente) throw new Error(`Cliente ${numeroCliente} no está en la lista de hoy`);
+
+    if (!cliente.email) throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
+
+    // Cuerpo del mensaje
     let bodyHtml = `<p>${emailText}</p>`;
 
     if (cuentaCorriente) {
-      const docsPendientes = cliente.documents.filter(
+      const docsPendientes = (cliente.documentos || []).filter(
         (d) => parseFloat(d.montopendiente) > 0
       );
 
@@ -74,9 +87,9 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
       }
     }
 
-    // 3. Enviar mail con nodemailer
+    // Enviamos mail con nodemailer
     const mailOptions = {
-      from: `"${usuario.name || 'Usuario'}" <${process.env.MAIL_USER}>`, // usuario que envía
+      from: `"${usuario.firstname || 'Usuario'}" <${process.env.MAIL_USER}>`, // usuario que envía
       to: cliente.email, // destinatario cliente
       cc: usuario.email, // copia al usuario
       subject: 'Aviso de Cuenta',

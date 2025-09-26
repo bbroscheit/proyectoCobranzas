@@ -48,6 +48,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
           name: clienteConDocs.name,
           cuit: clienteConDocs.cuit,
           contacto: clienteConDocs.contacto,
+          email:clienteConDocs.email,
           deudaTotal,
           deudaVencida,
           deudaNoVencida,
