@@ -24,6 +24,16 @@ const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {
         DocumentoModel = Documentchile;
         includeAlias = "documentochile";
         break;
+      // case 4:
+      //   ClienteModel = Clientrosario;
+      //   DocumentoModel = Documentrosario;
+      //   includeAlias = "documentorosario";
+      //   break;
+      case 5:
+        ClienteModel = Clientecopatagonico;
+        DocumentoModel = Documentecopatagonico;
+        includeAlias = "documentoecopatagonico";
+        break;
       default:
         return;
     }

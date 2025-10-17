@@ -1,9 +1,10 @@
-const getAllDocuments = require('../controllers/getAllDocuments.js');
+
 const { Document, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
-const getAllClients = require('../controllers/getAllClients.js');
+const getAllClients = require('../controllers/getAllClientsEcoPatagonicos.js');
+const getAllDocuments = require('../controllers/getAllDocumentsEcoPatagonicos.js');
 
-const fetchDocumentFromGP =  async () => {
+const fetchDocumentFromGPEcoPatagonico =  async () => {
   const t = await sequelize.transaction();
 
   try {
@@ -48,7 +49,7 @@ const fetchDocumentFromGP =  async () => {
     if (docsParaGuardar.length > 0) {
       // 🚀 Usamos ON CONFLICT para actualizar solo "montopendiente" si ya existe
       const query = `
-        INSERT INTO "Document" 
+        INSERT INTO "Documentecopatagonico" 
           ("clientId", "numerocliente", "numerodocumento", "tipodocumento", "fechadocumento", 
            "montooriginal", "montopendiente", "fechavencimiento", "createdAt", "updatedAt")
         VALUES ${docsParaGuardar.map((_, i) => 
@@ -90,11 +91,11 @@ const fetchDocumentFromGP =  async () => {
     }
 
     await t.commit();
-    console.log('Sincronización completada ✅');
+    console.log('Sincronización completada ✅ EcoPatagonicos');
   } catch (err) {
     await t.rollback();
-    console.error('Error en sincronización GP:', err);
+    console.error('Error en sincronización GP EcoPatagonicos:', err);
   }
 };
 
-module.exports = fetchDocumentFromGP 
+module.exports = fetchDocumentFromGPEcoPatagonico 

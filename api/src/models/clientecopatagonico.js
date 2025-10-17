@@ -22,11 +22,6 @@ module.exports = ( sequelize ) => {
             defaultValue: " nombre de usuario sin definir ",
             allowNull:true
         },
-        // contacto2:{
-        //     type: DataTypes.STRING,
-        //     defaultValue: " nombre de usuario sin definir ",
-        //     allowNull:false
-        // },
         email:{
             type: DataTypes.STRING,
             defaultValue: " sin definir",

@@ -1,13 +1,13 @@
 require("dotenv").config();
 const sql = require("mssql");
 
-const { GP_USER, GP_PASSWORD, GP_SERVER, GP_DATABASE } = process.env;
+const { GP_USER, GP_PASSWORD, GP_SERVER, GP_DATABASE_ECOPATAGONICOS } = process.env;
 
 const config = {
     user: GP_USER,
     password:  GP_PASSWORD,
     server: GP_SERVER,
-    database: GP_DATABASE,
+    database: GP_DATABASE_ECOPATAGONICOS,
     options: {
         trustedConnection: true,
         encrypt: true,
@@ -16,7 +16,7 @@ const config = {
     },
 };
 
-const getAllDocuments = async () => {
+const getAllDocumentsEcoPatagonicos = async () => {
   try {
     if (sql.connected) await sql.close();
     const pool = await sql.connect(config);
@@ -58,5 +58,4 @@ const getAllDocuments = async () => {
   }
 };
 
-module.exports = getAllDocuments;
-
+module.exports = getAllDocumentsEcoPatagonicos;

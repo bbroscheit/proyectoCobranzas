@@ -1,4 +1,4 @@
-const { Client, Clienturuguay, Clientchile } = require("../../../bd");
+const { Client, Clienturuguay, Clientchile, Clientecopatagonico } = require("../../../bd");
 
 // Devolvemos todos los clientes de un usuario por sucursal
 const getClientesPorUsuario = async (usuario) => {
@@ -16,6 +16,12 @@ const getClientesPorUsuario = async (usuario) => {
         break;
       case 3:
         clientesModel = Clientchile;
+        break;
+      // case 4:
+      //   clientesModel = Clientrosario;
+      //   break;
+      case 5:
+        clientesModel = Clientecopatagonico;
         break;
       default:
         return {

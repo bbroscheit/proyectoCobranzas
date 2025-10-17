@@ -11,7 +11,8 @@ module.exports = ( sequelize ) => {
         numerodocumento:{
             type: DataTypes.STRING,
             defaultValue: " nombre de usuario sin definir ",
-            allowNull:false
+            allowNull:false,
+            //unique:true
         },
         fechadocumento:{
             type: DataTypes.DATEONLY,
@@ -48,5 +49,13 @@ module.exports = ( sequelize ) => {
             allowNull: false
         }
             
+    },{
+        tableName: "Documentecopatagonico",
+    indexes: [
+      {
+        unique: true,
+        fields: ["numerodocumento", "clientId"], // 🔹 Combinación única
+      },
+    ],
     })
 }

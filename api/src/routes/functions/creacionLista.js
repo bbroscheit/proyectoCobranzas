@@ -7,14 +7,16 @@ const prellenarClientesHoy = require("./creacionListaLLamadas/prellenarlista");
 const agregarClientesNuevosConDeuda = require("./creacionListaLLamadas/agregarClientesNuevosConDeuda");
 const agregarClientesConDeuda = require("./creacionListaLLamadas/agregarClientesConDeuda");
 const limpiarClientesSinDeuda = require("./creacionListaLLamadas/limpiarClientesSinDeuda");
-const crearGestionDelDia = require ("../functions/crearGestionDelDia")
+const crearGestionDelDia = require ("../functions/crearGestionDelDia");
+
 
 
 const creacionLista = async () => {
 
     let usuarios = []
     try {
-        usuarios = await Usuario.findAll();
+        usuarios = await Usuario.findAll( { where: { isdelete: false } });
+        console.log("Usuarios cargados para creación de listas:", usuarios.length);
     } catch (error) {
         console.error("❌ Error al cargar usuarios:", error);
     }

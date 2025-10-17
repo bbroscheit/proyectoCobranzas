@@ -5,7 +5,9 @@ const morgan = require('morgan');
 let cors = require('cors');
 const cron = require('node-cron');
 const fetchClientsFromCRM = require('./routes/functions/fetchClientsFromCRM.js');
+const fetchClientsFromCRMEcoPatagonico = require('./routes/functions/fetchClientsFromCRMEcoPatagonico.js');
 const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
+const fetchDocumentFromGPEcoPatagonico = require('./routes/functions/fetchDocumentGPEcoPatagonico.js');
 const seedUsuarios = require('./routes/functions/seedUsuarios.js');
 const syncAllSources = require('./services/syncAllSources.js');
 const creacionLista = require('./routes/functions/creacionLista.js');
@@ -20,9 +22,15 @@ const promoterRouter = require ('../src/routes/promoterRouter.js');
 require('events').EventEmitter.defaultMaxListeners = 20;
 
 // fetchClientsFromCRM().then(() => {
-//     console.log('Clientes iniciales cargados desde CRM');
+//     console.log('Clientes iniciales cargados desde CRM Buenos Aires');
 // }).catch((err) => {
-//     console.error('Error al cargar clientes iniciales desde CRM:', err);
+//     console.error('Error al cargar clientes iniciales desde CRM Buenos Aires:', err);
+// });
+
+// fetchClientsFromCRMEcoPatagonico().then(() => {
+//     console.log('Clientes iniciales cargados desde CRM EcoPatagonico');
+// }).catch((err) => {
+//     console.error('Error al cargar clientes iniciales desde CRM EcoPtagonico:', err);
 // });
 
 // fetchDocumentFromGP().then(() => {
@@ -30,6 +38,12 @@ require('events').EventEmitter.defaultMaxListeners = 20;
 // }).catch((err) => {
 //     console.error('Error al cargar documentos iniciales desde GP:', err);
 // });
+
+fetchDocumentFromGPEcoPatagonico().then(() => {
+    console.log('Documentos iniciales cargados desde GP');
+}).catch((err) => {
+    console.error('Error al cargar documentos iniciales desde GP:', err);
+});
 
 // Carga inicial de usuarios
 //seedUsuarios();
@@ -86,9 +100,16 @@ server.use((err,req,res) => {
 cron.schedule('0 3 * * *', async () => {
     try {
         await fetchClientsFromCRM();
-        console.log('Clientes CRM actualizados');
+        console.log('Clientes CRM actualizados Buenos Aires');
     } catch (err) {
-        console.error('Error actualizando clientes CRM:', err);
+        console.error('Error actualizando clientes CRM Buenos Aires:', err);
+    }
+
+    try {
+        await fetchClientsFromCRMEcoPatagonico();
+        console.log('Clientes CRM actualizados Buenos Aires');
+    } catch (err) {
+        console.error('Error actualizando clientes CRM Buenos Aires:', err);
     }
 });
 
@@ -102,7 +123,7 @@ cron.schedule('0 5 * * *', async () => {
     }
 });
 
-// Todos los días a las 7 AM crea las listas de llamadas
+// Todos los días a las 7 AM crea las listas de llamadas 
 cron.schedule('0 7 * * *', async () => {
     try {
         await creacionLista();
@@ -112,14 +133,14 @@ cron.schedule('0 7 * * *', async () => {
     }
 });
 
-// Ejecutar creacionLista manualmente al iniciar el server (opcional)
-// (async () => {
-//     try {
-//         await creacionLista();
-//         console.log('Lista de llamadas inicial creada al iniciar server');
-//     } catch (err) {
-//         console.error('Error creando lista de llamadas inicial:', err);
-//     }
-// })();  
+//Ejecutar creacionLista manualmente al iniciar el server (opcional)
+(async () => {
+    try {
+        await creacionLista();
+        console.log('Lista de llamadas inicial creada al iniciar server');
+    } catch (err) {
+        console.error('Error creando lista de llamadas inicial:', err);
+    }
+})();  
 
 module.exports = server;

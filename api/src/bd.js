@@ -83,8 +83,8 @@ Documenturuguay.belongsTo(Clienturuguay, { foreignKey: 'clientId', as: 'clientdo
 Clientchile.hasMany(Documentchile, { foreignKey: 'clientId', as: 'documentochile' });
 Documentchile.belongsTo(Clientchile, { foreignKey: 'clientId', as: 'clientdocumentochile' });
 
-// Clientecopatagonico.hasMany(Documentecopatagonico, { foreignKey: 'clientId', as: 'documento' });
-// Documentecopatagonico.belongsTo(Clientecopatagonico, { foreignKey: 'clientId', as: 'clientdocumento' });
+Clientecopatagonico.hasMany(Documentecopatagonico, { foreignKey: 'clientId', as: 'documentoecopatagonico' });
+Documentecopatagonico.belongsTo(Clientecopatagonico, { foreignKey: 'clientId', as: 'clientdocumentoecopatagonico' });
 
 // Clientecobahia.hasMany(Documentecobahia, { foreignKey: 'clientId', as: 'documento' });
 // Documentecobahia.belongsTo(Clientecobahia, { foreignKey: 'clientId', as: 'clientdocumento' });

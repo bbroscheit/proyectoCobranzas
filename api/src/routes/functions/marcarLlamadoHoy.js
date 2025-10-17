@@ -14,11 +14,11 @@ const marcarLlamadoHoy = async (clienteId, usuarioId) => {
     fecha: {
       [Op.between]: [dayStart, dayEnd],
     },
-  },
+  },  
   include: [
     {
       model: Usuario,
-      as: "usuarioagenda",   // 👈 usa el alias que definiste en la relación
+      as: "usuarioagenda",   // 👈 el alias que definimos en la relación
       where: { id: usuarioId },
     },
   ],
@@ -48,6 +48,6 @@ const marcarLlamadoHoy = async (clienteId, usuarioId) => {
     console.error("❌ Error en marcarLlamadoHoy:", error);
     throw error;
   }
-};
+}; 
 
 module.exports = marcarLlamadoHoy;
