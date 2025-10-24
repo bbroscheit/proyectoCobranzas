@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import styles from '../modules/estadisticas.module.css'
+import useUser from "../hooks/useUser";
 import CardEstadisticasSaldos from './CardEstadisticasSaldos'
 import CardTotalFacturado from './CardTotalFacturado'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,10 +8,19 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { FacturacionContext } from '../context/FacturacionContext'
 import CardFacturaCliente from './CardFacturaCliente'
 import { filterAndSortDocuments } from '../functions/filterAndSortDocuments';
+import { calculaTotales } from '../functions/calculaTotales';
 
 
 function Estadisticas({clienteId}) {
+  const [gestor, setGestor] = useUser("");
+  const [ facturasPorGestor, setFacturasPorGestor ] = useState(null);
   const [ facturasCliente, setFacturasCliente ] = useState([])
+  const [ totales, setTotales ] = useState({
+    recibosMes: 0,
+    facturasNoVencidas: 0,
+    facturasVencidas: 0,
+    facturasMes: 0,
+  })
   const [nombreCliente, setNombreCliente] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const facturasPerPage = 10
@@ -18,38 +28,39 @@ function Estadisticas({clienteId}) {
   const { documentosSinRecibos } = useContext(FacturacionContext)
 
   useEffect(() => {
-    setFacturasCliente(filterAndSortDocuments(documentosSinRecibos, clienteId))
+    const cliente = clienteId;
+    const userLogin = localStorage.getItem("userCobranzas")
+    const userParse = JSON.parse(userLogin)
+
+    fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByClient?userId=${encodeURIComponent(userParse.id)}&clienteId=${encodeURIComponent(cliente)}`)
+          // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
+            .then((res) => res.json())
+            .then((data) => {
+              setFacturasPorGestor(data);
+              setFacturasCliente(filterAndSortDocuments(data))
+              setTotales(calculaTotales(data));
+            });
+          
+    fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientName?userId=${encodeURIComponent(userParse.id)}&clienteId=${encodeURIComponent(cliente)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            setNombreCliente(data.nombre)
+          });
+              
   }, [documentosSinRecibos, clienteId])
-
-  useEffect(() => {
-    async function fetchNombreCliente() {
-      try {
-        const response = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientName?clienteId=${clienteId}`)
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        const data = await response.json()
-        setNombreCliente(data.nombre) // Asegúrate de que 'data' tenga una propiedad 'nombre'
-      } catch (error) {
-        console.error('Error fetching client name:', error)
-      }
-    }
-
-    fetchNombreCliente()
-  }, [clienteId])
 
   const sortFacturas = (documentosSinRecibos, criteria) => {
     switch (criteria) {
       case 'MontoAsc':
-        return documentosSinRecibos.sort((a, b) => a.MontoOriginal - b.MontoOriginal)
+        return documentosSinRecibos.sort((a, b) => a.montooriginal - b.montooriginal)
       case 'MontoDesc':
-        return documentosSinRecibos.sort((a, b) => b.MontoOriginal - a.MontoOriginal)
+        return documentosSinRecibos.sort((a, b) => b.montooriginal - a.montooriginal)
       case 'FechaDocumentoAsc':
-        return documentosSinRecibos.sort((a, b) => new Date(a.FechaDocumento) - new Date(b.FechaDocumento))
+        return documentosSinRecibos.sort((a, b) => new Date(a.fechadocumento) - new Date(b.fechadocumento))
       case 'FechaDocumentoDesc':
-        return documentosSinRecibos.sort((a, b) => new Date(b.FechaDocumento) - new Date(a.FechaDocumento))
+        return documentosSinRecibos.sort((a, b) => new Date(b.fechadocumento) - new Date(a.fechadocumento))
       case 'MontoPendiente':
-        return documentosSinRecibos.sort((a, b) => b.MontoPendiente - a.MontoPendiente)
+        return documentosSinRecibos.sort((a, b) => b.montopendiente - a.montopendiente)
       default:
         return documentosSinRecibos
     }
@@ -127,11 +138,13 @@ function Estadisticas({clienteId}) {
     return buttons;
   };
 
+  console.log("Totales en Estadisticas:", totales);
+
   return (
     <div>
       <div className={styles.containerGrid}>
-        <CardEstadisticasSaldos clienteId={clienteId}/>
-        <CardTotalFacturado clienteId={clienteId}/>
+        <CardEstadisticasSaldos totalVencidas={totales.facturasVencidas} totalNoVencido={totales.facturasNoVencidas} recibosMes={totales.recibosMes}/>
+        <CardTotalFacturado facturado={totales.facturasMes}/>
       </div>
       <div className={styles.sortOptions}>
           <label htmlFor="sort">Ordenar por: </label>

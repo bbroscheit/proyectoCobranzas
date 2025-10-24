@@ -14,6 +14,8 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) => {
+  //console.log('📭 Enviando email aviso a cliente:', numeroCliente, cuentaCorriente);
+
   try {
     if (!emailText || String(emailText).trim() === '') {
       console.log('📭 No se envía email: emailText vacío');
@@ -55,6 +57,8 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
       const docsPendientes = (cliente.documentos || []).filter(
         (d) => parseFloat(d.montopendiente) > 0
       );
+ 
+      //console.log(`Documentos pendientes para cliente ${numeroCliente}:`, docsPendientes);
 
       if (docsPendientes.length > 0) {
         let tabla = `
@@ -74,9 +78,9 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
         for (const doc of docsPendientes) {
           tabla += `
             <tr>
-              <td>${doc.numerodocumento}</td>
-              <td>${doc.fechadocumento || '-'}</td>
-              <td>${doc.fechavencimiento || '-'}</td>
+              <td>${doc.numero}</td>
+              <td>${doc.fecha || '-'}</td>
+              <td>${doc.diasVencido || '-'}</td>
               <td>${doc.montopendiente}</td>
             </tr>
           `;
@@ -90,11 +94,14 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
     // Enviamos mail con nodemailer
     const mailOptions = {
       from: `"${usuario.firstname || 'Usuario'}" <${process.env.MAIL_USER}>`, // usuario que envía
-      to: cliente.email, // destinatario cliente
-      cc: usuario.email, // copia al usuario
+      //to: cliente.email, // destinatario cliente
+      to: process.env.MAIL_USER,
+      cc: usuario.mail, // copia al usuario
       subject: 'Aviso de Cuenta',
       html: bodyHtml,
     };
+
+    //console.log('📭 Enviando email con las siguientes opciones:', mailOptions);
 
     const result = await transporter.sendMail(mailOptions);
 

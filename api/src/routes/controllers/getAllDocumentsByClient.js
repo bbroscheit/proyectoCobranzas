@@ -10,7 +10,7 @@ const {
   Clientecopatagonico,
 } = require("../../bd");
 
-const getClientName = async (userId, clienteId) => {
+const getAllDocumentsByClient = async (userId, clientId) => {
   const usuario = await Usuario.findOne({
     where: {
       id: userId,
@@ -52,19 +52,16 @@ const getClientName = async (userId, clienteId) => {
   }
 
   try {
-    const clients = await ClienteModel.findAll({
-      where: { id: clienteId },
-    });
+    const documentos = await DocumentoModel.findAll({
+  where: { clientId: clientId },
+  order: [['fechadocumento', 'DESC']]
+});
 
-    if (clients.length > 0) {
-      return { nombre: clients[0].name };
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching clients by gestor:", error);
-    throw error;
+    return documentos;
+  } catch (err) {
+    console.error("Error al ejecutar la consulta:", err);
+    throw err;
   }
 };
 
-module.exports = getClientName;
+module.exports = getAllDocumentsByClient;

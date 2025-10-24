@@ -4,7 +4,7 @@ import { FacturacionContext } from '../context/FacturacionContext';
 import { formatNumber } from '../functions/formatNumber';
 
 function CardAgendaAVencer({cliente, deuda}) {
-    console.log("deuda a vencer : ", deuda)
+    //console.log("deuda a vencer : ", deuda)
     const idCliente = cliente;
     const totalSinVencer = deuda || 0;
 

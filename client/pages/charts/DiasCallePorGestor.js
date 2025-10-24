@@ -1,32 +1,37 @@
-import React, { useRef, useState , useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import useUser from "../hooks/useUser";
 import Chart from "chart.js/auto";
 import styles from "../modules/diasCallePorGestor.module.css";
+import { calcularDiasCalle } from "../functions/calcularDiasCalle";
 import { calcularDiasCallePorGestor } from "../functions/calcularDiasCallePorGestor";
 
-function DiasCallePorGestor({ facturasContext }) {
-  const facturas = facturasContext;
+function DiasCallePorGestor() {
+  const [gestor, setGestor] = useUser("");
   const chartRef = useRef(null);
-  const [datoCalculado, setDatoCalculado] = useState(0);
+  const [datoCalculado, setDatoCalculado] = useState(null);
 
-  useEffect(() => {
-      const fetchData = async () => {
-        if (facturas && facturas.length > 0) {
-          const datoCalculado = await calcularDiasCallePorGestor(facturas);
-          setDatoCalculado(datoCalculado);
-        }
-      };
-  
-      fetchData();
-    }, [facturas]);
-  
   let backgroundColor;
   if (datoCalculado < 30) {
-    backgroundColor = "rgb(60,190,100,0.7)"; 
+    backgroundColor = "rgb(60,190,100,0.7)";
   } else if (datoCalculado < 60) {
-    backgroundColor = "rgb(255,205,86,0.7)"; 
+    backgroundColor = "rgb(255,205,86,0.7)";
   } else {
-    backgroundColor = "rgb(255,99,132,0.7)"; 
+    backgroundColor = "rgb(255,99,132,0.7)";
   }
+
+  useEffect(() => {
+    const userLogin = localStorage.getItem("userCobranzas");
+    const userParse = JSON.parse(userLogin);
+
+    fetch(
+      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
+    )
+      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setDatoCalculado(calcularDiasCallePorGestor(data, userParse));
+      });
+  }, [gestor]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -59,7 +64,6 @@ function DiasCallePorGestor({ facturasContext }) {
               font: {
                 size: 20,
               },
-              
             },
           },
         },

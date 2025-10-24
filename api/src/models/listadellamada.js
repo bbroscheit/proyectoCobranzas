@@ -18,5 +18,9 @@ module.exports = (sequelize) => {
       defaultValue: Date.now(),
       allowNull: true,
     },
+    usuarioId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // o true si querés permitir listas sin usuario
+    },
   });
 };

@@ -14,7 +14,7 @@ function CardRecordatorios() {
     })
   }, [])
 
-  console.log(notas)
+  //console.log(notas)
 
   return (
     <div className={style.cardContainer}>
@@ -31,7 +31,7 @@ function CardRecordatorios() {
             </div>
         </div>
         { 
-notas > 0 ? <p className={style.piedepagina}> {notas} Notas este mes</p> : <p className={style.piedepagina}> No hay notas este mes</p>
+notas > 0 ? <p className={style.piedepagina}> {notas} Notas </p> : <p className={style.piedepagina}> No hay notas </p>
         }
         
     </div>

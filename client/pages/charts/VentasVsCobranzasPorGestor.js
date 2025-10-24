@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import styles from "../modules/ventasVsCobranzas.module.css";
 import useUser from "../hooks/useUser";
-import { calculaVentasVsCobranzas } from "../functions/calculaVentasVsCobranzas";
+import { calculaVentasVsCobranzasPorGestor } from "../functions/calculaVentasVsCobranzasPorGestor";
 
-function VentasVsCobranzas() {
+function VentasVsCobranzasPorGestor() {
   const [ gestor, setGestor ] = useUser("");
   const [ ventaCobranzas, setVentaCobranzas ] = useState(null);
   const chartRef = useRef(null);
@@ -14,12 +14,12 @@ function VentasVsCobranzas() {
       const userParse = JSON.parse(userLogin);
   
       fetch(
-        `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userParse.id}`
+        `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
       )
         // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
         .then((res) => res.json())
         .then((data) => {
-          setVentaCobranzas(calculaVentasVsCobranzas(data));
+          setVentaCobranzas(calculaVentasVsCobranzasPorGestor(data, userParse));
         });
     }, [gestor]);
 
@@ -100,4 +100,4 @@ function VentasVsCobranzas() {
   );
 }
 
-export default VentasVsCobranzas;
+export default VentasVsCobranzasPorGestor;

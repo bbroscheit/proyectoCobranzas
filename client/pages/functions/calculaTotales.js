@@ -1,27 +1,5 @@
-export function calculaTotalesPorGestor(documentos, usuario) {
-  //console.log("Calculando totales por gestor para usuario:", usuario);
-  let includeAlias;
-
-  switch (usuario.sucursal) {
-    case 1:
-      includeAlias = "documento";
-      break;
-    case 2:
-      includeAlias = "documentouruguay";
-      break;
-    case 3:
-      includeAlias = "documentochile";
-      break;
-    // case 4:
-    //   includeAlias = "documentorosario";
-    //   break;
-    case 5:
-      includeAlias = "documentoecopatagonico";
-      break;
-    default:
-      return;
-  }
-
+export function calculaTotales(documentos) {
+  
   if (documentos === null || documentos === undefined) {
     return {
       recibosMes: 0,
@@ -41,12 +19,7 @@ export function calculaTotalesPorGestor(documentos, usuario) {
   let facturasVencidasTotal = 0;
   let facturasMesTotal = 0;
 
-  documentos.forEach((cliente) => {
-    const docs = cliente[includeAlias];
-
-    if (!docs || docs.length === 0) return;
-
-    docs.forEach((doc) => {
+  documentos.forEach((doc) => {
       const fechaDocumento = new Date(doc.fechadocumento);
       const fechaVencimiento = new Date(doc.fechavencimiento);
 
@@ -79,7 +52,7 @@ export function calculaTotalesPorGestor(documentos, usuario) {
         }
       }
     });
-  });
+
 
   return {
     recibosMes: parseFloat(recibosMesTotal.toFixed(2)),

@@ -21,7 +21,17 @@ module.exports = ( sequelize ) => {
         user:{
             type: DataTypes.STRING,
             defaultValue: "usuario sin ingresar",
-            allowNull:true
-        }      
+            allowNull:false
+        },
+        sucursal:{
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull:false  
+        },
+        client:{
+            type: DataTypes.INTEGER,
+            defaultValue:0,
+            allowNull:false
+        }
     })
 }

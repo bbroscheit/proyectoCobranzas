@@ -1,6 +1,6 @@
 const { 
-  Client, Clienturuguay, Clientchile, 
-  Document, Documenturuguay, Documentchile 
+  Client, Clienturuguay, Clientchile, Clientecopatagonico,
+  Document, Documenturuguay, Documentchile, Documentecopatagonico 
 } = require("../../../bd");
 
 const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {

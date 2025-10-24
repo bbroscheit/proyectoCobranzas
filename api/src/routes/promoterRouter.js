@@ -1,7 +1,10 @@
 const promoterRouter = require("express").Router();
 const getAllDocuments = require("./controllers/getAllDocuments.js");
 const getClientsByGestor = require("./controllers/getClientsByGestor.js");
+const getAllDocumentsBySalepoint = require("./controllers/getAllDocumentsBySalepoint.js");
 const getAllDocumentsByPromoter = require("./controllers/getAllDocumentsByPromoter.js");
+const getAllDocumentsByGestor = require("./controllers/getAllDocumentByGestor.js");
+const getAllDocumentsByClient = require("./controllers/getAllDocumentsByClient.js");
 const getClientByPromoter = require("./controllers/getClientByPromoter.js");
 const getFacturasByPromoter = require("./controllers/getFacturasByPromoter.js");
 const getRecibosByPromoter = require("./controllers/getRecibosByPromoter.js");
@@ -161,6 +164,48 @@ promoterRouter.get("/gestionesByGestor/:gestor", async (req, res) => {
   }
 });
 
+promoterRouter.get("/getAllDocumentsBySalepoint/:gestor", async (req, res) => {
+  const { gestor } = req.params;
+
+  try {
+    const documentsBySalepoint = await getAllDocumentsBySalepoint(gestor);
+    
+    documentsBySalepoint
+      ? res.status(200).json(documentsBySalepoint)
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
+promoterRouter.get("/getAllDocumentsByGestor/:gestor", async (req, res) => {
+  const { gestor } = req.params;
+
+  try {
+    const documentsByGestor = await getAllDocumentsByGestor(gestor);
+    
+    documentsByGestor
+      ? res.status(200).json(documentsByGestor)
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
+promoterRouter.get("/getAllDocumentsByClient", async (req, res) => {
+  const { userId , clienteId } = req.query;
+
+  try {
+    const documentsByClient = await getAllDocumentsByClient(userId, clienteId);
+    
+    documentsByClient
+      ? res.status(200).json(documentsByClient)
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
 promoterRouter.get("/allDocumentsByPromoter", async (req, res) => {
   try {
     let clientByPromoter = await getClientByPromoter();
@@ -209,10 +254,10 @@ promoterRouter.get("/facturasByPromoter", async (req, res) => {
 });
 
 promoterRouter.get("/clientName", async (req, res) => {
-  const { clienteId } = req.query;
-  //console.log(req)
+  const { userId , clienteId } = req.query;
+  
   try {
-    let results = await getClientName(clienteId);
+    let results = await getClientName( userId, clienteId);
     results
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
@@ -274,7 +319,7 @@ promoterRouter.post("/newAvisos", async (req, res) => {
     numeroCliente,
     user,
   } = req.body;
-
+  
   try {
     let results = await postNewAvisos(
       nota,
@@ -284,7 +329,8 @@ promoterRouter.post("/newAvisos", async (req, res) => {
       reprogram,
       numeroCliente,
       user
-    );
+    )
+    
     results && results !== "Cliente no encontrado"
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });

@@ -1,26 +1,29 @@
 export const calculaVentasVsCobranzas = (documentos) => {
+  //console.log("documentos en calculaVentasVsCobranzas", documentos)
     const meses = generarEtiquetasMeses();
     const facturasVencidas = Array(12).fill(0);
     const recibosRecibidos = Array(12).fill(0);
     const facturasNoVencidas = Array(12).fill(0);
 
     documentos.forEach((documento) => {
-        const fechaDocumento = new Date(documento.FechaDocumento);
+       
+        const fechaDocumento = new Date(documento.fechadocumento);
         const mesIndex = (new Date().getFullYear() - fechaDocumento.getFullYear()) * 12 + new Date().getMonth() - fechaDocumento.getMonth();
     
         if (mesIndex >= 0 && mesIndex < 12) {
-          if (documento.TipoDocumento === 9) {
-            recibosRecibidos[11 - mesIndex] += documento.MontoOriginal;
-          } else if (documento.MontoPendiente > 0) {
-            if (documento.FechaVencimiento && new Date(documento.FechaVencimiento) < new Date()) {
-              facturasVencidas[11 - mesIndex] += documento.MontoPendiente;
+          if (documento.tipodocumento === 9) {
+            recibosRecibidos[11 - mesIndex] += documento.montooriginal;
+          } else if (documento.montopendiente > 0) {
+            if (documento.fechavencimiento && new Date(documento.fechavencimiento) < new Date()) {
+              facturasVencidas[11 - mesIndex] += documento.montopendiente;
             } else {
-              facturasNoVencidas[11 - mesIndex] += documento.MontoPendiente;
+              facturasNoVencidas[11 - mesIndex] += documento.montopendiente;
             }
           }
         }
       });
 
+    //console.log("meses en calculaVentasVsCobranzas", facturasVencidas, recibosRecibidos, facturasNoVencidas)
     return { meses, facturasVencidas, recibosRecibidos, facturasNoVencidas };
   };
 

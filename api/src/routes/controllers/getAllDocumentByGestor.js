@@ -10,17 +10,18 @@ const {
   Clientecopatagonico,
 } = require("../../bd");
 
-const getClientName = async (userId, clienteId) => {
+const getAllDocumentsByGestor = async (gestor) => {
   const usuario = await Usuario.findOne({
     where: {
-      id: userId,
+      id: gestor,
       isdelete: false,
     },
   });
 
+  let username = `${usuario.firstname} ${usuario.lastname}`;
+
   let ClienteModel, DocumentoModel, includeAlias;
 
-  // Seleccionamos modelos según sucursal
   switch (usuario.sucursal) {
     case 1:
       ClienteModel = Client;
@@ -52,19 +53,16 @@ const getClientName = async (userId, clienteId) => {
   }
 
   try {
-    const clients = await ClienteModel.findAll({
-      where: { id: clienteId },
+    const documentos = await ClienteModel.findAll({
+      where: { gestor: username },
+      include: [{ model: DocumentoModel, as: includeAlias }],
     });
 
-    if (clients.length > 0) {
-      return { nombre: clients[0].name };
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching clients by gestor:", error);
-    throw error;
+    return documentos;
+  } catch (err) {
+    console.error("Error al ejecutar la consulta:", err);
+    throw err;
   }
 };
 
-module.exports = getClientName;
+module.exports = getAllDocumentsByGestor;

@@ -3,7 +3,6 @@ import styles from "../modules/gestion.module.css";
 import Swal from "sweetalert2";
 import { FacturacionContext } from "../context/FacturacionContext";
 import { formatNumber } from "../functions/formatNumber";
-import { filterFacturasByCliente } from "../functions/filterFacturasByCliente";
 import LocalAtmIcon from "@mui/icons-material/LocalAtm";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,7 +25,22 @@ function Gestion({ clienteId }) {
   const [reprogram, setReprogram] = useState(false);
 
   useEffect(() => {
-    setFacturasCliente(filterFacturasByCliente(clientes, clienteId));
+    const cliente = clienteId;
+    const userLogin = localStorage.getItem("userCobranzas");
+    const userParse = JSON.parse(userLogin);
+
+    fetch(
+      `http://${
+        process.env.NEXT_PUBLIC_LOCALHOST
+      }:3001/getAllDocumentsByClient?userId=${encodeURIComponent(
+        userParse.id
+      )}&clienteId=${encodeURIComponent(cliente)}`
+    )
+      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFacturasCliente(data);
+      });
   }, [clientes, clienteId]);
 
   useEffect(() => {
@@ -62,82 +76,20 @@ function Gestion({ clienteId }) {
       user: user.id,
     };
 
-    postAvisos(avisosData);
-    if (res.state === "success") {
-      Swal.fire({
-        icon: "success",
-        title: "Tu aviso fue creado con éxito!",
-        showConfirmButton: false,
-        timer: 1000,
+    postAvisos(avisosData)
+      .then((res) => {
+        if (res.state === "success") {
+          Swal.fire({
+            icon: "success",
+            title: "Tu aviso fue creado con éxito!",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error al enviar el formulario:", error);
       });
-    }
-    // if (alarma) {
-    //   const noteData = {
-    //     nota,
-    //     comunicacion,
-    //     emailText,
-    //     cuentaCorriente,
-    //     reprogram,
-    //     numeroCliente: clienteId,
-    //     user : userName
-    //   };
-
-    //   postNote(noteData)
-    //     .then((res) => {
-    //       if (res.state === 'success') {
-    //         postAlarm(alarmaData)
-    //           .then((res) => {
-    //             if (res.state === 'success') {
-    //               Swal.fire(({
-    //                 icon: "success",
-    //                 title: "Tu Nota y Alarma fueron creadas con éxito!",
-    //                 showConfirmButton: false,
-    //                 timer: 1000
-    //               }));
-    //             } else {
-    //               Swal.fire({
-    //                 icon: "error",
-    //                 title: "Error al crear la alarma",
-    //                 text: "Por favor, intenta nuevamente"
-    //               })
-    //             }
-    //           })
-    //           setFacturasCliente([noteData, alarmaData , ...facturasCliente])
-    //       } else {
-    //         Swal.fire({
-    //           icon: "error",
-    //           title: "Error al crear la nota",
-    //           text: "Por favor, intenta nuevamente"
-    //         })
-    //       }
-    //     })
-
-    // } else {
-    //   const noteData = {
-    //     nota,
-    //     comunicacion,
-    //     numeroCliente: clienteId,
-    //     user :userName
-    //   };
-    //   // postNote(noteData)
-    //   // .then((res) => {
-    //   //   if (res.state === 'success') {
-    //   //     Swal.fire(({
-    //   //       icon: "success",
-    //   //       title: "Tu Nota fue creada con éxito!",
-    //   //       showConfirmButton: false,
-    //   //       timer: 1000
-    //   //     }));
-    //   //     setFacturasCliente([noteData, ...facturasCliente])
-    //   //   } else {
-    //   //     Swal.fire({
-    //   //       icon: "error",
-    //   //       title: "Error al crear la nota",
-    //   //       text: "Por favor, intenta nuevamente"
-    //   //     })
-    //   //   }
-    //   // })
-    // }
     setShowAvisosModal(false);
   };
 
@@ -161,7 +113,7 @@ function Gestion({ clienteId }) {
       </div>
       {currentFacturas.map((documento, index) => {
         const fecha = new Date(
-          documento.FechaDocumento || documento.createdAt || documento.fecha
+          documento.fechadocumento || documento.createdAt || documento.fecha
         );
         const dia = fecha.getDate().toString().padStart(2, "0");
         const mes = fecha
@@ -179,9 +131,9 @@ function Gestion({ clienteId }) {
               <p>{mes ? mes : currentMonth}</p>
             </div>
             <div className={styles.timelineIcon}>
-              {documento.TipoDocumento === 9 ? (
+              {documento.tipodocumento === 9 ? (
                 <LocalAtmIcon className={styles.reciboicon} />
-              ) : documento.TipoDocumento ? (
+              ) : documento.tipodocumento ? (
                 <CreateIcon className={styles.facturasicon} />
               ) : documento.typecontact ? (
                 <TextSnippetIcon className={styles.notasicon} />
@@ -191,24 +143,24 @@ function Gestion({ clienteId }) {
             </div>
             <div className={styles.timelineContent}>
               <h3 className={styles.timelineTitle}>
-                {documento.TipoDocumento === 9
+                {documento.tipodocumento === 9
                   ? "Pago Recibido"
-                  : documento.TipoDocumento
+                  : documento.tipodocumento
                   ? `Documento emitido N° ${
-                      documento.NumeroDocumento?.trim() || documento.id
+                      documento.numerodocumento?.trim() || documento.id
                     }`
                   : documento.typecontact || documento.comunicacion
                   ? "Nota"
                   : "Alarma"}
               </h3>
               <p className={styles.timelineText}>
-                {documento.TipoDocumento === 9
+                {documento.tipodocumento === 9
                   ? `Monto total pagado: $ ${formatNumber(
-                      documento.MontoOriginal
+                      documento.montooriginal
                     )}`
-                  : documento.TipoDocumento
+                  : documento.tipodocumento
                   ? `Monto del Documento: $ ${formatNumber(
-                      documento.MontoOriginal
+                      documento.montooriginal
                     )}`
                   : documento.typecontact || documento.comunicacion
                   ? `Nota: ${documento.detail || documento.nota}`

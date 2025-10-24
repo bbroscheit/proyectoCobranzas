@@ -39,14 +39,14 @@ require('events').EventEmitter.defaultMaxListeners = 20;
 //     console.error('Error al cargar documentos iniciales desde GP:', err);
 // });
 
-fetchDocumentFromGPEcoPatagonico().then(() => {
-    console.log('Documentos iniciales cargados desde GP');
-}).catch((err) => {
-    console.error('Error al cargar documentos iniciales desde GP:', err);
-});
+// fetchDocumentFromGPEcoPatagonico().then(() => {
+//     console.log('Documentos iniciales cargados desde GP');
+// }).catch((err) => {
+//     console.error('Error al cargar documentos iniciales desde GP:', err);
+// });
 
 // Carga inicial de usuarios
-//seedUsuarios();
+// seedUsuarios();
 
 // syncAllSources().then(() => {
 //     console.log('Documentos iniciales cargados desde GP');
@@ -134,13 +134,13 @@ cron.schedule('0 7 * * *', async () => {
 });
 
 //Ejecutar creacionLista manualmente al iniciar el server (opcional)
-(async () => {
-    try {
-        await creacionLista();
-        console.log('Lista de llamadas inicial creada al iniciar server');
-    } catch (err) {
-        console.error('Error creando lista de llamadas inicial:', err);
-    }
-})();  
+// (async () => {
+//     try {
+//         await creacionLista();
+//         console.log('Lista de llamadas inicial creada al iniciar server');
+//     } catch (err) {
+//         console.error('Error creando lista de llamadas inicial:', err);
+//     }
+// })();  
 
 module.exports = server;

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 // import Link from "next/link";
 import styles from "./modules/clientes.module.css";
 import useUser from "./hooks/useUser";
-import { FacturacionContext } from "./context/FacturacionContext";
-import { procesarDocumentos } from "./functions/procesarDocumentos";
 import CardClientes from "./components/CardClientes";
 import CardGestiones from "./components/CardGestiones";
 import CardGestionesTerminadas from "./components/CardGestionesTerminadas";
@@ -13,13 +11,12 @@ import { calculaTotalesPorGestor } from "./functions/calculaTotalesPorGestor";
 import { montosPorAntiguedadPorGestor } from "./functions/montosPorAntiguedadPorGestor";
 import AnticuacionPorGestor from "./charts/AnticuacionPorGestor";
 import DiasCallePorGestor from "./charts/DiasCallePorGestor";
+import VentasVsCobranzasPorGestor from "./charts/VentasVsCobranzasPorGestor";
 
 const Clientes = () => {
   const [gestor, setGestor] = useUser("");
-  const { facturas } = useContext(FacturacionContext);
-  const [facturasVencidas, setFacturasVencidas] = useState([
-    0, 0, 0, 0, 0, 0, 0, 0,
-  ]);
+
+  const [facturasPorGestor, setFacturasPorGestor] = useState(null);
   const [totales, setTotales] = useState({
     recibosMes: 0,
     facturasNoVencidas: 0,
@@ -27,41 +24,39 @@ const Clientes = () => {
     facturasMes: 0,
   });
   const [flag, setFlag] = useState(1);
-  const [ gestiones , setGestiones ] = useState(0)
-  const [ gestionesCompletadas, setGestionesCompletadas ] = useState(0)
-  const facturasTotales = procesarDocumentos(facturas);
+  const [gestiones, setGestiones] = useState(0);
+  const [gestionesCompletadas, setGestionesCompletadas] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (gestor !== "" && facturas && facturas.length > 0) {
-        const facturasVencidas = await montosPorAntiguedadPorGestor(
-          facturas,
-          gestor
-        );
-        setFacturasVencidas(facturasVencidas);
+    const userLogin = localStorage.getItem("userCobranzas");
+    const userParse = JSON.parse(userLogin);
 
-        const totales = await calculaTotalesPorGestor(facturas, gestor);
-        setTotales(totales);
-      }
-    };
+    fetch(
+      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
+    )
+      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFacturasPorGestor(data);
 
-    fetchData();
-  }, [facturas, gestor]);
+        // Una vez que tenemos los documentos, calculamos totales y montos
+          const totalesCalc = calculaTotalesPorGestor(data, userParse);
+          setTotales(totalesCalc);        
+      })
+      .catch((err) => console.error("Error al obtener documentos:", err));
 
-  useEffect(() => {
-      const userLogin = localStorage.getItem("userCobranzas")
-      const userParse = JSON.parse(userLogin)
-      
-
-      fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userParse.id}`)
+    fetch(
+      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userParse.id}`
+    )
       // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userLogin.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setGestiones(data.gestion);
-          setGestionesCompletadas(data.gestioncompletada)
-        });
+      .then((res) => res.json())
+      .then((data) => {
+        setGestiones(data.gestion);
+        setGestionesCompletadas(data.gestioncompletada);
+      })
+      .catch((err) => console.error("Error al obtener gestiones:", err))
+  }, []);
 
-  }, [gestionesCompletadas, gestor])
 
   function handleChange(condition) {
     condition === 1 ? setFlag(1) : condition === 2 ? setFlag(2) : setFlag(3);
@@ -80,66 +75,57 @@ const Clientes = () => {
         </div>
       </div>
 
-      {gestor !== "" && totales ? (
-        <div className={styles.cardContainer}>
-          <CardClientes total={totales.recibosMes} title={"Pagado"} />
-          <CardClientes
-            total={totales.facturasNoVencidas}
-            title={"Por Vencer"}
-          />
-          <CardClientes total={totales.facturasVencidas} title={"Vencido"} />
-          <CardClientes
-            total={totales.facturasMes}
-            title={"Total Facturado del mes en curso"}
-          />
-        </div>
-      ) : (
-        <div className={styles.cardContainer}>
-          <CardClientes total={0} title={"Pagado"} />
-          <CardClientes total={0} title={"Por Vencer"} />
-          <CardClientes total={0} title={"Vencido"} />
-          <CardClientes total={0} title={"Total Facturado del mes en curso"} />
-        </div>
-      )}
+      <div className={styles.cardContainer}>
+        <CardClientes total={totales.recibosMes} title={"Pagado"} />
+        <CardClientes total={totales.facturasNoVencidas} title={"Por Vencer"} />
+        <CardClientes total={totales.facturasVencidas} title={"Vencido"} />
+        <CardClientes
+          total={totales.facturasMes}
+          title={"Total Facturado del mes en curso"}
+        />
+      </div>
 
       <div className={styles.cardGestionesContainer}>
-        <CardGestiones total={gestiones}/>
-        <CardGestionesTerminadas total={gestionesCompletadas}/>
-        <CardAlarmas />
+        <CardGestiones total={gestiones} />
+        <CardGestionesTerminadas total={gestionesCompletadas} />
         <CardRecordatorios />
       </div>
       <div className={styles.buttonContainer}>
-        <button
-          className={
-            flag === 1 ? styles.buttonActive : styles.buttonContainerButton
-          }
-          onClick={(e) => handleChange(1)}
-        >
-          Anticuacion
-        </button>
-        <button
-          className={
-            flag === 2 ? styles.buttonActive : styles.buttonContainerButton
-          }
-          onClick={(e) => handleChange(2)}
-        >
-          Dias en calle
-        </button>
-        <button
-          className={
-            flag === 3 ? styles.buttonActive : styles.buttonContainerButton
-          }
-          onClick={(e) => handleChange(3)}
-        >
-          Ventas vs Cobranzas
-        </button>
-      </div>
-      <div>
-        <div className={styles.chartContainer}>
-          <AnticuacionPorGestor facturasContext={facturasVencidas} />
-          <DiasCallePorGestor facturasContext={facturas} />
+          <button
+            className={
+              flag === 1 ? styles.buttonActive : styles.buttonContainerButton
+            }
+            onClick={(e) => handleChange(1)}
+          >
+            Anticuacion
+          </button>
+          <button
+            className={
+              flag === 2 ? styles.buttonActive : styles.buttonContainerButton
+            }
+            onClick={(e) => handleChange(2)}
+          >
+            Dias en calle
+          </button>
+          <button
+            className={
+              flag === 3 ? styles.buttonActive : styles.buttonContainerButton
+            }
+            onClick={(e) => handleChange(3)}
+          >
+            Ventas vs Cobranzas
+          </button>
         </div>
-      </div>
+        <div className={styles.chartContainer}>
+          {flag === 1 && facturasPorGestor && facturasPorGestor !== null ? (
+            <AnticuacionPorGestor />
+          ) : flag === 2 ? (
+            <DiasCallePorGestor />
+          ) : (
+            <VentasVsCobranzasPorGestor />
+          )}
+        </div>
+      
     </>
   );
 };

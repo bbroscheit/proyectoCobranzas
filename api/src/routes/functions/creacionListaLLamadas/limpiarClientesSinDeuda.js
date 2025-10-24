@@ -54,7 +54,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
           deudaNoVencida,
           documentos: documentosConDeuda.map((doc) => ({
             id: doc.id,
-            numero: doc.numero || null,
+            numero: doc.numerodocumento || null,
             fecha: doc.fechadocumento || null,
             montopendiente: parseFloat(doc.montopendiente),
             diasVencido: doc.diasVencido || 0,

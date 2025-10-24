@@ -30,26 +30,35 @@ export function procesarDocumentos(documentos) {
     let facturasVencidasTotal = 0;
   
     documentos.forEach(doc => {
-      const fechaDocumento = new Date(doc.FechaDocumento);
-      const fechaVencimiento = new Date(doc.FechaVencimiento);
+      //const fechaDocumento = new Date(doc.FechaDocumento);
+      //const fechaVencimiento = new Date(doc.FechaVencimiento);
+
+      const fechaDocumento = new Date(doc.fechadocumento);
+      const fechaVencimiento = new Date(doc.fechavencimiento);
 
       // Tipo 9: Recibos
-      if (doc.TipoDocumento === 9) { 
+      //8if (doc.TipoDocumento === 9) { 
+      if (doc.tipodocumento === 9) { 
         if (fechaDocumento >= inicioMes && fechaDocumento <= ahora) {
           recibosMesCantidad++;
-          recibosMesTotal += doc.MontoOriginal;
+          //recibosMesTotal += doc.MontoOriginal;
+          recibosMesTotal += doc.montooriginal;
         }
-      } else if (doc.TipoDocumento === 1 || doc.TipoDocumento === 3 || doc.TipoDocumento === 7) { 
+      //} else if (doc.TipoDocumento === 1 || doc.TipoDocumento === 3 || doc.TipoDocumento === 7) { 
+      } else if (doc.tipodocumento === 1 || doc.tipodocumento === 3 || doc.tipodocumento === 7) { 
         // Tipo 1: Facturas; Tipo 2: Notas de débito/crédito
-        if (doc.MontoPendiente > 0) { 
+        //if (doc.MontoPendiente > 0) { 
+        if (doc.montopendiente > 0) { 
           if (fechaVencimiento >= ahora) {
             // No vencidas
             facturasNoVencidasCantidad++;
-            facturasNoVencidasTotal += doc.MontoPendiente;
+            //facturasNoVencidasTotal += doc.MontoPendiente;
+            facturasNoVencidasTotal += doc.montopendiente;
           } else {
             // Vencidas
             facturasVencidasCantidad++;
-            facturasVencidasTotal += doc.MontoPendiente;
+            //facturasVencidasTotal += doc.MontoPendiente;
+            facturasVencidasTotal += doc.montopendiente;
           }
         }
       }
