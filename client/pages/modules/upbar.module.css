@@ -1,7 +1,7 @@
 .container{
-    padding: 25px;
+    padding: 30px;
     display: grid;
-    grid-template-columns: 1fr 40%;
+    /* grid-template-columns: 1fr 40%; */
     color: black;
 }
 

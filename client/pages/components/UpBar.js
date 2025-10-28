@@ -16,7 +16,7 @@ export const UpBar = () => {
 
   return (
     <div className={styles.container}>
-        <input type='search' placeholder='Buscar...' className={styles.input}/>
+        {/* <input type='search' placeholder='Buscar...' className={styles.input}/> */}
         <div className={styles.notification}>
             
             {
