@@ -22,6 +22,7 @@ const loginUser = require("./controllers/loginUser.js");
 const getListaDeLlamadas = require("./controllers/getListaDeLlamadas.js");
 const getGestionesByGestor = require("./controllers/getGestionesByGestor.js")
 const postNewAvisos = require("./controllers/postNewAvisos.js")
+const sendCuentaCorriente  = require("./controllers/sendCuentaCorriente.js");
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -354,6 +355,19 @@ promoterRouter.post("/mailResumenVencido", async (req, res) => {
   }
 
   res.send("Emails enviados exitosamente");
+});
+
+promoterRouter.post("/sendCuentaCorriente", async (req, res) => {
+  const { user , numeroCliente } = req.body;
+      
+  try {
+    const results = await sendCuentaCorriente( numeroCliente, user );
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 module.exports = promoterRouter;

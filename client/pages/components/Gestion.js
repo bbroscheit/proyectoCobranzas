@@ -1,23 +1,27 @@
 import React, { useState, useContext, useEffect } from "react";
+import Router from "next/router";
 import styles from "../modules/gestion.module.css";
 import Swal from "sweetalert2";
-import { FacturacionContext } from "../context/FacturacionContext";
 import { formatNumber } from "../functions/formatNumber";
 import LocalAtmIcon from "@mui/icons-material/LocalAtm";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import AvisosModal from "../modals/AvisosModal";
+import CuentaCorrienteModal from "../modals/CuentaCorrienteModal";
 import { postAvisos } from "../api/postAvisos";
 import useUser from "../hooks/useUser";
 
 function Gestion({ clienteId }) {
   const [user, setUser] = useUser("");
-  const { clientes } = useContext(FacturacionContext);
+  const [cliente, setCliente ] = useState("");
+  const [usuarioId, setUsuarioId ] = useState("");
   const [facturasCliente, setFacturasCliente] = useState([]);
   const [visibleFacturas, setVisibleFacturas] = useState(10);
   const [showAvisosModal, setShowAvisosModal] = useState(false);
+  const [showCuentaCorrienteModal, setShowCuentaCorrienteModal] = useState(false);
   const [nota, setNota] = useState("");
   const [comunicacion, setComunicacion] = useState([]);
   const [emailText, setEmailText] = useState("");
@@ -41,7 +45,11 @@ function Gestion({ clienteId }) {
       .then((data) => {
         setFacturasCliente(data);
       });
-  }, [clientes, clienteId]);
+
+      setCliente(clienteId);
+      setUsuarioId(userLogin.id);
+
+  }, [clienteId, usuarioId]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,6 +94,9 @@ function Gestion({ clienteId }) {
             timer: 1000,
           });
         }
+       setTimeout(() => {
+        Router.push("/AgendaDeLlamadas"); 
+      }, 1000);
       })
       .catch(error => {
         console.error("Error al enviar el formulario:", error);
@@ -95,6 +106,10 @@ function Gestion({ clienteId }) {
 
   const openAvisosModal = () => {
     setShowAvisosModal(true);
+  };
+
+  const openCuentaCorrienteModal = () => {
+    setShowCuentaCorrienteModal(true);
   };
 
   return (
@@ -108,6 +123,10 @@ function Gestion({ clienteId }) {
           <button className={styles.button} onClick={openAvisosModal}>
             <TextSnippetIcon className={styles.buttonIcon} />
             <p className={styles.buttonText}>Avisos</p>
+          </button>
+          <button className={styles.button} onClick={openCuentaCorrienteModal}>
+            <ForwardToInboxIcon className={styles.buttonIcon} />
+            <p className={styles.buttonText}>Enviar CC</p>
           </button>
         </div>
       </div>
@@ -185,6 +204,12 @@ function Gestion({ clienteId }) {
         reprogram={reprogram}
         setReprogram={setReprogram}
         handleSubmit={handleAvisosSubmit}
+      />
+
+      <CuentaCorrienteModal
+        showModal={showCuentaCorrienteModal}
+        setShowModal={setShowCuentaCorrienteModal}
+        cliente={cliente}
       />
     </div>
   );

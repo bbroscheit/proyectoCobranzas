@@ -18,7 +18,6 @@ function CardGestiones({total}) {
                 <p> Gestiones en total</p>
             </div>
         </div>
-        {/* <p className={style.piedepagina}> {`1 Gestiones en total`}</p> */}
     </div>
   )
 }

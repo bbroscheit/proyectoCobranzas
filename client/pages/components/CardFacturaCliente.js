@@ -19,6 +19,7 @@ function CardFacturaCliente({ factura , nombreCliente }) {
     }
 
     const montoPendienteTexto = factura.montopendiente === 0 ? "Pagada" : `Por Pagar: $ ${formatNumber(factura.montopendiente)}`
+    //const montoPendienteTexto = factura.numerodocumento.include("REC") ? `Por Aplicar: $ ${formatNumber(factura.montopendiente)}` : `Por Pagar: $ ${formatNumber(factura.montopendiente)}`
 
       // Determinar la clase CSS según el estado de la factura
     let estadoClase

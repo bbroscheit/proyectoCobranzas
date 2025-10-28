@@ -140,6 +140,7 @@ function AvisosModal({
             )}
           </div>
           {/* cuenta corriente si o no */}
+          {showEmailForm && (
           <div className={styles.checkboxGroup}>
             <label>
               <input
@@ -149,6 +150,8 @@ function AvisosModal({
               Adjuntar Cuenta Corriente
             </label>
           </div>
+          )}
+          
           {/* Apertura de re-llamada */}
           <div className={styles.checkboxGroup}>
             <label>

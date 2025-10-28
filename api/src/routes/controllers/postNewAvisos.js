@@ -93,14 +93,15 @@ const postNewAvisos = async (
     });
 
     // Envia email si EmailText tiene informacion
-    if (emailText && emailText.trim() !== "") {
-      await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
-    }
+    // if (emailText && emailText.trim() !== "") {
+    //   await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
+    // }
 
     await reprogramacion(cliente, reprogram, usuario.id);
     
     //cambiamos el estado del cliente a llamado:true
     await marcarLLamadoHoy(cliente.id, usuario.id);
+
 
     return nuevaNota;
   } catch (error) {

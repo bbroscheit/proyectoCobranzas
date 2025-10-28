@@ -62,11 +62,10 @@ const Recordatorios = () => {
           <p className={styles.sectionTitle}>Recordatorios</p>
         </Link>
         </div>
-        <Link href="/RecordatoriosManuales">
+        {/* <Link href="/RecordatoriosManuales">
         <h4 className={styles.sectionLink}>Recordatorios Manuales</h4>
-        </Link>
-        <button className={styles.buttonRecordatorio}> <MdOutlineAdd />Nuevo Recordatorio</button>
-    </div>
+        </Link> */}
+        </div>
     <div className={styles.container}>
       <div>
         <h1 className={styles.title}>Recordatorios</h1>

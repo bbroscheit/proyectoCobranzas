@@ -62,6 +62,7 @@ const Clientes = () => {
     condition === 1 ? setFlag(1) : condition === 2 ? setFlag(2) : setFlag(3);
   }
 
+  console.log("gestiones terminadas por gestor:", gestionesCompletadas);
   return (
     <>
       <div className={styles.sectorContainer}>

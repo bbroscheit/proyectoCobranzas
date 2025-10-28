@@ -1,4 +1,5 @@
 const { Listadellamada, Usuario } = require("../../bd");
+const sumaGestiones = require("./sumaGestiones");
 const { Op } = require("sequelize");
 
 const marcarLlamadoHoy = async (clienteId, usuarioId) => {
@@ -42,7 +43,7 @@ const marcarLlamadoHoy = async (clienteId, usuarioId) => {
     const listaHoy = await Listadellamada.findByPk(listaJoin.id);
 
     // Actualizar cliente dentro del array
-   const clientes = Array.isArray(listaHoy.clientes) ? [...listaHoy.clientes] : [];
+    const clientes = Array.isArray(listaHoy.clientes) ? [...listaHoy.clientes] : [];
     const idx = clientes.findIndex((c) => Number(c.id) === Number(clienteId));
 
     //console.log(" Índice del cliente en la lista de hoy:", idx);
@@ -59,6 +60,9 @@ const marcarLlamadoHoy = async (clienteId, usuarioId) => {
 
     listaHoy.set("clientes", clientes);
     await listaHoy.save({ fields: ["clientes"] });
+
+    //se suma una gestion al usuario
+    await sumaGestiones(usuarioId);
 
     return listaHoy;
   } catch (error) {
