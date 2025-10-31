@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import Link from 'next/link';
 import styles from './modules/recordatorios.module.css'
 import CardRecordatorio from './components/CardRecordatorio'
 import { MdOutlineAdd } from "react-icons/md";
+import useUser from "./hooks/useUser";
 
 
 let recordatorioEmitida = {
@@ -51,6 +52,8 @@ let recordatorioPagoRecibido = {
 }
 
 const Recordatorios = () => {
+  const [user, setUser] = useUser("");
+
   return (
     <>
     
@@ -68,7 +71,10 @@ const Recordatorios = () => {
         </div>
     <div className={styles.container}>
       <div>
-        <h1 className={styles.title}>Recordatorios</h1>
+        {
+            user ? <h1 className={styles.title}>{`Hola ${user.firstname}`}</h1> 
+            : <h1 className={styles.title}>Hola Invitado</h1>
+          }
         <p className={styles.subtitle}>Los siguientes recordatorios se envian de forma automatica a tus clientes en los dias indicados</p>
       </div>
     </div>

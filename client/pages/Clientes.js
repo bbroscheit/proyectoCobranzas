@@ -15,7 +15,7 @@ import VentasVsCobranzasPorGestor from "./charts/VentasVsCobranzasPorGestor";
 
 const Clientes = () => {
   const [gestor, setGestor] = useUser("");
-
+  const [user, setUser] = useUser("");
   const [facturasPorGestor, setFacturasPorGestor] = useState(null);
   const [totales, setTotales] = useState({
     recibosMes: 0,
@@ -62,7 +62,7 @@ const Clientes = () => {
     condition === 1 ? setFlag(1) : condition === 2 ? setFlag(2) : setFlag(3);
   }
 
-  console.log("gestiones terminadas por gestor:", gestionesCompletadas);
+  //console.log("gestiones terminadas por gestor:", gestionesCompletadas);
   return (
     <>
       <div className={styles.sectorContainer}>
@@ -72,7 +72,10 @@ const Clientes = () => {
       </div>
       <div className={styles.container}>
         <div>
-          <h1 className={styles.title}>Gestión</h1>
+          {
+            user ? <h1 className={styles.title}>{`Hola ${user.firstname}`}</h1> 
+            : <h1 className={styles.title}>Hola Invitado</h1>
+          }
         </div>
       </div>
 
