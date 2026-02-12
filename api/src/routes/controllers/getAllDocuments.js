@@ -3,6 +3,13 @@ const sql = require("mssql");
 
 const { GP_USER, GP_PASSWORD, GP_SERVER, GP_DATABASE } = process.env;
 
+  const formatDateSQL = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
 const config = {
     user: GP_USER,
     password:  GP_PASSWORD,
@@ -39,14 +46,13 @@ const getAllDocuments = async () => {
       FROM
         RM20101 AS RM
       WHERE
-        RM.RMDTYPAL IN (1, 3, 7, 9)
-        AND RM.VOIDSTTS != 1
-        AND RM.DOCDATE >= '${inicioPeriodo.toISOString().split('T')[0]}'
-        AND RM.DOCDATE <= '${finPeriodo.toISOString().split('T')[0]}'
+        RM.RMDTYPAL IN (1, 3, 7, 8, 9)
+        AND RM.DOCDATE >= '${formatDateSQL(inicioPeriodo)}'
+        AND RM.DOCDATE <= '${formatDateSQL(finPeriodo)}'
     `;
 
     const result = await request.query(query);
-
+    
     await pool.close();
     return result.recordset;
 

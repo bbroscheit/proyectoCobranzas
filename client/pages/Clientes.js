@@ -1,61 +1,72 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 // import Link from "next/link";
 import styles from "./modules/clientes.module.css";
 import useUser from "./hooks/useUser";
 import CardClientes from "./components/CardClientes";
 import CardGestiones from "./components/CardGestiones";
 import CardGestionesTerminadas from "./components/CardGestionesTerminadas";
-import CardAlarmas from "./components/CardAlarmas";
+import CardGestionesNoRealizadas from "./components/CardGestionesNoRealizadas";
 import CardRecordatorios from "./components/CardRecordatorios";
-import { calculaTotalesPorGestor } from "./functions/calculaTotalesPorGestor";
-import { montosPorAntiguedadPorGestor } from "./functions/montosPorAntiguedadPorGestor";
 import AnticuacionPorGestor from "./charts/AnticuacionPorGestor";
 import DiasCallePorGestor from "./charts/DiasCallePorGestor";
 import VentasVsCobranzasPorGestor from "./charts/VentasVsCobranzasPorGestor";
 
 const Clientes = () => {
-  const [gestor, setGestor] = useUser("");
+  
   const [user, setUser] = useUser("");
-  const [facturasPorGestor, setFacturasPorGestor] = useState(null);
-  const [totales, setTotales] = useState({
-    recibosMes: 0,
-    facturasNoVencidas: 0,
-    facturasVencidas: 0,
-    facturasMes: 0,
-  });
+  const initialState = {
+      totalCobradoMes: 0,
+      saldoPendiente: 0 ,
+      saldoVencido: 0 ,
+      totalFacturadoMes: 0,
+      antiguedad: [],
+      diasCalle: 0,
+      ventasVsCobranzas: {
+        meses: [],
+        facturasVencidas: [],
+        facturasNoVencidas: [],
+        recibosRecibidos: [],
+      },
+    };
+  const initialStateGestiones = {
+    hoy: 0,
+    completadasMes: 0,
+    noCompletadasMes: 0
+  }
+  const [facturasTotalesBD, setFacturasTotalesBD] = useState(initialState);
   const [flag, setFlag] = useState(1);
-  const [gestiones, setGestiones] = useState(0);
+  const [gestiones, setGestiones] = useState(initialStateGestiones);
   const [gestionesCompletadas, setGestionesCompletadas] = useState(0);
 
   useEffect(() => {
-    const userLogin = localStorage.getItem("userCobranzas");
-    const userParse = JSON.parse(userLogin);
 
-    fetch(
-      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
-    )
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setFacturasPorGestor(data);
+  const fetchData = async () => {
+    try {
+      const userLogin = localStorage.getItem("userCobranzas");
+      const userParse = JSON.parse(userLogin);
 
-        // Una vez que tenemos los documentos, calculamos totales y montos
-          const totalesCalc = calculaTotalesPorGestor(data, userParse);
-          setTotales(totalesCalc);        
-      })
-      .catch((err) => console.error("Error al obtener documentos:", err));
+      if (!userParse) return;
 
-    fetch(
-      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userParse.id}`
-    )
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userLogin.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setGestiones(data.gestion);
-        setGestionesCompletadas(data.gestioncompletada);
-      })
-      .catch((err) => console.error("Error al obtener gestiones:", err))
-  }, []);
+      const [documentosRes, gestionesRes] = await Promise.all([
+        fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`),
+        fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/gestionesByGestor/${userParse.id}`)
+      ]);
+
+      const documentosData = await documentosRes.json();
+      const gestionesData = await gestionesRes.json();
+
+      setFacturasTotalesBD(documentosData);
+      setGestiones(gestionesData.resumenGestiones);
+      
+
+    } catch (err) {
+      console.error("Error al cargar datos de gestión:", err);
+    }
+  };
+
+  fetchData();
+
+}, []);
 
 
   function handleChange(condition) {
@@ -80,18 +91,19 @@ const Clientes = () => {
       </div>
 
       <div className={styles.cardContainer}>
-        <CardClientes total={totales.recibosMes} title={"Pagado"} />
-        <CardClientes total={totales.facturasNoVencidas} title={"Por Vencer"} />
-        <CardClientes total={totales.facturasVencidas} title={"Vencido"} />
+        <CardClientes total={facturasTotalesBD.totalCobradoMes} title={"Pagado"} />
+        <CardClientes total={facturasTotalesBD.saldoPendiente} title={"Por Vencer"} />
+        <CardClientes total={facturasTotalesBD.saldoVencido} title={"Vencido"} />
         <CardClientes
-          total={totales.facturasMes}
+          total={facturasTotalesBD.totalFacturadoMes}
           title={"Total Facturado del mes en curso"}
         />
       </div>
 
       <div className={styles.cardGestionesContainer}>
-        <CardGestiones total={gestiones} />
-        <CardGestionesTerminadas total={gestionesCompletadas} />
+        <CardGestiones total={gestiones.hoy} />
+        <CardGestionesTerminadas total={gestiones.completadasMes} />
+        <CardGestionesNoRealizadas total={gestiones.noCompletadasMes} />
         <CardRecordatorios />
       </div>
       <div className={styles.buttonContainer}>
@@ -121,12 +133,12 @@ const Clientes = () => {
           </button>
         </div>
         <div className={styles.chartContainer}>
-          {flag === 1 && facturasPorGestor && facturasPorGestor !== null ? (
-            <AnticuacionPorGestor />
+          {flag === 1 && facturasTotalesBD ? (
+            <AnticuacionPorGestor data={facturasTotalesBD.antiguedad}/>
           ) : flag === 2 ? (
-            <DiasCallePorGestor />
+            <DiasCallePorGestor data={facturasTotalesBD.diasCalle} />
           ) : (
-            <VentasVsCobranzasPorGestor />
+            <VentasVsCobranzasPorGestor data={facturasTotalesBD.ventasVsCobranzas} />
           )}
         </div>
       

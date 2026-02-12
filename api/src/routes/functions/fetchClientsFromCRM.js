@@ -24,7 +24,14 @@ const fetchClientsFromCRM = async () => {
     const result = await pool
       .request()
       .query(
-        "SELECT new_gestordecobranzasidName AS gestor , new_1contactocobridName AS contacto1 , new_apellidonombrerazonsocial AS razonsocial, new_codigodecliente AS codigocliente, new_facturacionelectronica AS email FROM Account"
+        `SELECT 
+          new_gestordecobranzasidName AS gestor,
+          new_1contactocobridName AS contacto1 , 
+          new_apellidonombrerazonsocial AS razonsocial, 
+          new_codigodecliente AS codigocliente, 
+          new_facturacionelectronica AS email 
+        FROM 
+          Account`
       ); 
     //console.log("Clientes obtenidos:", result.recordset);
 

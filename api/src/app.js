@@ -97,7 +97,7 @@ server.use((err,req,res) => {
 // --------------------
 
 // Todos los días a las 3 AM trae clientes de CRM
-cron.schedule('0 3 * * *', async () => {
+cron.schedule('0 11 * * *', async () => {
     try {
         await fetchClientsFromCRM();
         console.log('Clientes CRM actualizados Buenos Aires');
@@ -105,16 +105,20 @@ cron.schedule('0 3 * * *', async () => {
         console.error('Error actualizando clientes CRM Buenos Aires:', err);
     }
 
+});
+
+cron.schedule('15 11 * * *', async () => {
     try {
         await fetchClientsFromCRMEcoPatagonico();
         console.log('Clientes CRM actualizados Buenos Aires');
     } catch (err) {
         console.error('Error actualizando clientes CRM Buenos Aires:', err);
     }
+
 });
 
 // Todos los días a las 5 AM trae documentos de Dynamics
-cron.schedule('0 5 * * *', async () => {
+cron.schedule('30 11 * * *', async () => {
     try {
         await fetchDocumentFromGP();
         console.log('Documentos GP actualizados');
@@ -123,8 +127,17 @@ cron.schedule('0 5 * * *', async () => {
     }
 });
 
+cron.schedule('45 11 * * *', async () => {
+    try {
+        await fetchDocumentFromGPEcoPatagonico();
+        console.log('Documentos GP actualizados');
+    } catch (err) {
+        console.error('Error actualizando documentos GP:', err);
+    }
+});
+
 // Todos los días a las 7 AM crea las listas de llamadas 
-cron.schedule('0 7 * * *', async () => {
+cron.schedule('0 12 * * *', async () => {
     try {
         await creacionLista();
         console.log('Lista de llamadas creada correctamente');

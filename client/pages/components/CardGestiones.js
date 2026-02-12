@@ -12,10 +12,11 @@ function CardGestiones({total}) {
             <FaBriefcase className={style.iconos}/>
             <div className={style.gestiones}>
                 <div className={style.numerogestion}>
-                    <h1>{total}</h1>
+                    <h1>{total ? total : 0 }</h1>
                     <FaArrowUp className={style.icononumerogestionup}/>
                 </div>
-                <p> Gestiones en total</p>
+                <p> Gestiones diarias</p>
+                <p> .</p>
             </div>
         </div>
     </div>

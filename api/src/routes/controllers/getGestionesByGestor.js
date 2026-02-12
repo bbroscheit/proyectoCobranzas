@@ -1,43 +1,53 @@
-const { Gestion, Usuario } = require('../../bd');
-const { Op } = require('sequelize');
+const { Gestion, Listadellamada } = require("../../bd");
+const { Op, fn, col } = require("sequelize");
 
-const getGestionesByGestor = async (gestor) => {
-    console.log("gestor: ", gestor)
-  try {
-    // Primero buscamos el usuario por su identificador (puede ser id o username según tu caso)
-    const usuario = await Usuario.findOne({ where: { id: gestor } }); 
-    if (!usuario) {
-      console.warn(`No se encontró usuario con id: ${gestor}`);
-      return null;
-    }
+const getGestionesByGestor = async (usuarioId) => {
+  console.log("usuarioId en getGestionesByGestor", usuarioId);
+  const hoy = new Date();
 
-    // Rango de hoy
-    const hoyInicio = new Date();
-    hoyInicio.setHours(0, 0, 0, 0);
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
-    const hoyFin = new Date();
-    hoyFin.setHours(23, 59, 59, 999);
-
-    // Buscamos la gestión del día
-    const gestionDelDia = await Gestion.findOne({
-      where: {
-        usuarioId: usuario.id,
-        fecha: {
-          [Op.between]: [hoyInicio, hoyFin],
-        },
+  
+  const listaHoy  = await Listadellamada.findOne({
+    where: {
+      usuarioId,
+      fecha: {
+        [require("sequelize").Op.gte]: inicioDia,
       },
-    });
+    },
+  });
 
-    if (!gestionDelDia) {
-      console.log(`No hay gestión registrada hoy para el gestor ${gestor}`);
-      return null;
-    }
+  // Gestiones creadas hoy (lista de llamadas del día)
+  const gestionesHoy = listaHoy?.clientes?.length || 0;
 
-    return gestionDelDia;
-  } catch (error) {
-    console.error(`❌ Error obteniendo gestiones del gestor ${gestor}:`, error);
-    throw error;
-  }
+ const resumenMes = await Gestion.findAll({
+    where: {
+      usuarioId,
+      fecha: {
+        [Op.gte]: inicioMes,
+      },
+    },
+    attributes: [
+      [fn("SUM", col("gestion")), "totalGestionesMes"],
+      [fn("SUM", col("gestioncompletada")), "totalCompletadasMes"],
+    ],
+    raw: true,
+  });
+
+  const totalGestionesMes = Number(resumenMes[0]?.totalGestionesMes) || 0;
+  const totalCompletadasMes = Number(resumenMes[0]?.totalCompletadasMes) || 0;
+
+  const totalNoCompletadasMes = totalGestionesMes - totalCompletadasMes;
+
+
+  return {
+    resumenGestiones: {
+      hoy: gestionesHoy,
+      completadasMes: totalCompletadasMes,
+      noCompletadasMes: totalNoCompletadasMes,
+    },
+  };
 };
 
 module.exports = getGestionesByGestor;

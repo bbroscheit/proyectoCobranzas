@@ -5,33 +5,21 @@ import styles from "../modules/diasCallePorGestor.module.css";
 import { calcularDiasCalle } from "../functions/calcularDiasCalle";
 import { calcularDiasCallePorGestor } from "../functions/calcularDiasCallePorGestor";
 
-function DiasCallePorGestor() {
-  const [gestor, setGestor] = useUser("");
+function DiasCallePorGestor({data}) {
+  const dias = data?.dias ?? 0;
+  const cuentasPorCobrar = data?.cuentasPorCobrar ?? 0;
+  const ventasDiariasPromedio = data?.ventasDiariasPromedio ?? 0;
   const chartRef = useRef(null);
-  const [datoCalculado, setDatoCalculado] = useState(null);
+ 
 
   let backgroundColor;
-  if (datoCalculado < 30) {
+  if (dias < 30) {
     backgroundColor = "rgb(60,190,100,0.7)";
-  } else if (datoCalculado < 60) {
+  } else if (dias < 60) {
     backgroundColor = "rgb(255,205,86,0.7)";
   } else {
     backgroundColor = "rgb(255,99,132,0.7)";
   }
-
-  useEffect(() => {
-    const userLogin = localStorage.getItem("userCobranzas");
-    const userParse = JSON.parse(userLogin);
-
-    fetch(
-      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
-    )
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setDatoCalculado(calcularDiasCallePorGestor(data, userParse));
-      });
-  }, [gestor]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -46,7 +34,7 @@ function DiasCallePorGestor() {
           labels: ["Días Calle"],
           datasets: [
             {
-              data: [datoCalculado],
+              data: [dias],
               backgroundColor: [backgroundColor],
               borderWidth: 1,
               borderRadius: 4,
@@ -70,12 +58,26 @@ function DiasCallePorGestor() {
       });
       chartRef.current.chart = newChart;
     }
-  }, [datoCalculado]);
+  }, [data]);
+
+  const currencyFormatter = new Intl.NumberFormat("es-AR", {
+  style: "currency",
+  currency: "ARS",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 
   return (
     <div className={styles.canvaContainer}>
       <canvas ref={chartRef} />
-      <h2 className={styles.title}>{datoCalculado}</h2>
+      <h2 className={styles.title}>{dias}</h2>
+          <div className={styles.formula}>
+  <p>
+    {currencyFormatter.format(cuentasPorCobrar)} /{" "}
+    {currencyFormatter.format(ventasDiariasPromedio)}
+  </p>
+</div>
     </div>
   );
 }

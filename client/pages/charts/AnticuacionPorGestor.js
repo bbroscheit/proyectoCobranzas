@@ -4,24 +4,8 @@ import styles from "../modules/anticuacionPorGestor.module.css";
 import useUser from "../hooks/useUser";
 import { montosPorAntiguedadPorGestor } from "../functions/montosPorAntiguedadPorGestor";
 
-function AnticuacionPorGestor() {
-  const [gestor, setGestor] = useUser("");
-  const [facturasVencidasBD, setFacturasVencidasBD] = useState(null);
+function AnticuacionPorGestor({data}) {
   const chartRef = useRef(null);
-
-  useEffect(() => {
-    const userLogin = localStorage.getItem("userCobranzas");
-    const userParse = JSON.parse(userLogin);
-
-    fetch(
-      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsByGestor/${userParse.id}`
-    )
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setFacturasVencidasBD(montosPorAntiguedadPorGestor(data, userParse));
-      });
-  }, [gestor]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -46,7 +30,7 @@ function AnticuacionPorGestor() {
           datasets: [
             {
               label: "",
-              data: facturasVencidasBD,
+              data: data ? data : [0, 0, 0, 0, 0, 0, 0, 0],
               backgroundColor: [
                 "rgb(255,99,132,0.7)",
                 "rgb(255,159,64,0.7)",
@@ -96,9 +80,7 @@ function AnticuacionPorGestor() {
       });
       chartRef.current.chart = newChart;
     }
-  }, [facturasVencidasBD]);
-
-  //console.log("facturasVencidasBD", facturasVencidasBD);
+  }, [data]);
 
   return (
     <div className={styles.canvaContainer}>

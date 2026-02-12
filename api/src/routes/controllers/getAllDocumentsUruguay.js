@@ -39,7 +39,7 @@ const getAllDocumentsUruguay = async () => {
       FROM
         RM20101 AS RM
       WHERE
-        RM.RMDTYPAL IN (1, 3, 7, 9)
+        RM.RMDTYPAL IN (1, 3, 7, 8, 9)
         AND RM.VOIDSTTS != 1
         AND RM.DOCDATE >= '${inicioPeriodo.toISOString().split('T')[0]}'
         AND RM.DOCDATE <= '${finPeriodo.toISOString().split('T')[0]}'

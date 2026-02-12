@@ -27,6 +27,7 @@ function CardRecordatorios() {
                 </div>
                  {/* { notas <= 0 ? <p> No hay notas </p>  :<p> {notas} Notas </p>  } */}
                   <p>Notas</p>
+                  <p>creadas</p>
             </div>
         </div>
        

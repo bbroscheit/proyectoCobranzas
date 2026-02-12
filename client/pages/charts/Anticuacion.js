@@ -1,28 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import styles from "../modules/anticuacion.module.css";
-import useUser from "../hooks/useUser";
-import { montosPorAntiguedad } from "../functions/montosPorAntiguedad";
 
-function Anticuacion() {
-  const [gestor, setGestor] = useUser("");
-  const [facturasVencidasBD, setFacturasVencidasBD] = useState(null);
+
+function Anticuacion({ data }) {
+  
   const chartRef = useRef(null);
 
-  useEffect(() => {
-    const userLogin = localStorage.getItem("userCobranzas");
-    const userParse = JSON.parse(userLogin);
-
-    fetch(
-      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userParse.id}`
-    )
-      // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setFacturasVencidasBD(montosPorAntiguedad(data));
-      });
-  }, [gestor]);
-
+ 
   useEffect(() => {
     if (chartRef.current) {
       if (chartRef.current.chart) {
@@ -34,19 +19,19 @@ function Anticuacion() {
         type: "bar",
         data: {
           labels: [
-            " < 0 ",
+            "  0 ",
             "1 - 7 ",
             " 8 - 15 ",
             " 16 - 30 ",
             "31 - 60",
             " 61 - 90 ",
-            " 90 - 120 ",
+            " 91 - 120 ",
             " +120 ",
           ],
           datasets: [
             {
               label: "",
-              data: facturasVencidasBD,
+              data: data ? data : [0, 0, 0, 0, 0, 0, 0, 0],
               backgroundColor: [
                 "rgb(255,99,132,0.7)",
                 "rgb(255,159,64,0.7)",
@@ -96,7 +81,7 @@ function Anticuacion() {
       });
       chartRef.current.chart = newChart;
     }
-  }, [facturasVencidasBD]);
+  }, [data]);
 
   return (
     <div className={styles.canvaContainer}>

@@ -5,7 +5,7 @@ import { FaArrowUp } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
 
 
-function CardGestionesTerminadas({total}) {
+function CardGestionesNoRealizadas({total}) {
   return (
     <div className={style.cardContainer}>
         <div className={style.titulos}>
@@ -15,7 +15,7 @@ function CardGestionesTerminadas({total}) {
                     <h1>{total ? total : 0}</h1>
                     <FaArrowUp className={style.icononumerogestionup}/>
                 </div>
-                <p> Gestiones cumplidas</p>
+                <p> Gestiones no cumplidas</p>
                 <p> Mes en Curso</p>
             </div>
         </div>
@@ -24,4 +24,4 @@ function CardGestionesTerminadas({total}) {
   )
 }
 
-export default CardGestionesTerminadas
+export default CardGestionesNoRealizadas

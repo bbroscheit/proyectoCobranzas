@@ -1,8 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import useUser from "./hooks/useUser";
-import { FacturacionContext } from "./context/FacturacionContext";
-import { procesarDocumentos } from "./functions/procesarDocumentos";
-import { montosPorAntiguedad } from "./functions/montosPorAntiguedad";
 import styles from "./modules/index.module.css";
 import CardIndex from "./components/CardIndex";
 import Anticuacion from "./charts/Anticuacion";
@@ -11,7 +8,20 @@ import VentasVsCobranzas from "./charts/VentasVsCobranzas";
 
 export default function Principal() {
   const [gestor, setGestor] = useUser("");
-  const [facturasTotalesBD, setFacturasTotalesBD] = useState(null);
+  const initialState = {
+    recibosMes: { total: 0, cantidad: 0 },
+    facturasNoVencidas: { total: 0, cantidad: 0 },
+    facturasVencidas: { total: 0, cantidad: 0 },
+    antiguedad: [],
+    diasCalle: 0,
+    ventasVsCobranzas: {
+      meses: [],
+      facturasVencidas: [],
+      facturasNoVencidas: [],
+      recibosRecibidos: [],
+    },
+  };
+  const [facturasTotalesBD, setFacturasTotalesBD] = useState(initialState);
   const [flag, setFlag] = useState(1);
 
   function handleChange(condition) {
@@ -19,6 +29,8 @@ export default function Principal() {
   }
 
   useEffect(() => {
+    //if (!gestor) return;
+
     const userLogin = localStorage.getItem("userCobranzas");
     const userParse = JSON.parse(userLogin);
 
@@ -27,11 +39,10 @@ export default function Principal() {
     )
       // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
       .then((res) => res.json())
-      .then((data) => {
-        setFacturasTotalesBD(procesarDocumentos(data));
-        //setFacturasVencidasBD(montosPorAntiguedad(data));
-      });
-  }, [gestor]);
+      .then(setFacturasTotalesBD);
+  }, []);
+
+  //console.log("facturasTotalesBD", facturasTotalesBD);
 
   return (
     <>
@@ -51,33 +62,21 @@ export default function Principal() {
           </p>
         </div>
         <div className={styles.cardContainer}>
-          {facturasTotalesBD && facturasTotalesBD !== null ? (
-            <CardIndex
-              total={facturasTotalesBD.recibosMes.total}
-              cant={facturasTotalesBD.recibosMes.cantidad}
-              title={"pagado"}
-            />
-          ) : (
-            <CardIndex total={0} cant={0} title={"pagado"} />
-          )}
-          {facturasTotalesBD && facturasTotalesBD !== null ? (
-            <CardIndex
-              total={facturasTotalesBD.facturasNoVencidas.total}
-              cant={facturasTotalesBD.facturasNoVencidas.cantidad}
-              title={"por vencer"}
-            />
-          ) : (
-            <CardIndex total={0} cant={0} title={"por vencer"} />
-          )}
-          {facturasTotalesBD && facturasTotalesBD !== null ? (
-            <CardIndex
-              total={facturasTotalesBD.facturasVencidas.total}
-              cant={facturasTotalesBD.facturasVencidas.cantidad}
-              title={"vencido"}
-            />
-          ) : (
-            <CardIndex total={0} cant={0} title={"vencido"} />
-          )}
+          <CardIndex
+            total={facturasTotalesBD?.resumen?.recibosMes?.total ?? 0}
+            cant={facturasTotalesBD?.resumen?.recibosMes?.cantidad ?? 0}
+            title={"pagado"}
+          />
+          <CardIndex
+            total={facturasTotalesBD?.resumen?.facturasNoVencidas?.total ?? 0}
+            cant={facturasTotalesBD?.resumen?.facturasNoVencidas?.cantidad ?? 0}
+            title={"por vencer"}
+          />
+          <CardIndex
+            total={facturasTotalesBD?.resumen?.facturasVencidas?.total ?? 0}
+            cant={facturasTotalesBD?.resumen?.facturasVencidas?.cantidad ?? 0}
+            title={"vencido"}
+          />
         </div>
         <div className={styles.buttonContainer}>
           <button
@@ -106,13 +105,19 @@ export default function Principal() {
           </button>
         </div>
         <div>
-          {flag === 1 && facturasTotalesBD && facturasTotalesBD !== null ? (
-            <Anticuacion />
-          ) : flag === 2 ? (
-            <DiasCalle />
-          ) : (
-            <VentasVsCobranzas />
+          {facturasTotalesBD && flag === 1 && (
+            <Anticuacion data={facturasTotalesBD.antiguedad} />
           )}
+
+          {facturasTotalesBD && flag === 2 && (
+            <DiasCalle data={facturasTotalesBD.diasCalle} />
+          )}
+
+          {facturasTotalesBD &&
+            flag === 3 &&
+            facturasTotalesBD.ventasVsCobranzas && (
+              <VentasVsCobranzas data={facturasTotalesBD.ventasVsCobranzas} />
+            )}
         </div>
       </div>
     </>

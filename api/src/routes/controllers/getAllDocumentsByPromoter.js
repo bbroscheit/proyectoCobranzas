@@ -47,7 +47,7 @@ const getAllDocumentsByPromoter = async (clientes) => {
                     RM20101 AS RM
                 WHERE
                     RM.CUSTNMBR = '${clienteId}' -- Filtrar por cliente
-                    AND RM.RMDTYPAL IN (1, 3, 7, 9) -- Tipos de documento: Facturas, Notas de Débito, Notas de Crédito, Recibos
+                    AND RM.RMDTYPAL IN (1, 3, 7, 8, 9) -- Tipos de documento: Facturas, Notas de Débito, Notas de Crédito, Recibos
                     AND RM.VOIDSTTS != 1 -- Excluir recibos anulados
                     AND (
                         (RM.DOCDATE >= '${inicioDiciembreAnterior.toISOString().split('T')[0]}' AND RM.DOCDATE <= '${finDiciembreAnterior.toISOString().split('T')[0]}') -- Para documentos de diciembre del año anterior
