@@ -63,17 +63,19 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
       );
     }
 
+    
+
     const bodyHtml = estadoDeCuentaTemplate({
-      clienteNombre: cliente.nombre,
-      gestoraNombre: usuario.firstname,
+      clienteNombre: cliente.name,
+      gestoraNombre: usuario.firstname + " " + usuario.lastname,
       facturas: docsPendientes,
     });
 
     // Enviamos mail con nodemailer
     const mailOptions = {
-      from: `"${usuario.firstname || "Usuario"}" <${process.env.MAIL_USER}>`, // usuario que envía
-      //to: cliente.email, // destinatario cliente
-      to: process.env.MAIL_USER,
+      from: `"${usuario.firstname || "Usuario"}" <${usuario.mail}>`, // usuario que envía
+      to: cliente.email, // destinatario cliente
+      //to: process.env.MAIL_USER,
       cc: usuario.mail, // copia al usuario
       subject: "Aviso de Cuenta",
       html: bodyHtml,

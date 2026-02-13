@@ -1,4 +1,4 @@
-function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
+function suspensionTemplate({ clienteNombre, gestoraNombre, facturas }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -13,10 +13,8 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
       <body style="font-family: Arial, sans-serif;">
         <h2>Área de Cobranzas - ${hoy}</h2>
         <p>Estimado cliente ${clienteNombre}, </p>
-        <p>En <strong>BASANI S.A.</strong> trabajamos constantemente para ofrecerle el mejor servicio, y como parte de nuestro compromiso, nos gustaría informarle sobre el estado actual de sus cuenta.</p>
-        <p>Facturas vencidas y próximas a vencer</p>
-        <p>A continuación, detallamos las facturas pendientes de pago para su revisión:</p>
-        < br/>
+        <p>Le informamos que, debido a la falta de regularización de los pagos pendientes detallados a continuación, los servicios de limpieza asociados a su cunta han sido suspendidos.</p>
+        <p>Detalle de facturas pendientes: </p>
         <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr style="background-color:#f2f2f2;">
@@ -37,17 +35,18 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
             `).join("")}
           </tbody>
         </table>
-
+        <p>Lamentablemente, de no regularizar el saldo pendiente en un plazo de [Plazo establecido] contados a partir de la fecha de este aviso, nos veremos obligados a proceder con el retiro de los equipos en uso.</p>
         <p style="margin-top:20px;">
-          Opciones de Pago
+          Para evitar esta medida, le solicitamos realizar el pago correspondiente a través de:
         </p>
         <ul>
               <ol>Transferencia bancaria a la cuenta [número de cuenta].</ol>
               <ol>Otros métodos de pago(consultar con nuestro equipo de cobranzas).</ol>
         </ul>
-        <p>Le solicitamos gentilmente realizar el pago de sus facturas vencidas para evitar posibles recargos adicionales o interrupciones en sus servicios.</p>
-        <p>Si ya ha realizado el pago o tiene algún inconveniente, no dude en contactarnos para informarlo y asistirlo. Puede comunicarse con nuestro equipo de cobranzas al [numero de telefono general] o responder este correo.</p>
-        <p>Agradecemos su atención y quedamos a su disposición para cualquier consulta.</p>
+        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos; o lo envíe mediante Whatsapp al [número de cobranzas].</p>
+        <p>Estamos disponibles para discutir opciones de regularización o atender cualquier consulta al respecto.Le agradecemos su pronta atención y comprensión para resolver esta situación</p>
+        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp [número telefónico] o respondiendo este correo electrónico.</p>
+        
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
         Área de Cobranzas<br/>
@@ -57,4 +56,4 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
   `;
 }
 
-module.exports = estadoDeCuentaTemplate;
+module.exports = suspensionTemplate;

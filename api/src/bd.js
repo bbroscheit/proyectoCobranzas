@@ -60,7 +60,8 @@ const {
         Documentcordoba,
         Listadellamada,
         Gestion,
-        Usuario
+        Usuario,
+        Mailqueue
          } = sequelize.models;
 
 // Relacionamos las tablas

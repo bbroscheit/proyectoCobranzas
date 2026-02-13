@@ -3,16 +3,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require ('body-parser');
 const morgan = require('morgan');
 let cors = require('cors');
-const cron = require('node-cron');
-const fetchClientsFromCRM = require('./routes/functions/fetchClientsFromCRM.js');
-const fetchClientsFromCRMEcoPatagonico = require('./routes/functions/fetchClientsFromCRMEcoPatagonico.js');
-const fetchDocumentFromGP = require('./routes/functions/fetchDocumentGP.js');
-const fetchDocumentFromGPEcoPatagonico = require('./routes/functions/fetchDocumentGPEcoPatagonico.js');
 const seedUsuarios = require('./routes/functions/seedUsuarios.js');
-const syncAllSources = require('./services/syncAllSources.js');
-const creacionLista = require('./routes/functions/creacionLista.js');
 require('./bd.js')
-// require("./jobs/syncJob.js")
 
 // se cargan las rutas
 const promoterRouter = require ('../src/routes/promoterRouter.js');
@@ -21,38 +13,8 @@ const promoterRouter = require ('../src/routes/promoterRouter.js');
 // Incrementar límite de listeners para evitar warning
 require('events').EventEmitter.defaultMaxListeners = 20;
 
-// fetchClientsFromCRM().then(() => {
-//     console.log('Clientes iniciales cargados desde CRM Buenos Aires');
-// }).catch((err) => {
-//     console.error('Error al cargar clientes iniciales desde CRM Buenos Aires:', err);
-// });
-
-// fetchClientsFromCRMEcoPatagonico().then(() => {
-//     console.log('Clientes iniciales cargados desde CRM EcoPatagonico');
-// }).catch((err) => {
-//     console.error('Error al cargar clientes iniciales desde CRM EcoPtagonico:', err);
-// });
-
-// fetchDocumentFromGP().then(() => {
-//     console.log('Documentos iniciales cargados desde GP');
-// }).catch((err) => {
-//     console.error('Error al cargar documentos iniciales desde GP:', err);
-// });
-
-// fetchDocumentFromGPEcoPatagonico().then(() => {
-//     console.log('Documentos iniciales cargados desde GP');
-// }).catch((err) => {
-//     console.error('Error al cargar documentos iniciales desde GP:', err);
-// });
-
 // Carga inicial de usuarios
 // seedUsuarios();
-
-// syncAllSources().then(() => {
-//     console.log('Documentos iniciales cargados desde GP');
-// }).catch((err) => {
-//     console.error('Error al cargar documentos iniciales desde GP:', err);
-// });
 
 const server = express();
 server.name = 'API';
@@ -96,64 +58,9 @@ server.use((err,req,res) => {
 // Cron jobs en async
 // --------------------
 
-// Todos los días a las 3 AM trae clientes de CRM
-cron.schedule('0 11 * * *', async () => {
-    try {
-        await fetchClientsFromCRM();
-        console.log('Clientes CRM actualizados Buenos Aires');
-    } catch (err) {
-        console.error('Error actualizando clientes CRM Buenos Aires:', err);
-    }
-
-});
-
-cron.schedule('15 11 * * *', async () => {
-    try {
-        await fetchClientsFromCRMEcoPatagonico();
-        console.log('Clientes CRM actualizados Buenos Aires');
-    } catch (err) {
-        console.error('Error actualizando clientes CRM Buenos Aires:', err);
-    }
-
-});
-
-// Todos los días a las 5 AM trae documentos de Dynamics
-cron.schedule('30 11 * * *', async () => {
-    try {
-        await fetchDocumentFromGP();
-        console.log('Documentos GP actualizados');
-    } catch (err) {
-        console.error('Error actualizando documentos GP:', err);
-    }
-});
-
-cron.schedule('45 11 * * *', async () => {
-    try {
-        await fetchDocumentFromGPEcoPatagonico();
-        console.log('Documentos GP actualizados');
-    } catch (err) {
-        console.error('Error actualizando documentos GP:', err);
-    }
-});
-
-// Todos los días a las 7 AM crea las listas de llamadas 
-cron.schedule('0 12 * * *', async () => {
-    try {
-        await creacionLista();
-        console.log('Lista de llamadas creada correctamente');
-    } catch (err) {
-        console.error('Error creando lista de llamadas:', err);
-    }
-});
-
-//Ejecutar creacionLista manualmente al iniciar el server (opcional)
-// (async () => {
-//     try {
-//         await creacionLista();
-//         console.log('Lista de llamadas inicial creada al iniciar server');
-//     } catch (err) {
-//         console.error('Error creando lista de llamadas inicial:', err);
-//     }
-// })();  
+if (process.env.RUN_JOBS === "true") {
+  require("./jobs/masterJob");
+  //require("./jobs/mailWorker");
+}
 
 module.exports = server; 
