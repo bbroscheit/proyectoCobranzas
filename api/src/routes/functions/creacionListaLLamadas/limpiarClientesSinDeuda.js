@@ -13,7 +13,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
         (c) => c.id === cliente.id
       );
 
-      console.log("🔍 Procesando cliente:", cliente);
+      console.log("Procesando cliente:", cliente);
 
       if (!clienteConDocs) continue;
 
@@ -58,6 +58,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
             fecha: doc.fechadocumento || null,
             montopendiente: parseFloat(doc.montopendiente),
             diasVencido: doc.diasVencido || 0,
+            fechavencimiento: doc.fechavencimiento || null,
             tipodocumento: doc.tipodocumento,
           })),
           llamado: false,

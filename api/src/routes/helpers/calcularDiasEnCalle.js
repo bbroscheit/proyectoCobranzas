@@ -1,33 +1,3 @@
-// const calcularDiasCalle = (documentos) => {
-//   const hoy = new Date();
-
-//   let totalPonderado = 0;
-//   let totalMonto = 0;
-
-//   for (const doc of documentos) {
-//     if (![1, 3, 7, 8].includes(doc.tipodocumento)) continue;
-//     if (doc.montopendiente <= 0) continue;
-
-//     const fechaVenc = new Date(doc.fechavencimiento);
-//     const dias = Math.floor(
-//       (hoy - fechaVenc) / (1000 * 60 * 60 * 24)
-//     );
-
-//     if (dias <= 0) continue; // solo vencidas
-
-//     const signo = doc.tipodocumento === 8 ? -1 : 1;
-
-//     totalPonderado += signo * dias * doc.montopendiente;
-//     totalMonto += signo * doc.montopendiente;
-//   }
-
-//   if (totalMonto === 0) return 0;
-
-//   return Math.round(totalPonderado / totalMonto);
-// };
-
-// module.exports = calcularDiasCalle;
-
 const calcularDiasCalle = (documentos) => {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);

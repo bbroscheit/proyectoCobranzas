@@ -14,7 +14,13 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) => {
-  //console.log('📭 Enviando email aviso a cliente:', numeroCliente, cuentaCorriente);
+   function formatearFecha(fecha) {
+    if (!fecha || fecha === 0) return "-";
+    const f = new Date(fecha);
+    if (isNaN(f)) return "-";
+    return f.toLocaleDateString("es-AR").replaceAll("/", "-");
+  }
+
 
   try {
     if (!emailText || String(emailText).trim() === '') {
@@ -43,7 +49,6 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
       throw new Error(`No existe lista de llamadas para hoy del usuario ${user}`);
     }
 
-    //console.log("lista de llamadas", listaHoy)
     //Buscamos cliente dentro de la lista de llamadas de hoy
     const cliente = listaHoy.clientes.find((c) => String(c.id).trim() === String(numeroCliente).trim());
     if (!cliente) throw new Error(`Cliente ${numeroCliente} no está en la lista de hoy`);
@@ -58,7 +63,9 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
         (d) => parseFloat(d.montopendiente) > 0
       );
  
-      //console.log(`Documentos pendientes para cliente ${numeroCliente}:`, docsPendientes);
+      
+      console.log(`Documentos pendientes para cliente ${numeroCliente}:`, docsPendientes);
+      console.log(`usuario:`, usuario);
 
       if (docsPendientes.length > 0) {
         let tabla = `
@@ -79,9 +86,9 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
           tabla += `
             <tr>
               <td>${doc.numero}</td>
-              <td>${doc.fecha || '-'}</td>
-              <td>${doc.diasVencido || '-'}</td>
-              <td>${doc.montopendiente}</td>
+              <td>${formatearFecha(doc.fecha || '-')}</td>
+              <td>${formatearFecha(doc.fechavencimiento || '-')}</td>
+              <td>$${Number(doc.montopendiente).toLocaleString("es-AR")}</td>
             </tr>
           `;
         }
@@ -93,7 +100,7 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
 
     // Enviamos mail con nodemailer
     const mailOptions = {
-      from: `"${usuario.firstname || 'Usuario'}" <${process.env.MAIL_USER}>`, // usuario que envía
+      from: `"${usuario.firstname || 'Usuario'}" <${usuario.mail}>`, // usuario que envía
       //to: cliente.email, // destinatario cliente
       to: process.env.MAIL_USER,
       cc: usuario.mail, // copia al usuario

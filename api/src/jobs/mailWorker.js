@@ -9,7 +9,7 @@ const processMailQueue = async () => {
 
   for (const mail of pendientes) {
     try {
-      await enviarMail(mail); // tu función real
+      await enviarMail(mail); 
       mail.status = "sent";
       mail.sentAt = new Date();
       await mail.save();
@@ -20,9 +20,9 @@ const processMailQueue = async () => {
     }
   }
 
-  console.log(`📨 Procesados ${pendientes.length} mails`);
+  console.log(`Procesados ${pendientes.length} mails`);
 };
 
 cron.schedule("*/5 * * * *", processMailQueue);
 
-console.log("📬 MailWorker cargado");
+console.log("MailWorker cargado");

@@ -40,17 +40,17 @@ if (mesKey === claveAnteriores) {
 
 } else {
 
-  // 🟢 COBRADAS
+  // COBRADAS
   if (doc.montopendiente === 0) {
     meses[mesKey].facturasCobradas += signo * doc.montooriginal;
   }
 
-  // 🔴 VENCIDAS
+  // VENCIDAS
   else if (fechaVenc < hoy) {
     meses[mesKey].facturasVencidas += signo * doc.montopendiente;
   }
 
-  // 🟡 PENDIENTES
+  // PENDIENTES
   else {
     meses[mesKey].facturasPendientes += signo * doc.montopendiente;
   }

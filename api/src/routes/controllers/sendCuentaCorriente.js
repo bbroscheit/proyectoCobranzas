@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
 const estadoDeCuentaTemplate = require("../mailModels/estadoDeCuenta");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
+const createSystemNote = require("../functions/createSystemNote");
 
 const transporter = nodemailer.createTransport({
   host: "mail.basani.com.ar",
@@ -63,8 +64,6 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
       );
     }
 
-    
-
     const bodyHtml = estadoDeCuentaTemplate({
       clienteNombre: cliente.name,
       gestoraNombre: usuario.firstname + " " + usuario.lastname,
@@ -86,6 +85,13 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
     const result = await transporter.sendMail(mailOptions);
 
     await marcarLLamadoHoy(numeroCliente, user);
+
+    await createSystemNote({
+      clientId: numeroCliente,
+      userId: user,
+      sucursal: usuario.sucursal,
+      detail: "Se envió cuenta corriente al cliente por email",
+    });
 
     console.log("Aviso enviado:", result.messageId);
     return result;

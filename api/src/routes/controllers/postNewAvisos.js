@@ -25,7 +25,7 @@ const postNewAvisos = async (
   user
 ) => {
 
-  //console.log("📝 cuentaCorriente :" , cuentaCorriente);
+  console.log("📝 nota :" , nota);
   try {
     // No crear si nota es null/undefined/empty
     if (!nota || String(nota).trim() === "") {
@@ -90,17 +90,18 @@ const postNewAvisos = async (
       user: usuario.id,
       sucursal: usuario.sucursal,
       client: cliente.id,
+      clientId: cliente.id,
     });
 
     // Envia email si EmailText tiene informacion
-    // if (emailText && emailText.trim() !== "") {
-    //   await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
-    // }
+     if (emailText && emailText.trim() !== "") {
+       await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
+     }
 
     await reprogramacion(cliente, reprogram, usuario.id);
     
     //cambiamos el estado del cliente a llamado:true
-    await marcarLLamadoHoy(cliente.id, usuario.id);
+    //await marcarLLamadoHoy(cliente.id, usuario.id);
 
 
     return nuevaNota;

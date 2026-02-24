@@ -17,7 +17,7 @@ function facturaPorVencerTemplate(facturas) {
             <tr>
               <td>${factura.numero}</td>
               <td>${factura.fechaEmision}</td>
-              <td>${factura.fechaVencimiento}</td>
+              <td>${factura.fechavencimiento}</td>
               <td>$${factura.montoPendiente}</td>
             </tr>
           `).join('')}

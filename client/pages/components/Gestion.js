@@ -8,7 +8,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import AvisosModal from "../modals/AvisosModal";
 import CuentaCorrienteModal from "../modals/CuentaCorrienteModal";
 import { postAvisos } from "../api/postAvisos";
@@ -16,12 +16,13 @@ import useUser from "../hooks/useUser";
 
 function Gestion({ clienteId }) {
   const [user, setUser] = useUser("");
-  const [cliente, setCliente ] = useState("");
-  const [usuarioId, setUsuarioId ] = useState("");
+  const [cliente, setCliente] = useState("");
+  const [usuarioId, setUsuarioId] = useState("");
   const [facturasCliente, setFacturasCliente] = useState([]);
   const [visibleFacturas, setVisibleFacturas] = useState(10);
   const [showAvisosModal, setShowAvisosModal] = useState(false);
-  const [showCuentaCorrienteModal, setShowCuentaCorrienteModal] = useState(false);
+  const [showCuentaCorrienteModal, setShowCuentaCorrienteModal] =
+    useState(false);
   const [nota, setNota] = useState("");
   const [comunicacion, setComunicacion] = useState([]);
   const [emailText, setEmailText] = useState("");
@@ -46,18 +47,18 @@ function Gestion({ clienteId }) {
         setFacturasCliente(data);
       });
 
-      setCliente(clienteId);
-      setUsuarioId(userLogin.id);
-
-  }, [clienteId, usuarioId]);
+    setCliente(clienteId);
+    setUsuarioId(userLogin.id);
+  }, [clienteId]);
 
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100 &&
+        visibleFacturas < facturasCliente.length
       ) {
-        setVisibleFacturas((prevVisibleFacturas) => prevVisibleFacturas + 10);
+        setVisibleFacturas((prev) => prev + 10);
       }
     };
 
@@ -94,11 +95,11 @@ function Gestion({ clienteId }) {
             timer: 1000,
           });
         }
-       setTimeout(() => {
-        Router.push("/AgendaDeLlamadas"); 
-      }, 1000);
+        setTimeout(() => {
+          Router.push("/AgendaDeLlamadas");
+        }, 1000);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error al enviar el formulario:", error);
       });
     setShowAvisosModal(false);
@@ -130,60 +131,56 @@ function Gestion({ clienteId }) {
           </button>
         </div>
       </div>
-      {currentFacturas.map((documento, index) => {
-        const fecha = new Date(
-          documento.fechadocumento || documento.createdAt || documento.fecha
-        );
+      {currentFacturas.map((item, index) => {
+        const data = item.payload;
+
+        const fecha = new Date(item.fechaOrden);
+
         const dia = fecha.getDate().toString().padStart(2, "0");
         const mes = fecha
           .toLocaleString("es-ES", { month: "short" })
           .toUpperCase();
 
-        const today = new Date();
-        const currentDay = today.getDate();
-        const currentMonth = today.getMonth() + 1; // Los meses en JavaScript son 0-indexados
-
         return (
           <div key={index} className={styles.timelineItem}>
             <div className={styles.timelineDate}>
-              <p>{dia ? dia : currentDay}</p>
-              <p>{mes ? mes : currentMonth}</p>
+              <p>{dia}</p>
+              <p>{mes}</p>
             </div>
+
             <div className={styles.timelineIcon}>
-              {documento.tipodocumento === 9 ? (
+              {item.tipo === "documento" && data.tipodocumento === 9 ? (
                 <LocalAtmIcon className={styles.reciboicon} />
-              ) : documento.tipodocumento ? (
+              ) : item.tipo === "documento" ? (
                 <CreateIcon className={styles.facturasicon} />
-              ) : documento.typecontact ? (
+              ) : item.tipo === "nota" ? (
                 <TextSnippetIcon className={styles.notasicon} />
               ) : (
                 <NotificationsActiveIcon className={styles.alarmasicon} />
               )}
             </div>
+
             <div className={styles.timelineContent}>
               <h3 className={styles.timelineTitle}>
-                {documento.tipodocumento === 9
+                {item.tipo === "documento" && data.tipodocumento === 9
                   ? "Pago Recibido"
-                  : documento.tipodocumento
+                  : item.tipo === "documento"
                   ? `Documento emitido N° ${
-                      documento.numerodocumento?.trim() || documento.id
+                      data.numerodocumento?.trim() || data.id
                     }`
-                  : documento.typecontact || documento.comunicacion
+                  : item.tipo === "nota"
                   ? "Nota"
-                  : "Alarma"}
+                  : "Evento"}
               </h3>
+
               <p className={styles.timelineText}>
-                {documento.tipodocumento === 9
-                  ? `Monto total pagado: $ ${formatNumber(
-                      documento.montooriginal
-                    )}`
-                  : documento.tipodocumento
-                  ? `Monto del Documento: $ ${formatNumber(
-                      documento.montooriginal
-                    )}`
-                  : documento.typecontact || documento.comunicacion
-                  ? `Nota: ${documento.detail || documento.nota}`
-                  : `Alarma: ${documento.detail || documento.texto}`}
+                {item.tipo === "documento" && data.tipodocumento === 9
+                  ? `Monto total pagado: $ ${formatNumber(data.montooriginal)}`
+                  : item.tipo === "documento"
+                  ? `Monto del Documento: $ ${formatNumber(data.montooriginal)}`
+                  : item.tipo === "nota"
+                  ? `Nota: ${data.detail}`
+                  : ""}
               </p>
             </div>
           </div>
