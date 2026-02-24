@@ -23,6 +23,9 @@ const getListaDeLlamadas = require("./controllers/getListaDeLlamadas.js");
 const getGestionesByGestor = require("./controllers/getGestionesByGestor.js")
 const postNewAvisos = require("./controllers/postNewAvisos.js")
 const sendCuentaCorriente  = require("./controllers/sendCuentaCorriente.js");
+const sendPreSuspension  = require("./controllers/sendPreSuspension.js");
+const sendSuspension  = require("./controllers/sendSuspension.js");
+const sendLegales  = require("./controllers/sendSuspension.js");
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -361,6 +364,45 @@ promoterRouter.post("/sendCuentaCorriente", async (req, res) => {
       
   try {
     const results = await sendCuentaCorriente( numeroCliente, user );
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
+promoterRouter.post("/sendPreSuspension", async (req, res) => {
+  const { user , numeroCliente } = req.body;
+      
+  try {
+    const results = await sendPreSuspension( numeroCliente, user );
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
+promoterRouter.post("/sendSuspension", async (req, res) => {
+  const { user , numeroCliente } = req.body;
+      
+  try {
+    const results = await sendSuspension( numeroCliente, user );
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
+promoterRouter.post("/sendLegales", async (req, res) => {
+  const { user , numeroCliente } = req.body;
+      
+  try {
+    const results = await sendLegales( numeroCliente, user );
     results && results !== "Cliente no encontrado"
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });

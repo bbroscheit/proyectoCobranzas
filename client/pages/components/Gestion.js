@@ -8,9 +8,15 @@ import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox"; 
+import GavelIcon from '@mui/icons-material/Gavel';
+import MailLockIcon from '@mui/icons-material/MailLock';
+import EmailIcon from '@mui/icons-material/Email';
 import AvisosModal from "../modals/AvisosModal";
 import CuentaCorrienteModal from "../modals/CuentaCorrienteModal";
+import EnvioPreSuspensionModal from "../modals/EnvioPreSuspensionModal";
+import EnvioLegalesModal from "../modals/EnvioLegales";
+import EnvioSuspensionModal from "../modals/EnvioSuspensionModal";
 import { postAvisos } from "../api/postAvisos";
 import useUser from "../hooks/useUser";
 
@@ -23,6 +29,11 @@ function Gestion({ clienteId }) {
   const [showAvisosModal, setShowAvisosModal] = useState(false);
   const [showCuentaCorrienteModal, setShowCuentaCorrienteModal] =
     useState(false);
+  const [showEnvioPreSuspensionModal, setShowEnvioPreSuspensionModal] =
+    useState(false);
+  const [showEnvioSuspensionModal, setShowEnvioSuspensionModal] =
+    useState(false);
+  const [showEnvioLegalesModal, setShowEnvioLegalesModal] = useState(false);
   const [nota, setNota] = useState("");
   const [comunicacion, setComunicacion] = useState([]);
   const [emailText, setEmailText] = useState("");
@@ -113,6 +124,19 @@ function Gestion({ clienteId }) {
     setShowCuentaCorrienteModal(true);
   };
 
+  const openEnvioPreSuspensionModal = () => {
+    setShowEnvioPreSuspensionModal(true);
+  };
+
+  const openEnvioSuspensionModal = () => {
+    setShowEnvioSuspensionModal(true);
+  };
+
+  const openEnvioLegalesModal = () => {
+    setShowEnvioLegalesModal(true);
+  };
+
+
   return (
     <div className={styles.timeline}>
       <div className={styles.timelineItem}>
@@ -126,8 +150,20 @@ function Gestion({ clienteId }) {
             <p className={styles.buttonText}>Avisos</p>
           </button>
           <button className={styles.button} onClick={openCuentaCorrienteModal}>
-            <ForwardToInboxIcon className={styles.buttonIcon} />
+            <EmailIcon className={styles.buttonIcon} />
             <p className={styles.buttonText}>Enviar CC</p>
+          </button>
+          <button className={styles.button} onClick={openEnvioPreSuspensionModal}>
+            <ForwardToInboxIcon className={styles.buttonIcon} />
+            <p className={styles.buttonText}>Enviar Pre-Suspensión</p>
+          </button>
+          <button className={styles.button} onClick={openEnvioSuspensionModal}>
+            <MailLockIcon className={styles.buttonIcon} />
+            <p className={styles.buttonText}>Enviar Suspensión</p>
+          </button>
+          <button className={styles.button} onClick={openEnvioLegalesModal}>
+            <GavelIcon className={styles.buttonIcon} />
+            <p className={styles.buttonText}>Enviar Legales</p>
           </button>
         </div>
       </div>
@@ -208,6 +244,26 @@ function Gestion({ clienteId }) {
         setShowModal={setShowCuentaCorrienteModal}
         cliente={cliente}
       />
+
+      <EnvioPreSuspensionModal
+        showModal={showEnvioPreSuspensionModal}
+        setShowModal={setShowEnvioPreSuspensionModal}
+        cliente={cliente}
+      />
+
+      <EnvioSuspensionModal
+        showModal={showEnvioSuspensionModal}
+        setShowModal={setShowEnvioSuspensionModal}
+        cliente={cliente}
+      />
+
+       <EnvioLegalesModal
+        showModal={showEnvioLegalesModal}
+        setShowModal={setShowEnvioLegalesModal}
+        cliente={cliente}
+      />
+        
+        
     </div>
   );
 }
