@@ -25,7 +25,6 @@ function Estadisticas({clienteId}) {
   const [currentPage, setCurrentPage] = useState(1)
   const facturasPerPage = 10
   const [sortCriteria, setSortCriteria] = useState('FechaDocumentoDesc')
-  const { documentosSinRecibos } = useContext(FacturacionContext)
 
   useEffect(() => {
     const cliente = clienteId;
@@ -36,10 +35,14 @@ function Estadisticas({clienteId}) {
           // fetch(`https://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/getAllDocumentsBySalepoint/${userLogin.id}`)
             .then((res) => res.json())
             .then((data) => {
-              setFacturasPorGestor(data);
-              setFacturasCliente(filterAndSortDocuments(data))
-              setTotales(calculaTotales(data));
-            });
+  const soloDocumentos = data
+    .filter(item => item.tipo === "documento")
+    .map(item => item.payload);
+
+  setFacturasPorGestor(soloDocumentos);
+  setFacturasCliente(filterAndSortDocuments(soloDocumentos));
+  setTotales(calculaTotales(soloDocumentos));
+});
           
     fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clientName?userId=${encodeURIComponent(userParse.id)}&clienteId=${encodeURIComponent(cliente)}`)
           .then((res) => res.json())
@@ -47,7 +50,7 @@ function Estadisticas({clienteId}) {
             setNombreCliente(data.nombre)
           });
               
-  }, [documentosSinRecibos, clienteId])
+  }, [clienteId])
 
   const sortFacturas = (documentosSinRecibos, criteria) => {
     switch (criteria) {
@@ -138,7 +141,7 @@ function Estadisticas({clienteId}) {
     return buttons;
   };
 
-  console.log("Totales en Estadisticas:", totales);
+  console.log("Totales en Estadisticas:", facturasPorGestor, totales);
 
   return (
     <div>
