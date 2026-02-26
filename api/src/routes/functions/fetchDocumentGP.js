@@ -52,6 +52,7 @@ const fetchDocumentFromGP = async () => {
           .join(",")}
         ON CONFLICT ("numerodocumento", "clientId")
         DO UPDATE SET
+          "montooriginal" = EXCLUDED."montooriginal",
           "montopendiente" = EXCLUDED."montopendiente",
           "fechadocumento" = EXCLUDED."fechadocumento",
           "updatedAt" = NOW();
