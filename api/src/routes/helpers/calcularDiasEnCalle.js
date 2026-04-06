@@ -10,8 +10,8 @@ const calcularDiasCalle = (documentos) => {
   let ventasMesAnterior = 0;
 
   for (const doc of documentos) {
-    const fechaDoc = new Date(doc.fechadocumento);
-    fechaDoc.setHours(0,0,0,0);
+    const [year, month, day] = doc.fechadocumento.split("-");
+    const fechaDoc = new Date(year, month - 1, day);
 
     
     // Cuentas por cobrar actuales

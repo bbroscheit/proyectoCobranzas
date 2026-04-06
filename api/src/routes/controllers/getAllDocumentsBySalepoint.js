@@ -1,32 +1,50 @@
-const { Usuario, Document, Documenturuguay, Documentchile, Documentecopatagonico } = require("../../bd");
+const {
+  Usuario,
+  Document,
+  Documenturuguay,
+  Documentchile,
+  Documentecopatagonico,
+} = require("../../bd");
 const calcularMontosPorAntiguedad = require("../helpers/calculaMontosPorAntiguedad");
 const calcularDiasEnCalle = require("../helpers/calcularDiasEnCalle");
 const calcularVentasVsCobranzas = require("../helpers/calcularVentasVsCobranzas");
+const filtrarDocumentosValidos = require("../helpers/filtraDocumentos");
+const exportarDocumentosExcel = require("../helpers/exportarDocumentosExcel");
+const exportarDocumentosMes = require("../helpers/exportarDocumentosMes");
 
 const getAllDocumentsBySalepoint = async (gestor) => {
-
   const usuario = await Usuario.findOne({
-    where: { id: gestor, isdelete: false }
+    where: { id: gestor, isdelete: false },
   });
 
   let DocumentoModel;
 
   switch (usuario.sucursal) {
-    case 1: DocumentoModel = Document; break;
-    case 2: DocumentoModel = Documenturuguay; break;
-    case 3: DocumentoModel = Documentchile; break;
-    case 5: DocumentoModel = Documentecopatagonico; break;
-    default: return null;
+    case 1:
+      DocumentoModel = Document;
+      break;
+    case 2:
+      DocumentoModel = Documenturuguay;
+      break;
+    case 3:
+      DocumentoModel = Documentchile;
+      break;
+    case 5:
+      DocumentoModel = Documentecopatagonico;
+      break;
+    default:
+      return null;
   }
 
   const documentos = await DocumentoModel.findAll({
     attributes: [
+      "numerodocumento",
       "tipodocumento",
       "fechadocumento",
       "fechavencimiento",
       "montooriginal",
       "montopendiente",
-    ]
+    ],
   });
 
   const ahora = new Date();
@@ -38,7 +56,30 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     facturasVencidas: { cantidad: 0, total: 0 },
   };
 
-  for (const doc of documentos) {
+  //const documentosFiltrados = filtrarDocumentosValidos(documentos);
+  
+  const documentosFiltrados = documentos.filter((doc) => {
+    const numero = doc.numerodocumento || "";
+    if(doc.tipodocumento === 9) return true; // dejamos los recibos sin filtrar
+    // quitamos NDI y NCI
+    if (numero.startsWith("NDI") || numero.startsWith("NCI")) {
+      return false;
+    }
+
+    // quitamos documentos sin la P (no validados por AFIP)
+    if (!numero.includes("P")) {
+      return false;
+    }
+
+    return true;
+  });
+
+  //exportarDocumentosExcel(documentosFiltrados);
+  //exportarDocumentosMes(documentosFiltrados, "3/2026");
+
+  console.log(`Documentos totales: ${documentos.length}, Documentos filtrados: ${documentosFiltrados.length}`);
+
+  for (const doc of documentosFiltrados) {
     const fechaDocumento = new Date(doc.fechadocumento);
     const fechaVencimiento = new Date(doc.fechavencimiento);
 
@@ -50,11 +91,10 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     }
 
     if ([1, 3, 7, 8].includes(doc.tipodocumento) && doc.montopendiente > 0) {
-
-  const signo = doc.tipodocumento === 8 ? -1 : 1;
+      const signo = doc.tipodocumento === 8 ? -1 : 1;
       if (fechaVencimiento >= ahora) {
         resumen.facturasNoVencidas.cantidad++;
-       resumen.facturasNoVencidas.total += signo * doc.montopendiente;
+        resumen.facturasNoVencidas.total += signo * doc.montopendiente;
       } else {
         resumen.facturasVencidas.cantidad++;
         resumen.facturasVencidas.total += signo * doc.montopendiente;
@@ -62,12 +102,12 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     }
   }
 
-  return{
+  return {
     resumen,
-    antiguedad: calcularMontosPorAntiguedad(documentos),
-    diasCalle: calcularDiasEnCalle(documentos),
-    ventasVsCobranzas: calcularVentasVsCobranzas(documentos)
-  } 
-}
+    antiguedad: calcularMontosPorAntiguedad(documentosFiltrados),
+    diasCalle: calcularDiasEnCalle(documentosFiltrados),
+    ventasVsCobranzas: calcularVentasVsCobranzas(documentosFiltrados),
+  };
+};
 
 module.exports = getAllDocumentsBySalepoint;

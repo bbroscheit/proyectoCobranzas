@@ -72,9 +72,10 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
 
     // Enviamos mail con nodemailer
     const mailOptions = {
-      from: `"${usuario.firstname || "Usuario"}" <${usuario.mail}>`, // usuario que envía
-      to: cliente.email, // destinatario cliente
-      //to: process.env.MAIL_USER,
+      from : "mesadeayuda@basani.com.ar",
+      //from: `"${usuario.firstname || "Usuario"}" <${usuario.mail}>`, // usuario que envía
+      //to: cliente.email, // destinatario cliente
+      to: "bernardo.broscheit@basani.com.ar",
       cc: usuario.mail, // copia al usuario
       subject: "Aviso de Cuenta",
       html: bodyHtml,

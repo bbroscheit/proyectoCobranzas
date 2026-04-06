@@ -11,11 +11,16 @@ const calcularVentasVsCobranzas = (documentos) => {
 
     if (![1,3,7,8].includes(doc.tipodocumento)) continue;
 
-    const fecha = new Date(doc.fechadocumento);
-    fecha.setHours(0,0,0,0);
+    //const fecha = new Date(doc.fechadocumento);
+    const [year, month, day] = doc.fechadocumento.split("-");
+    const fecha = new Date(year, month - 1, day);
+    //fecha.setHours(0,0,0,0);
 
-    const fechaVenc = new Date(doc.fechavencimiento);
-    fechaVenc.setHours(0,0,0,0);
+    // const fechaVenc = new Date(doc.fechavencimiento);
+    // fechaVenc.setHours(0,0,0,0);
+    const [yearVencimiento, monthVencimiento, dayVencimiento] = doc.fechavencimiento.split("-");
+    const fechaVenc = new Date(yearVencimiento, monthVencimiento - 1, dayVencimiento);
+    //fechaVenc.setHours(0,0,0,0);
 
     const signo = doc.tipodocumento === 8 ? -1 : 1;
 
@@ -36,6 +41,7 @@ if (mesKey === claveAnteriores) {
 
   if (doc.montopendiente > 0 && fechaVenc < hoy) {
     meses[mesKey].facturasVencidas += signo * doc.montopendiente;
+    //meses[mesKey].facturasVencidas += doc.montopendiente;
   }
 
 } else {
@@ -43,16 +49,19 @@ if (mesKey === claveAnteriores) {
   // COBRADAS
   if (doc.montopendiente === 0) {
     meses[mesKey].facturasCobradas += signo * doc.montooriginal;
+    //meses[mesKey].facturasCobradas += doc.montooriginal;
   }
 
   // VENCIDAS
   else if (fechaVenc < hoy) {
-    meses[mesKey].facturasVencidas += signo * doc.montopendiente;
+    meses[mesKey].facturasVencidas += signo * doc.montooriginal;
+    //meses[mesKey].facturasVencidas += doc.montooriginal;
   }
 
   // PENDIENTES
   else {
-    meses[mesKey].facturasPendientes += signo * doc.montopendiente;
+    meses[mesKey].facturasPendientes += signo * doc.montooriginal;
+    //meses[mesKey].facturasPendientes += doc.montooriginal;
   }
 }
   }
