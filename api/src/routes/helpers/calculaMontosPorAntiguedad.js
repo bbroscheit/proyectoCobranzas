@@ -20,8 +20,10 @@ const calcularMontosPorAntiguedad = (documentos) => {
     if (![1, 3, 7, 8].includes(doc.tipodocumento)) continue;
     if (doc.montopendiente <= 0) continue;
 
-    const fechaVenc = new Date(doc.fechavencimiento);
-    fechaVenc.setHours(0, 0, 0, 0);
+    // const fechaVenc = new Date(doc.fechavencimiento);
+    // fechaVenc.setHours(0, 0, 0, 0);
+    const [year, month, day] = doc.fechavencimiento.split("-");
+    const fechaVenc = new Date(year, month - 1, day);
 
     const dias = Math.floor(
       (hoy - fechaVenc) / (1000 * 60 * 60 * 24)

@@ -38,23 +38,6 @@ const getAllDocuments = async () => {
       0,
     ); // fin mes actual
 
-    // const query = `
-    //   SELECT
-    //     RM.DOCNUMBR AS NumeroDocumento,
-    //     RM.DOCDATE AS FechaDocumento,
-    //     RM.DUEDATE AS FechaVencimiento,
-    //     RM.CUSTNMBR AS NumeroCliente,
-    //     RM.CURTRXAM AS MontoPendiente,
-    //     RM.ORTRXAMT AS MontoOriginal,
-    //     RM.RMDTYPAL AS TipoDocumento
-    //   FROM
-    //     RM20101 AS RM
-    //   WHERE
-    //     RM.RMDTYPAL IN (1, 3, 7, 8, 9)
-    //     AND RM.DOCDATE >= '${formatDateSQL(inicioPeriodo)}'
-    //     AND RM.DOCDATE <= '${formatDateSQL(finPeriodo)}'
-    // `;
-
     const query = `
   SELECT *
   FROM (

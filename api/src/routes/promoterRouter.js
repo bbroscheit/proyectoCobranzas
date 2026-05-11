@@ -26,6 +26,7 @@ const sendCuentaCorriente  = require("./controllers/sendCuentaCorriente.js");
 const sendPreSuspension  = require("./controllers/sendPreSuspension.js");
 const sendSuspension  = require("./controllers/sendSuspension.js");
 const sendLegales  = require("./controllers/sendSuspension.js");
+const getStatusClient = require("./controllers/getStatusClient.js");
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -408,6 +409,20 @@ promoterRouter.post("/sendLegales", async (req, res) => {
       : res.status(400).json({ state: "failure" });
   } catch (e) {
     console.log(e.message);
+  }
+});
+
+promoterRouter.get("/changeStatusClient/:clientId", async (req, res) => {
+  const { clientId } = 28343;
+
+  try {
+    let results = await getStatusClient( clientId );
+    //console.log("soy los clientes", results)
+    results
+      ? res.status(200).json(results)
+      : res.status(400).json(results);
+  } catch (e) {
+    console.log("error en ruta getStatusClient", e.message);
   }
 });
 
