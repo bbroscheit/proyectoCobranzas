@@ -48,5 +48,12 @@ module.exports = ( sequelize ) => {
             allowNull: false
         }
             
+    },{
+    indexes: [
+      {
+        unique: true,
+        fields: ["numerodocumento", "clientId"], // 🔹 Combinación única
+      },
+    ],
     })
 }

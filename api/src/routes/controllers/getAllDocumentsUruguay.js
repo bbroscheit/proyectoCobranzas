@@ -1,12 +1,12 @@
 require("dotenv").config();
 const sql = require("mssql");
 
-const { GP_USER, GP_PASSWORD, GP_SERVER_URUGUAY, GP_DATABASE_URUGUAY } = process.env;
+const { GP_USER, GP_PASSWORD, GP_SERVER, GP_DATABASE_URUGUAY } = process.env;
 
 const config = {
     user: GP_USER,
     password:  GP_PASSWORD,
-    server: GP_SERVER_URUGUAY,
+    server: GP_SERVER,
     database: GP_DATABASE_URUGUAY,
     options: {
         trustedConnection: true,

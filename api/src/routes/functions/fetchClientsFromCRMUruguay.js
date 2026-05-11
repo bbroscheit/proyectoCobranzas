@@ -1,16 +1,16 @@
 require("dotenv").config();
 const sql = require("mssql");
-const { Clientecopatagonico } = require('../../bd');
+const { Clienturuguay } = require('../../bd');
 
-const { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_ECOPATAGONICO } = process.env;
-
+const { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_URUGUAY } = process.env;
+console.log("Configuración CRM Uruguay:", { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_URUGUAY });
 
 // Configuración de la base de datos CRM
 const crmConfig = {
   user: CRM_USER,
   password: CRM_PASSWORD,
   server: CRM_SERVER,
-  database: CRM_DATABASE_ECOPATAGONICO,
+  database: CRM_DATABASE_URUGUAY,
   options: {
     encrypt: true,
     enableArithAbort: true,
@@ -19,21 +19,22 @@ const crmConfig = {
 };
 
 // Función para obtener todos los clientes de la base de datos CRM
-const fetchClientsFromCRMEcoPatagonico = async () => {
+const fetchClientsFromCRMUruguay = async () => {
   try {
     const pool = await sql.connect(crmConfig);
     const result = await pool
       .request()
       .query(
-        "SELECT new_gestordecobranzasidName AS gestor , new_1contactocobridName AS contacto1 , new_apellidonombrerazonsocial AS razonsocial, new_codigodecliente AS codigocliente, new_facturacionelectronica AS email FROM Account"
+        "SELECT new_gestordecobranzasidName AS gestor , new_1contactocobridName AS contacto1 , new_apellidonombrerazonsocial AS razonsocial, new_codigodecliente AS codigocliente, new_facturacionelectronica AS email FROM Account WHERE statecode = 0"
       ); 
     //console.log("Clientes obtenidos:", result.recordset);
 
-    const existingClients = await Clientecopatagonico.findAll({
+    const existingClients = await Clienturuguay.findAll({
       where: {
         id: result.recordset.map(client => client.codigocliente)
       }
     });
+
 
     const existingMap = new Map()
     existingClients.forEach(c => existingMap.set(c.id , c ))
@@ -67,14 +68,14 @@ const fetchClientsFromCRMEcoPatagonico = async () => {
     }
 
     if(toCreate.length > 0){
-  await Clientecopatagonico.bulkCreate(toCreate, {
+  await Clienturuguay.bulkCreate(toCreate, {
     updateOnDuplicate: ["name", "gestor", "contacto1", "email"]
   });
   console.log(`Clientes creados/actualizados: ${toCreate.length}`);
 }
 
     for(const update of toUpdate){
-      await Clientecopatagonico.update(
+      await Clienturuguay.update(
         { email: update.email, gestor: update.gestor },
         { where: { id: update.id } }
       );
@@ -87,4 +88,4 @@ const fetchClientsFromCRMEcoPatagonico = async () => {
   }
 };
 
-module.exports = fetchClientsFromCRMEcoPatagonico;
+module.exports = fetchClientsFromCRMUruguay;

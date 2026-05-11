@@ -1,5 +1,5 @@
 
-const { Document, sequelize } = require('../../bd.js');
+const { Documentecopatagonico, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcoPatagonicos.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcoPatagonicos.js');
@@ -52,13 +52,19 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
         INSERT INTO "Documentecopatagonico" 
           ("clientId", "numerocliente", "numerodocumento", "tipodocumento", "fechadocumento", 
            "montooriginal", "montopendiente", "fechavencimiento", "createdAt", "updatedAt")
-        VALUES ${docsParaGuardar.map((_, i) => 
-          `(:clientId${i}, :numerocliente${i}, :numerodocumento${i}, :tipodocumento${i}, :fechadocumento${i}, 
+        VALUES ${docsParaGuardar
+          .map(
+            (_, i) =>
+              `(:clientId${i}, :numerocliente${i}, :numerodocumento${i}, :tipodocumento${i}, :fechadocumento${i}, 
             :montooriginal${i}, :montopendiente${i}, :fechavencimiento${i}, NOW(), NOW())`
-        ).join(',')}
-        ON CONFLICT ("numerodocumento", "clientId") 
-        DO UPDATE SET "montopendiente" = EXCLUDED."montopendiente",
-                      "updatedAt" = NOW();
+          )
+          .join(",")}
+        ON CONFLICT ("numerodocumento", "clientId")
+        DO UPDATE SET
+          "montooriginal" = EXCLUDED."montooriginal",
+          "montopendiente" = EXCLUDED."montopendiente",
+          "fechadocumento" = EXCLUDED."fechadocumento",
+          "updatedAt" = NOW();
       `;
 
       // Generamos un objeto de reemplazo con los valores
@@ -83,7 +89,7 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {
       const cutoff = new Date(hoy.getFullYear() - 2, 0, 1);
-      const deleted = await Document.destroy({
+      const deleted = await Documentecopatagonico.destroy({
         where: { fecha: { [Op.lt]: cutoff } },
         transaction: t
       });

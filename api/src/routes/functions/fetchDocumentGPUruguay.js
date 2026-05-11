@@ -1,14 +1,14 @@
 
-const { Document, sequelize } = require("../../bd.js");
-const { Op } = require("sequelize");
-const getAllClients = require("../controllers/getAllClients.js");
-const getAllDocuments = require("../controllers/getAllDocuments.js");
+const { Documenturuguay, sequelize } = require('../../bd.js');
+const { Op } = require('sequelize');
+const getAllClients = require('../controllers/getAllClientsUruguay.js');
+const getAllDocuments = require('../controllers/getAllDocumentsUruguay.js');
 
-const fetchDocumentFromGP = async () => {
+const fetchDocumentFromGPUruguay =  async () => {
   const t = await sequelize.transaction();
 
   try {
-    console.log("Sincronizando documentos GP → Postgres", new Date());
+    console.log('Sincronizando documentos GP → Postgres', new Date());
 
     // 1. Obtener documentos de GP
     const docs = await getAllDocuments();
@@ -16,32 +16,41 @@ const fetchDocumentFromGP = async () => {
     //console.log('Muestra de documento obtenido:', docs[0]);
 
     // 2. Obtener clientes de la BD
-    const clientes = await getAllClients();
+    const clientes = await getAllClients()
     console.log(`Clientes obtenidos: ${clientes.length}`);
     //console.log('Muestra de cliente obtenido:', clientes[0]);
-
-    const mapClientes = new Set(clientes.map((c) => String(c.id).trim()));
-
+    
+    const mapClientes = new Set(clientes.map(c => String(c.id).trim()));
+        
     // 3. Mapear documentos a formato de inserción
     const docsParaGuardar = docs
-      .filter((d) => mapClientes.has(String(d.NumeroCliente).trim()))
-      .map((d) => ({
+      .filter(d => mapClientes.has(String(d.NumeroCliente).trim()))
+      .map(d => ({
         clientId: parseInt(String(d.NumeroCliente).trim(), 10),
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento.trim(),
         tipodocumento: parseInt(d.TipoDocumento),
-        fechadocumento: d.FechaDocumento.toISOString().slice(0, 10),
+        fechadocumento: d.FechaDocumento,
         montooriginal: parseFloat(d.MontoOriginal),
         montopendiente: parseFloat(d.MontoPendiente),
-        fechavencimiento: d.FechaVencimiento.toISOString().slice(0, 10),
-      }));
+        fechavencimiento: d.FechaVencimiento,
+       })); 
 
     console.log(`Documentos a guardar: ${docsParaGuardar.length}`);
 
+    // //4. Guardar / Actualizar en bloque
+    // if (docsParaGuardar.length > 0) {
+    //   await Document.bulkCreate(docsParaGuardar, {
+    //     updateOnDuplicate: [
+    //       'montopendiente'],
+    //     transaction: t
+    //   })
+    // } 
     if (docsParaGuardar.length > 0) {
-      // Usamos ON CONFLICT para actualizar solo "montopendiente" si ya existe
-      const query = `
-        INSERT INTO "Document" 
+      // 🚀 Usamos ON CONFLICT para actualizar solo "montopendiente" si ya existe
+    
+        const query = `
+        INSERT INTO "documenturuguays" 
           ("clientId", "numerocliente", "numerodocumento", "tipodocumento", "fechadocumento", 
            "montooriginal", "montopendiente", "fechavencimiento", "createdAt", "updatedAt")
         VALUES ${docsParaGuardar
@@ -81,19 +90,19 @@ const fetchDocumentFromGP = async () => {
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {
       const cutoff = new Date(hoy.getFullYear() - 2, 0, 1);
-      const deleted = await Document.destroy({
+      const deleted = await Documenturuguay.destroy({
         where: { fecha: { [Op.lt]: cutoff } },
-        transaction: t,
+        transaction: t
       });
       console.log(`Registros eliminados por limpieza anual: ${deleted}`);
     }
 
     await t.commit();
-    console.log("Sincronización completada ✅");
+    console.log('Sincronización completada ✅ Uruguay');
   } catch (err) {
     await t.rollback();
-    console.error("Error en sincronización GP:", err);
+    console.error('Error en sincronización GP Uruguay:', err);
   }
 };
 
-module.exports = fetchDocumentFromGP;
+module.exports = fetchDocumentFromGPUruguay 
