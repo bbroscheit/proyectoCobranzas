@@ -21,8 +21,8 @@ const runSyncProcess = async () => {
   await creacionLista();
 };
 
-// Se ejecuta todos los días a las 12:00 pero deberia de ser a las 3 de la mañana, se cambió para probarlo
-cron.schedule("30 10 * * *", async () => {
+// Se ejecuta todos los días a las 5 de la mañana
+cron.schedule("00 05 * * *", async () => {
   await runExclusive("SYNC_MASTER", runSyncProcess);
 });
 

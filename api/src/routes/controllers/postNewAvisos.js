@@ -59,11 +59,11 @@ const postNewAvisos = async (
         DocumentoModel = Documentchile;
         includeAlias = "documentochile";
         break;
-      // case 4:
-      //   ClienteModel = Clientrosario;
-      //   DocumentoModel = Documentrosario;
-      //   includeAlias = "documentorosario";
-      //   break;
+      case 4:
+        ClienteModel = Clientrosario;
+        DocumentoModel = Documentrosario;
+        includeAlias = "documentorosario";
+        break;
       case 5:
         ClienteModel = Clientecopatagonico;
         DocumentoModel = Documentecopatagonico;
@@ -101,7 +101,7 @@ const postNewAvisos = async (
     await reprogramacion(cliente, reprogram, usuario.id);
     
     //cambiamos el estado del cliente a llamado:true
-    //await marcarLLamadoHoy(cliente.id, usuario.id);
+    await marcarLLamadoHoy(cliente.id, usuario.id);
 
 
     return nuevaNota;
