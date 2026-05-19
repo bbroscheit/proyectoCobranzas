@@ -75,14 +75,14 @@ async function seedUsuarios() {
       //   mail:"bernardo.broscheit@basani.com.ar",
       //   sucursal: 1
       // },
-      {
-        username: "Aagazarian",
-        password: "123",
-        firstname: "Andrea",
-        lastname: "Agazarian",
-        mail:"bernardo.broscheit@basani.com.ar",
-        sucursal: 2
-      }
+      // {
+      //   username: "Aagazarian",
+      //   password: "123",
+      //   firstname: "Andrea",
+      //   lastname: "Agazarian",
+      //   mail:"bernardo.broscheit@basani.com.ar",
+      //   sucursal: 2
+      // }
      
     ];
 

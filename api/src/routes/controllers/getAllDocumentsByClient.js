@@ -65,12 +65,10 @@ const getAllDocumentsByClient = async (userId, clientId) => {
       payload: doc
     }));
 
-    const notes = await Note.findAll(
-      {
-        model: Note,
-        as: 'notes'
-      }
-    );
+    const notes = await Note.findAll({
+      where: { client: clientId },
+      as: "notes"
+    });
 
     const notasTimeline = notes.map(note => ({
       tipo: "nota",
