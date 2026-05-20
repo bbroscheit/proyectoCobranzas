@@ -1,46 +1,61 @@
 import React, { useState, useEffect, useContext } from "react";
+import Router from "next/router";
+import Swal from "sweetalert2";
 import styles from "@/pages/modules/agendadellamadas.module.css";
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CardAgenda from "./components/CardAgenda";
-import { FacturacionContext } from "../pages/context/FacturacionContext"
+import AvisosPromesa from "./modals/AvisosPromesa";
+import { FacturacionContext } from "../pages/context/FacturacionContext";
 import useUser from "./hooks/useUser";
+import { postPromesa } from "./api/postPromesa";
 
 export default function AgendaDeLlamadas() {
   const [user, setUser] = useUser("");
   const [lista, setLista] = useState(null); // Lista de llamadas
   const [cliente, setCliente] = useState(null);
+  const [showAvisosModal, setShowAvisosModal] = useState(false);
+  const [resumen, setResumen] = useState(false);
+  const [reprogram, setReprogram] = useState(false);
+  const [nota, setNota] = useState("");
+  const [clienteId, setClienteId] = useState(null);
   const [filteredClientes, setFilteredClientes] = useState(null); // Clientes filtrados
   const [searchQuery, setSearchQuery] = useState(""); // Texto del input de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const recordsPerPage = 20; // Número de registros por página
 
-  const { totalesPorCliente, totalesVencidosPorCliente } = useContext(FacturacionContext);
+  const { totalesPorCliente, totalesVencidosPorCliente } =
+    useContext(FacturacionContext);
 
   useEffect(() => {
-  const fetchLista = async () => {
-    try {
-      const res = await fetch(`http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/lista-llamadas?usuarioId=${user.id}`); 
-      if (!res.ok) throw new Error("Error al traer lista");
+    const fetchLista = async () => {
+      try {
+        const res = await fetch(
+          `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/lista-llamadas?usuarioId=${user.id}`,
+        );
+        if (!res.ok) throw new Error("Error al traer lista");
 
-      const data = await res.json();
-      console.log("✅ Lista de llamadas:", data);
+        const data = await res.json();
+        //console.log("✅ Lista de llamadas:", data);
 
-      if (data?.clientes) {
-        
-        const clientesSinLlamar = data.clientes.filter(c => !c.llamado);
+        if (data?.clientes) {
+          const clientesSinLlamar = data.clientes.filter((c) => !c.llamado);
 
-        setCliente(clientesSinLlamar);
-        setFilteredClientes(clientesSinLlamar);
-        setLista({ ...data, clientes: clientesSinLlamar });
+          setCliente(clientesSinLlamar);
+          setFilteredClientes(clientesSinLlamar);
+          setLista({ ...data, clientes: clientesSinLlamar });
+        }
+      } catch (error) {
+        console.error("❌ Error cargando lista de llamadas:", error);
       }
-    } catch (error) {
-      console.error("❌ Error cargando lista de llamadas:", error);
-    }
-  };
+    };
 
-  fetchLista();
-}, [user]);
+    fetchLista();
+  }, [user]);
+
+  const openAvisosModal = () => {
+    setShowAvisosModal(true);
+  };
 
   const handleSearchChange = (e) => {
     const query = e.target.value.toLowerCase();
@@ -62,15 +77,13 @@ export default function AgendaDeLlamadas() {
     const sortOption = e.target.value;
 
     if (filteredClientes) {
-      
       let sortedClientes = [...filteredClientes];
 
       switch (sortOption) {
         case "No vencido primero":
           sortedClientes.sort(
             (a, b) =>
-              (totalesPorCliente[b.id] || 0) -
-              (totalesPorCliente[a.id] || 0)
+              (totalesPorCliente[b.id] || 0) - (totalesPorCliente[a.id] || 0),
           );
           break;
 
@@ -78,17 +91,17 @@ export default function AgendaDeLlamadas() {
           sortedClientes.sort(
             (a, b) =>
               (totalesVencidosPorCliente[b.id] || 0) -
-              (totalesVencidosPorCliente[a.id] || 0)
+              (totalesVencidosPorCliente[a.id] || 0),
           );
           break;
 
         case "Deuda total":
           sortedClientes.sort(
             (a, b) =>
-              ((totalesPorCliente[b.id] || 0) +
-                (totalesVencidosPorCliente[b.id] || 0)) -
+              (totalesPorCliente[b.id] || 0) +
+              (totalesVencidosPorCliente[b.id] || 0) -
               ((totalesPorCliente[a.id] || 0) +
-                (totalesVencidosPorCliente[a.id] || 0))
+                (totalesVencidosPorCliente[a.id] || 0)),
           );
           break;
 
@@ -131,13 +144,13 @@ export default function AgendaDeLlamadas() {
           className={styles.pageButton}
         >
           1
-        </button>
+        </button>,
       );
       if (rangeStart > 2) {
         buttons.push(
           <span key="start-dots" className={styles.ellipsis}>
             ...
-          </span>
+          </span>,
         );
       }
     }
@@ -152,7 +165,7 @@ export default function AgendaDeLlamadas() {
           }`}
         >
           {i}
-        </button>
+        </button>,
       );
     }
 
@@ -161,7 +174,7 @@ export default function AgendaDeLlamadas() {
         buttons.push(
           <span key="end-dots" className={styles.ellipsis}>
             ...
-          </span>
+          </span>,
         );
       }
       buttons.push(
@@ -171,11 +184,43 @@ export default function AgendaDeLlamadas() {
           className={styles.pageButton}
         >
           {totalPages}
-        </button>
+        </button>,
       );
     }
 
     return buttons;
+  };
+
+  const handleAvisosSubmit = ({
+    clienteId,
+    nota,
+    reprogram,
+  }) => {
+    const avisosData = {
+      numeroCliente: clienteId,
+      nota,
+      reprogram,
+      user: user.id,
+    };
+
+    postPromesa(avisosData)
+      .then((res) => {
+        if (res.state === "success") {
+          Swal.fire({
+            icon: "success",
+            title: "Tu aviso fue creado con éxito!",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+        setTimeout(() => {
+          Router.push("/AgendaDeLlamadas");
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Error al enviar el formulario:", error);
+      });
+    setShowAvisosModal(false);
   };
 
   //console.log("Clientes para agenda de llamadas:", cliente);
@@ -187,11 +232,12 @@ export default function AgendaDeLlamadas() {
       </div>
       <div className={styles.container}>
         <div>
-          {
-            user ? <h1 className={styles.title}>{`Hola ${user.firstname}`}</h1> 
-            : <h1 className={styles.title}>Hola Invitado</h1>
-          }
-          
+          {user ? (
+            <h1 className={styles.title}>{`Hola ${user.firstname}`}</h1>
+          ) : (
+            <h1 className={styles.title}>Hola Invitado</h1>
+          )}
+
           <p className={styles.subtitle}>
             Revisa el estado de tu cartera a continuación
           </p>
@@ -200,7 +246,7 @@ export default function AgendaDeLlamadas() {
           <div className={styles.position}>Ejecutivo</div>
         </div> */}
         <div className={styles.positionContainer2}>
-        <input
+          <input
             type="search"
             placeholder="Ingresa el N° de cliente o nombre"
             className={styles.positionFinder}
@@ -218,17 +264,23 @@ export default function AgendaDeLlamadas() {
             <option>Deuda total</option>
             <option>Nombre</option>
           </select>
+          <button className={styles.positionButton} onClick={openAvisosModal}>
+            Promesa de pago
+          </button>
         </div>
         {currentRecords && currentRecords.length > 0 ? (
-          currentRecords.map((e, index) => <CardAgenda  key={index} 
-                                                        numCliente={e.id} 
-                                                        clientes={e.name} 
-                                                        cuit={e.cuit} 
-                                                        contacto={e.contacto} 
-                                                        deudaAVencer={e.deudaNoVencida}
-                                                        deudaVencida={e.deudaVencida}
-                                                        deudaTotal={e.deudaTotal}
-                                                        /> )
+          currentRecords.map((e, index) => (
+            <CardAgenda
+              key={index}
+              numCliente={e.id}
+              clientes={e.name}
+              cuit={e.cuit}
+              contacto={e.contacto}
+              deudaAVencer={e.deudaNoVencida}
+              deudaVencida={e.deudaVencida}
+              deudaTotal={e.deudaTotal}
+            />
+          ))
         ) : (
           <p>No hay registros para mostrar</p>
         )}
@@ -250,6 +302,20 @@ export default function AgendaDeLlamadas() {
           </button>
         </div>
       </div>
+
+      <AvisosPromesa
+        showModal={showAvisosModal}
+        setShowModal={setShowAvisosModal}
+        resumen={resumen}
+        setResumen={setResumen}
+        clienteId={clienteId}
+        setClienteId={setClienteId}
+        nota={nota}
+        setNota={setNota}
+        reprogram={reprogram}
+        setReprogram={setReprogram}
+        handleSubmit={handleAvisosSubmit}
+      />
     </>
   );
 }

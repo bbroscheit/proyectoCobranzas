@@ -67,7 +67,8 @@ const getAllDocumentsByClient = async (userId, clientId) => {
 
     const notes = await Note.findAll({
       where: { client: clientId },
-      as: "notes"
+      sucursal: usuario.sucursal
+     
     });
 
     const notasTimeline = notes.map(note => ({

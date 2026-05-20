@@ -12,20 +12,16 @@ const {
 } = require("../../bd");
 
 const reprogramacion = require("../functions/reprogramacion");
-const sendAvisoEmail = require("../functions/sendEmailAvisos");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 
-const postNewAvisos = async (
-  nota,
-  comunicacion,
-  emailText,
-  cuentaCorriente,
-  reprogram,
+const postNewPromesa = async (
   numeroCliente,
+  nota,
+  reprogram,
   user
 ) => {
 
-  console.log("📝 nota :" , nota);
+  //console.log("📝 nota :" , nota);
   try {
     // No crear si nota es null/undefined/empty
     if (!nota || String(nota).trim() === "") {
@@ -86,17 +82,12 @@ const postNewAvisos = async (
     // Crea la nota asociada al cliente (   )
     const nuevaNota = await Note.create({
       detail: String(nota),
-      typecontact: comunicacion || "correo electronico",
+      typecontact: "Promesa de Pago",
       user: usuario.id,
       sucursal: usuario.sucursal,
       client: cliente.id,
-      // clientId: cliente.id,
+    //   clientId: cliente.id,
     });
-
-    // Envia email si EmailText tiene informacion
-     if (emailText && emailText.trim() !== "") {
-       await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
-     }
 
     await reprogramacion(cliente, reprogram, usuario.id);
     
@@ -106,9 +97,9 @@ const postNewAvisos = async (
 
     return nuevaNota;
   } catch (error) {
-    console.error("❌ Error en postNewAvisos:", error);
+    console.error("❌ Error en postNewPromesa:", error);
     throw error;
   }
 };
 
-module.exports = postNewAvisos;
+module.exports = postNewPromesa;

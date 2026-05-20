@@ -17,6 +17,7 @@ const getAllNotes = require("./controllers/getAllNotes.js");
 const getAllNotesInMonth = require("./controllers/getAllNotesInMonth.js");
 const getAllAlarmsInMonth = require("./controllers/getAllAlarmsInMonth.js");
 const postAlarm = require("./controllers/postAlarm.js");
+const postNewPromesa = require("./controllers/postNewPromesa.js");
 const postNote = require("./controllers/postNote.js");
 const loginUser = require("./controllers/loginUser.js");
 const getListaDeLlamadas = require("./controllers/getListaDeLlamadas.js");
@@ -27,6 +28,7 @@ const sendPreSuspension  = require("./controllers/sendPreSuspension.js");
 const sendSuspension  = require("./controllers/sendSuspension.js");
 const sendLegales  = require("./controllers/sendSuspension.js");
 const getStatusClient = require("./controllers/getStatusClient.js");
+const getAllClientsBySucursal = require("./controllers/getAllClientsBySucursal.js");
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -91,6 +93,25 @@ promoterRouter.get("/allClients", async (req, res) => {
       : res.status(400).json({ state: "failure" });
   } catch (e) {
     console.log("error en ruta allDocuments", e.message);
+  }
+});
+
+promoterRouter.get("/getAllClientBySucursal", async (req, res) => {
+  const { usuarioId } = req.query;
+  console.log("usuarioId recibido en ruta getAllClientBySucursal:", usuarioId);
+
+   if (!usuarioId) {
+    return res.status(400).json({ error: "Falta usuarioId" });
+  }
+
+  try {
+    let results = await getAllClientsBySucursal(usuarioId);
+    //console.log("soy los clientes", results)
+    results
+      ? res.status(200).json(results)
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log("error en ruta getAllClientBySucursal", e.message);
   }
 });
 
@@ -341,6 +362,31 @@ promoterRouter.post("/newAvisos", async (req, res) => {
   } catch (error) {
     console.log("Error en /newAvisos : ", error);
     res.status(500).json({ error: "Error al crear la nota" });
+  }
+});
+
+promoterRouter.post("/newPromesa", async (req, res) => {
+  const {
+    numeroCliente,
+    nota,
+    reprogram,
+    user,
+  } = req.body;
+  
+  try {
+    let results = await postNewPromesa(
+      numeroCliente,
+      nota,
+      reprogram,
+      user
+    )
+    
+    results && results !== "Cliente no encontrado"
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (error) {
+    console.log("Error en /newPromesa : ", error);
+    res.status(500).json({ error: "Error al crear la promesa " });
   }
 });
 

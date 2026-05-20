@@ -67,3 +67,29 @@
   .button:hover {
     background-color: #0056b3;
   }
+
+  /* ---------- Modal AvisosPromesa.js ------------ */
+
+  .searchInputPromesa {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .clientesList {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  .clientesListItem {
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  } 
