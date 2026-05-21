@@ -82,26 +82,19 @@ export default function AgendaDeLlamadas() {
       switch (sortOption) {
         case "No vencido primero":
           sortedClientes.sort(
-            (a, b) =>
-              (totalesPorCliente[b.id] || 0) - (totalesPorCliente[a.id] || 0),
+              (a, b) => (b.deudaNoVencida || 0) - (a.deudaNoVencida || 0)
           );
           break;
 
         case "Vencido primero":
           sortedClientes.sort(
-            (a, b) =>
-              (totalesVencidosPorCliente[b.id] || 0) -
-              (totalesVencidosPorCliente[a.id] || 0),
+            (a, b) => (b.deudaVencida || 0) - (a.deudaVencida || 0)
           );
           break;
 
         case "Deuda total":
           sortedClientes.sort(
-            (a, b) =>
-              (totalesPorCliente[b.id] || 0) +
-              (totalesVencidosPorCliente[b.id] || 0) -
-              ((totalesPorCliente[a.id] || 0) +
-                (totalesVencidosPorCliente[a.id] || 0)),
+            (a, b) => (b.deudaTotal || 0) - (a.deudaTotal || 0)
           );
           break;
 
@@ -223,7 +216,7 @@ export default function AgendaDeLlamadas() {
     setShowAvisosModal(false);
   };
 
-  //console.log("Clientes para agenda de llamadas:", cliente);
+  console.log("Clientes para agenda de llamadas:", cliente);
 
   return (
     <>
