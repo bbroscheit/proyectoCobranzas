@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import styles from "../modules/detalle.module.css";
 import { useRouter } from "next/router";
 import { VscGraph } from "react-icons/vsc";
 import { ImParagraphJustify } from "react-icons/im";
-import { FaRegWindowRestore } from "react-icons/fa";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { IoSettingsOutline } from "react-icons/io5";
 import Estadisticas from "../components/Estadisticas";
-import Avisos from "../components/Avisos";
 import Gestion from "../components/Gestion";
 
 export default function Detalle() {
   const [flag, setFlag] = useState(1);
   const router = useRouter();
   const { id } = router.query;
+  const { nombre } = router.query;
 
   function handleClick(a) {
     if (a >= 1 && a <= 5) {
@@ -36,7 +33,7 @@ export default function Detalle() {
   return (
     <>
       <div className={styles.sectorContainer}>
-        <p className={styles.sectionTitle}>Cliente N° {id}</p>
+        <p className={styles.sectionTitle}>{`Cliente N° ${id} - ${nombre} `}</p>
       </div>
       <div className={styles.miniNavbar}>
         {menuItems.map((item) => (
