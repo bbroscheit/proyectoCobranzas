@@ -62,6 +62,8 @@ function Estadisticas({ clienteId }) {
       });
   }, [clienteId]);
 
+  console.log("Facturas por gestor en Estadisticas:", clienteId);
+
   const sortFacturas = (documentosSinRecibos, criteria) => {
     switch (criteria) {
       case "MontoAsc":
@@ -164,7 +166,7 @@ function Estadisticas({ clienteId }) {
     return buttons;
   };
 
-  console.log("Totales en Estadisticas:", facturasPorGestor, totales);
+  //console.log("Totales en Estadisticas:", facturasPorGestor, totales);
 
   return (
     <div>

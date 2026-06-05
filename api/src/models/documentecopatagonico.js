@@ -50,7 +50,7 @@ module.exports = ( sequelize ) => {
         }
             
     },{
-        tableName: "Documentecopatagonico",
+        
     indexes: [
       {
         unique: true,

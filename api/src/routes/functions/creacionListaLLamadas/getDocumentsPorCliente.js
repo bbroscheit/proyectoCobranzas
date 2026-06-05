@@ -1,4 +1,4 @@
-const { Document, Documenturuguay, Documentchile, Documentecopatagonico } = require("../../../bd");
+const { Document, Documentrosario, Documenturuguay, Documentchile, Documentecopatagonico, Documentecobahia, Documentecoportatiles } = require("../../../bd");
 const pMap = require("p-map");
 const { Sequelize } = require("sequelize");
 
@@ -17,12 +17,18 @@ const getDocumentosPorClientes = async (gestorData) => {
       case 3:
         documentosModel = Documentchile;
         break;
-      // case 4:
-      //   documentosModel = Documentrosario;
-      //   break;
+      case 4:
+        documentosModel = Documentrosario;
+        break;
       case 5:
         documentosModel = Documentecopatagonico;
         break;
+        case 6:
+          documentosModel = Documentecobahia;
+          break;
+            case 7:
+              documentosModel = Documentecoportatiles;
+              break;
       default:
         console.error(` Sucursal inválida: ${gestorData.sucursal}`);
         return {

@@ -1,9 +1,15 @@
 require("dotenv").config();
 const sql = require("mssql");
-const { Clienturuguay } = require('../../bd');
+const { Clienturuguay } = require("../../bd");
 
-const { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_URUGUAY } = process.env;
-console.log("Configuración CRM Uruguay:", { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_URUGUAY });
+const { CRM_USER, CRM_PASSWORD, CRM_SERVER, CRM_DATABASE_URUGUAY } =
+  process.env;
+// console.log("Configuración CRM Uruguay:", {
+//   CRM_USER,
+//   CRM_PASSWORD,
+//   CRM_SERVER,
+//   CRM_DATABASE_URUGUAY,
+// });
 
 // Configuración de la base de datos CRM
 const crmConfig = {
@@ -25,63 +31,62 @@ const fetchClientsFromCRMUruguay = async () => {
     const result = await pool
       .request()
       .query(
-        "SELECT new_gestordecobranzasidName AS gestor , new_1contactocobridName AS contacto1 , new_apellidonombrerazonsocial AS razonsocial, new_codigodecliente AS codigocliente, new_facturacionelectronica AS email FROM Account WHERE statecode = 0"
-      ); 
+        "SELECT new_gestordecobranzasidName AS gestor , new_1contactocobridName AS contacto1 , new_apellidonombrerazonsocial AS razonsocial, new_codigodecliente AS codigocliente, new_facturacionelectronica AS email FROM Account WHERE statecode = 0",
+      );
     //console.log("Clientes obtenidos:", result.recordset);
 
     const existingClients = await Clienturuguay.findAll({
       where: {
-        id: result.recordset.map(client => client.codigocliente)
-      }
+        id: result.recordset.map((client) => client.codigocliente),
+      },
     });
 
+    const existingMap = new Map();
+    existingClients.forEach((c) => existingMap.set(c.id, c));
 
-    const existingMap = new Map()
-    existingClients.forEach(c => existingMap.set(c.id , c ))
-
-    let toCreate = []
-    let toUpdate = []
+    let toCreate = [];
+    let toUpdate = [];
 
     for (const client of result.recordset) {
       const clientId = String(client.codigocliente).trim();
       const existing = existingMap.get(clientId);
-      if(!existing){
+      if (!existing) {
         toCreate.push({
           id: client.codigocliente,
           name: client.razonsocial || "Sin asignar",
           gestor: client.gestor || "Sin asignar",
           contacto1: client.contacto1 || "Sin asignar",
-          email: client.email || "Sin asignar"
-        })
+          email: client.email || "Sin asignar",
+        });
       } else {
-        if(
+        if (
           existing.email !== (client.email || "Sin asignar") ||
-          existing.gestor !== (client.gestor || "Sin asignar") 
-        ){
+          existing.gestor !== (client.gestor || "Sin asignar")
+        ) {
           toUpdate.push({
             id: client.codigocliente,
             email: client.email || "Sin asignar",
             gestor: client.gestor || "Sin asignar",
-          })
+          });
         }
       }
     }
 
-    if(toCreate.length > 0){
-  await Clienturuguay.bulkCreate(toCreate, {
-    updateOnDuplicate: ["name", "gestor", "contacto1", "email"]
-  });
-  console.log(`Clientes creados/actualizados: ${toCreate.length}`);
-}
+    if (toCreate.length > 0) {
+      await Clienturuguay.bulkCreate(toCreate, {
+        updateOnDuplicate: ["name", "gestor", "contacto1", "email"],
+      });
+      console.log(`Clientes creados/actualizados: ${toCreate.length}`);
+    }
 
-    for(const update of toUpdate){
+    for (const update of toUpdate) {
       await Clienturuguay.update(
         { email: update.email, gestor: update.gestor },
-        { where: { id: update.id } }
+        { where: { id: update.id } },
       );
       console.log(`Cliente actualizado: ${update.id}`);
     }
-  
+
     await pool.close();
   } catch (err) {
     console.error("Error al obtener clientes del CRM:", err);

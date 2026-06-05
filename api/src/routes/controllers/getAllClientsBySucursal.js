@@ -4,6 +4,9 @@ const {
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
+  Clientecobahia,
+  Clientrosario,
+  Clientecoportatiles,
 } = require("../../bd");
 
 const getAllClientBySucursal = async (userId) => {
@@ -28,13 +31,17 @@ const getAllClientBySucursal = async (userId) => {
     case 3:
       ClienteModel = Clientchile;
       break;
-    // case 4:
-    //   ClienteModel = Clientrosario;
-    //   DocumentoModel = Documentrosario;
-    //   includeAlias = "documentorosario";
-    //   break;
+    case 4:
+      ClienteModel = Clientrosario;
+      break;
     case 5:
       ClienteModel = Clientecopatagonico;
+      break;
+    case 6:
+      ClienteModel = Clientecobahia;
+      break;
+    case 7:
+      ClienteModel = Clientecoportatiles;
       break;
     default:
       return;

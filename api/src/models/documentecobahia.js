@@ -43,10 +43,19 @@ module.exports = ( sequelize ) => {
             defaultValue: 0,
             allowNull:false
         },
-        clientId: {   // 👈 este es el foreign key
+        clientId: {   //  este es el foreign key
             type: DataTypes.INTEGER,
             allowNull: false
         }
             
-    })
+    },
+    {
+    
+    indexes: [
+      {
+        unique: true,
+        fields: ["numerodocumento", "clientId"], //  Combinación única
+      },
+    ],
+  })
 }

@@ -4,10 +4,14 @@ const {
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
+  Documentecobahia,
+  Documentecoportatiles,
   Client,
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
+  Clientecobahia,
+  Clientecoportatiles,
 } = require("../../bd");
 const calcularMontosPorAntiguedad = require("../helpers/calculaMontosPorAntiguedad");
 const calcularDiasCalle = require("../helpers/calcularDiasEnCalle");
@@ -44,6 +48,14 @@ const getAllDocumentsByGestor = async (gestor) => {
       ClienteModel = Clientecopatagonico;
       DocumentoModel = Documentecopatagonico;
       includeAlias = "clientdocumentoecopatagonico";
+    case 6:
+      ClienteModel = Clientecobahia;
+      DocumentoModel = Documentecobahia;
+      includeAlias = "clientdocumentoecobahia";
+    case 7:
+      ClienteModel = Clientecoportatiles;
+      DocumentoModel = Documentecoportatiles;
+      includeAlias = "clientdocumentoecoportatiles";
       break;
     default:
       return;

@@ -177,7 +177,7 @@ promoterRouter.get("/clientsByGestor", async (req, res) => {
 
 promoterRouter.get("/gestionesByGestor/:gestor", async (req, res) => {
   const { gestor } = req.params;
-  console.log("gestor en ruta gestionesByGestor", gestor);
+  //console.log("gestor en ruta gestionesByGestor", gestor);
 
   try {
     const gestiones = await getGestionesByGestor(gestor);

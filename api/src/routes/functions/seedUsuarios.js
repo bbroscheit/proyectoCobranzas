@@ -3,7 +3,7 @@ const { Usuario } = require("../../bd.js"); // ajustá la ruta a donde tengas ex
 async function seedUsuarios() {
   try {
     const usuarios = [
-      // {
+       {
       //   username: "Bescudero",
       //   password: "123",
       //   firstname: "Banesa",
@@ -83,6 +83,20 @@ async function seedUsuarios() {
       //   mail:"bernardo.broscheit@basani.com.ar",
       //   sucursal: 2
       // }
+        username: "Jgarcia",
+        password: "123",
+        firstname: "Jorgelina",
+        lastname: "Garcia",
+        mail:"bernardo.broscheit@basani.com.ar",
+        sucursal: 6
+      },{
+        username: "Anavarro",
+        password: "123",
+        firstname: "Ana",
+        lastname: "Navarro",
+        mail:"bernardo.broscheit@basani.com.ar",
+        sucursal: 6
+      }
      
     ];
 

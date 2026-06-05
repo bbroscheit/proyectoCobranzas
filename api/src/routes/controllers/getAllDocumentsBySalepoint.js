@@ -4,6 +4,8 @@ const {
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
+  Documentecobahia,
+  Documentecoportatiles,
 } = require("../../bd");
 const calcularMontosPorAntiguedad = require("../helpers/calculaMontosPorAntiguedad");
 const calcularDiasEnCalle = require("../helpers/calcularDiasEnCalle");
@@ -32,6 +34,12 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     case 5:
       DocumentoModel = Documentecopatagonico;
       break;
+    case 6:
+      DocumentoModel = Documentecobahia;
+      break;
+    case 7:
+      DocumentoModel = Documentecoportatiles;
+    break;
     default:
       return null;
   }

@@ -13,8 +13,11 @@ const prellenarClientesHoy = async (usuario, listadoHoy) => {
       llamado: false,
     }));
 
-    // 3️⃣ Actualizar el registro del día actual
-    listadoHoy.clientes = clientesParaHoy;
+    // 3️⃣ Fusionar: preservar clientes ya presentes (ej: pre-agendados via reprogramacion)
+    const clientesExistentes = listadoHoy.clientes || [];
+    const idsExistentes = new Set(clientesExistentes.map(c => c.id));
+    const clientesNuevos = clientesParaHoy.filter(c => !idsExistentes.has(c.id));
+    listadoHoy.clientes = [...clientesExistentes, ...clientesNuevos];
     await listadoHoy.save();
 
     console.log(

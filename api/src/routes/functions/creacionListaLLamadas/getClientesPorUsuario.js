@@ -1,4 +1,12 @@
-const { Client, Clienturuguay, Clientchile, Clientecopatagonico } = require("../../../bd");
+const {
+  Client,
+  Clientrosario,
+  Clienturuguay,
+  Clientchile,
+  Clientecopatagonico,
+  Clientecobahia,
+  Clientecoportatiles,
+} = require("../../../bd");
 
 // Devolvemos todos los clientes de un usuario por sucursal
 const getClientesPorUsuario = async (usuario) => {
@@ -17,11 +25,17 @@ const getClientesPorUsuario = async (usuario) => {
       case 3:
         clientesModel = Clientchile;
         break;
-      // case 4:
-      //   clientesModel = Clientrosario;
-      //   break;
+      case 4:
+        clientesModel = Clientrosario;
+        break;
       case 5:
         clientesModel = Clientecopatagonico;
+        break;
+      case 6:
+        clientesModel = Clientecobahia;
+        break;
+      case 7:
+        clientesModel = Clientecoportatiles;
         break;
       default:
         return {
@@ -39,7 +53,6 @@ const getClientesPorUsuario = async (usuario) => {
 
     //console.log(" listado de clientes: ", clientes);
 
-     
     return {
       gestor: gestorNombre,
       // clientes: clientes.map((c) => c.id, c.name, c.contacto1, c.email),
@@ -54,7 +67,7 @@ const getClientesPorUsuario = async (usuario) => {
   } catch (error) {
     console.error(
       `❌ Error obteniendo clientes para usuario ${gestorNombre}:`,
-      error
+      error,
     );
     return {
       gestor: gestorNombre,

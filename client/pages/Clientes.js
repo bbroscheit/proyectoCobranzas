@@ -104,7 +104,7 @@ const Clientes = () => {
         <CardGestiones total={gestiones.hoy} />
         <CardGestionesTerminadas total={gestiones.completadasMes} />
         <CardGestionesNoRealizadas total={gestiones.noCompletadasMes} />
-        <CardRecordatorios />
+        {/* <CardRecordatorios /> */}
       </div>
       <div className={styles.buttonContainer}>
           <button

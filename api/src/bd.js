@@ -48,6 +48,7 @@ const {
         Clientecopatagonico,
         Clientecobahia,
         Clientcordoba,
+        Clientecoportatiles,
         Note,
         Alarma,
         Tarea,
@@ -58,6 +59,7 @@ const {
         Documentecopatagonico,
         Documentecobahia,
         Documentcordoba,
+        Documentecoportatiles,
         Listadellamada,
         Gestion,
         Usuario,
@@ -87,8 +89,11 @@ Documentchile.belongsTo(Clientchile, { foreignKey: 'clientId', as: 'clientdocume
 Clientecopatagonico.hasMany(Documentecopatagonico, { foreignKey: 'clientId', as: 'documentoecopatagonico' });
 Documentecopatagonico.belongsTo(Clientecopatagonico, { foreignKey: 'clientId', as: 'clientdocumentoecopatagonico' });
 
-// Clientecobahia.hasMany(Documentecobahia, { foreignKey: 'clientId', as: 'documento' });
-// Documentecobahia.belongsTo(Clientecobahia, { foreignKey: 'clientId', as: 'clientdocumento' });
+Clientecobahia.hasMany(Documentecobahia, { foreignKey: 'clientId', as: 'documentoecobahia' });
+Documentecobahia.belongsTo(Clientecobahia, { foreignKey: 'clientId', as: 'clientdocumentoecobahia' });
+
+Clientecoportatiles.hasMany(Documentecoportatiles, { foreignKey: 'clientId', as: 'documentoecoportatiles' });
+Documentecoportatiles.belongsTo(Clientecoportatiles, { foreignKey: 'clientId', as: 'clientdocumentoecoportatiles' });
 
 // Clientcordoba.hasMany(Documentcordoba, { foreignKey: 'clientId', as: 'documento' });
 // Documentcordoba.belongsTo(Clientcordoba, { foreignKey: 'clientId', as: 'clientdocumento' });

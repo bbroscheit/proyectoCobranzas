@@ -6,9 +6,16 @@ const {
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
+  Documentecobahia,
+  Documentecoportatiles,
+  Documentrosario,
+
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
+  Clientrosario,
+  Clientecobahia,
+  Clientecoportatiles,
 } = require("../../bd");
 
 const reprogramacion = require("../functions/reprogramacion");
@@ -68,6 +75,16 @@ const postNewAvisos = async (
         ClienteModel = Clientecopatagonico;
         DocumentoModel = Documentecopatagonico;
         includeAlias = "documentoecopatagonico";
+        break;
+      case 6:
+        ClienteModel = Clientecobahia;
+        DocumentoModel = Documentecobahia;
+        includeAlias = "documentoecobahia";
+        break;
+      case 7:
+        ClienteModel = Clientecoportatiles;
+        DocumentoModel = Documentecoportatiles;
+        includeAlias = "documentoecoportatiles";
         break;
       default:
         return;

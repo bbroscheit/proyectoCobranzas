@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Router from "next/router";
 import Swal from "sweetalert2";
 import styles from "@/pages/modules/agendadellamadas.module.css";
@@ -6,7 +6,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CardAgenda from "./components/CardAgenda";
 import AvisosPromesa from "./modals/AvisosPromesa";
-import { FacturacionContext } from "../pages/context/FacturacionContext";
 import useUser from "./hooks/useUser";
 import { postPromesa } from "./api/postPromesa";
 
@@ -23,9 +22,6 @@ export default function AgendaDeLlamadas() {
   const [searchQuery, setSearchQuery] = useState(""); // Texto del input de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const recordsPerPage = 20; // Número de registros por página
-
-  const { totalesPorCliente, totalesVencidosPorCliente } =
-    useContext(FacturacionContext);
 
   useEffect(() => {
     const fetchLista = async () => {
@@ -216,7 +212,7 @@ export default function AgendaDeLlamadas() {
     setShowAvisosModal(false);
   };
 
-  console.log("Clientes para agenda de llamadas:", cliente);
+  //console.log("Clientes para agenda de llamadas:", cliente);
 
   return (
     <>

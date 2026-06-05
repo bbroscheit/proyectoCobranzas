@@ -1,7 +1,7 @@
 const { DataTypes } = require ('sequelize');
 
 module.exports = ( sequelize ) => {
-    sequelize.define( "document" , {
+    sequelize.define( "documentecoportatiles" , {
         id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -11,8 +11,7 @@ module.exports = ( sequelize ) => {
         numerodocumento:{
             type: DataTypes.STRING,
             defaultValue: " nombre de usuario sin definir ",
-            allowNull:false,
-            //unique:true
+            allowNull:false
         },
         fechadocumento:{
             type: DataTypes.DATEONLY,
@@ -44,18 +43,18 @@ module.exports = ( sequelize ) => {
             defaultValue: 0,
             allowNull:false
         },
-        clientId: {   // 👈 este es el foreign key
+        clientId: {   // este es el foreign key
             type: DataTypes.INTEGER,
             allowNull: false
         }
             
     },
     {
-    tableName: "Document",
+    
     indexes: [
       {
         unique: true,
-        fields: ["numerodocumento", "clientId"], // Combinación única
+        fields: ["numerodocumento", "clientId"], //  Combinación única
       },
     ],
   })

@@ -2,7 +2,7 @@ const { Gestion, Listadellamada } = require("../../bd");
 const { Op, fn, col } = require("sequelize");
 
 const getGestionesByGestor = async (usuarioId) => {
-  console.log("usuarioId en getGestionesByGestor", usuarioId);
+  //console.log("usuarioId en getGestionesByGestor", usuarioId);
   const hoy = new Date();
 
   const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
@@ -18,10 +18,12 @@ const getGestionesByGestor = async (usuarioId) => {
     },
   });
 
+  console.log("Lista de llamadas del día:", listaHoy.clientes, );
+
   // Gestiones creadas hoy (lista de llamadas del día)
   const gestionesHoy = listaHoy?.clientes?.length || 0;
 
- const resumenMes = await Gestion.findAll({
+  const resumenMes = await Gestion.findAll({
     where: {
       usuarioId,
       fecha: {

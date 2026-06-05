@@ -4,10 +4,15 @@ const {
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
+  Documentecobahia,
+  Documentecoportatiles,
+
   Client,
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
+  Clientecobahia,
+  Clientecoportatiles,
 } = require("../../bd");
 
 const getClientName = async (userId, clienteId) => {
@@ -37,16 +42,25 @@ const getClientName = async (userId, clienteId) => {
       DocumentoModel = Documentchile;
       includeAlias = "documentochile";
       break;
-    // case 4:
-    //   ClienteModel = Clientrosario;
-    //   DocumentoModel = Documentrosario;
-    //   includeAlias = "documentorosario";
-    //   break;
+    case 4:
+      ClienteModel = Clientrosario;
+      DocumentoModel = Documentrosario;
+      includeAlias = "documentorosario";
+      break;
     case 5:
       ClienteModel = Clientecopatagonico;
       DocumentoModel = Documentecopatagonico;
       includeAlias = "documentoecopatagonico";
       break;
+    case 6:
+      ClienteModel = Clientecobahia;
+      DocumentoModel = Documentecobahia;
+      includeAlias = "documentoecobahia";
+      break;
+    case 7:
+      ClienteModel = Clientecoportatiles;
+      DocumentoModel = Documentecoportatiles;
+      includeAlias = "documentoecoportatiles";
     default:
       return;
   }

@@ -4,11 +4,17 @@ const {
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
+  Documentecobahia,
+  Documentecoportatiles,
+  Documentrosario,
   Client,
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
-  Note
+  Clientecobahia,
+  Clientecoportatiles,
+  Clientrosario,
+  Note,
 } = require("../../bd");
 
 const getAllDocumentsByClient = async (userId, clientId) => {
@@ -38,49 +44,58 @@ const getAllDocumentsByClient = async (userId, clientId) => {
       DocumentoModel = Documentchile;
       includeAlias = "documentochile";
       break;
-    // case 4:
-    //   ClienteModel = Clientrosario;
-    //   DocumentoModel = Documentrosario;
-    //   includeAlias = "documentorosario";
-    //   break;
+    case 4:
+      ClienteModel = Clientrosario;
+      DocumentoModel = Documentrosario;
+      includeAlias = "documentorosario";
+      break;
     case 5:
       ClienteModel = Clientecopatagonico;
       DocumentoModel = Documentecopatagonico;
       includeAlias = "documentoecopatagonico";
+      break;
+    case 6:
+      ClienteModel = Clientecobahia;
+      DocumentoModel = Documentecobahia;
+      includeAlias = "documentocobahia";
+      break;
+    case 7:
+      ClienteModel = Clientecoportatiles;
+      DocumentoModel = Documentecoportatiles;
+      includeAlias = "documentoecoportatiles";
       break;
     default:
       return;
   }
 
   try {
-    const documentos = await DocumentoModel.findAll(
-      {
-        where: { clientId: clientId },
-        as: includeAlias,
-      })
-    
-    const documentosTimeline = documentos.map(doc => ({
+    const documentos = await DocumentoModel.findAll({
+      where: { clientId: clientId },
+      as: includeAlias,
+    });
+
+    const documentosTimeline = documentos.map((doc) => ({
       tipo: "documento",
       fechaOrden: new Date(doc.fechadocumento),
-      payload: doc
+      payload: doc,
     }));
 
     const notes = await Note.findAll({
       where: { client: clientId },
-      sucursal: usuario.sucursal
-     
+      sucursal: usuario.sucursal,
     });
 
-    const notasTimeline = notes.map(note => ({
+    const notasTimeline = notes.map((note) => ({
       tipo: "nota",
       fechaOrden: new Date(note.createdAt),
-      payload: note
+      payload: note,
     }));
-    
-    const timeline = [...documentosTimeline, ...notasTimeline]
-      .sort((a, b) => b.fechaOrden - a.fechaOrden);
 
-  return timeline;
+    const timeline = [...documentosTimeline, ...notasTimeline].sort(
+      (a, b) => b.fechaOrden - a.fechaOrden,
+    );
+
+    return timeline;
   } catch (err) {
     console.error("Error al ejecutar la consulta:", err);
     throw err;

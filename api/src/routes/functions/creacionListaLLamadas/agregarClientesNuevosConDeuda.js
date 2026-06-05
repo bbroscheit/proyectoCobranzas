@@ -1,6 +1,6 @@
-const { 
-  Client, Clienturuguay, Clientchile, Clientecopatagonico,
-  Document, Documenturuguay, Documentchile, Documentecopatagonico 
+const {
+  Client, Clienturuguay, Clientchile, Clientecopatagonico, Clientecobahia, Clientecoportatiles,
+  Document, Documenturuguay, Documentchile, Documentecopatagonico, Documentecobahia, Documentecoportatiles
 } = require("../../../bd");
 
 const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {
@@ -33,6 +33,16 @@ const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {
         ClienteModel = Clientecopatagonico;
         DocumentoModel = Documentecopatagonico;
         includeAlias = "documentoecopatagonico";
+        break;
+      case 6:
+        ClienteModel = Clientecobahia;
+        DocumentoModel = Documentecobahia;
+        includeAlias = "documentoecobahia";
+        break;
+      case 7:
+        ClienteModel = Clientecoportatiles;
+        DocumentoModel = Documentecoportatiles;
+        includeAlias = "documentoecoportatiles";
         break;
       default:
         return;
