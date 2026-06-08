@@ -75,7 +75,7 @@ const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {
         //   `📌 Cliente nuevo ${cliente.id} con deuda agregado a la lista de hoy del gestor ${usuario.firstname} ${usuario.lastname}`
         // );
         // Marcar cliente como ya no nuevo
-        await cliente.update({ nuevo: false });
+        //await cliente.update({ nuevo: false });
       }
     }
 

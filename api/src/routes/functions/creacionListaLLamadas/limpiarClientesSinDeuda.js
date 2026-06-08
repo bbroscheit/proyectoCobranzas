@@ -21,6 +21,11 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
       let deudaVencida = 0;
       let deudaNoVencida = 0;
 
+      // Tipos que suman deuda: facturas (1), notas de débito (3)
+      const TIPOS_DEUDA = [1, 3];
+      // Tipos que restan deuda: recibos (9), notas de crédito (7)
+      const TIPOS_CREDITO = [7, 9];
+
       const documentosConDeuda = clienteConDocs.documents.filter(
         (doc) => parseFloat(doc.montopendiente || 0) > 0
       );
@@ -31,9 +36,8 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
           ? new Date(doc.fechavencimiento)
           : null;
 
-        // Ajuste total según tipo de documento
-        if (doc.tipodocumento === 1) deudaTotal += monto; 
-        if (doc.tipodocumento === 9) deudaTotal -= monto; 
+        if (TIPOS_DEUDA.includes(doc.tipodocumento)) deudaTotal += monto;
+        if (TIPOS_CREDITO.includes(doc.tipodocumento)) deudaTotal -= monto;
 
         // Clasificar deuda vencida / no vencida
         if (vencimiento) {
@@ -42,7 +46,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
         }
       }
 
-      if (deudaTotal !== 0) {
+      if (deudaTotal > 0) {
         clientesValidados.push({
           id: clienteConDocs.id,
           name: clienteConDocs.name,
