@@ -23,8 +23,8 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
 
       // Tipos que suman deuda: facturas (1), notas de débito (3)
       const TIPOS_DEUDA = [1, 3];
-      // Tipos que restan deuda: recibos (9), notas de crédito (7)
-      const TIPOS_CREDITO = [7, 9];
+      // Tipos que restan deuda: notas de crédito (7, 8), recibos (9)
+      const TIPOS_CREDITO = [7, 8, 9];
 
       const documentosConDeuda = clienteConDocs.documents.filter(
         (doc) => parseFloat(doc.montopendiente || 0) > 0
@@ -65,7 +65,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
             fechavencimiento: doc.fechavencimiento || null,
             tipodocumento: doc.tipodocumento,
           })),
-          llamado: false,
+          llamado: cliente.llamado === true,
         });
       } else {
         console.log(

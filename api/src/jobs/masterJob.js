@@ -15,15 +15,15 @@ const fetchDocumentFromGPEcoportatiles = require("../routes/functions/fetchDocum
 const creacionLista = require("../routes/functions/creacionLista");
 
 const runSyncProcess = async () => {
-  await fetchClientsFromCRM();
-  await fetchClientsFromCRMEcoPatagonico();
-  await fetchClientsFromCRMUruguay();
+  //await fetchClientsFromCRM();
+  //await fetchClientsFromCRMEcoPatagonico();
+  //await fetchClientsFromCRMUruguay();
   await fetchClientsFromCRMEcobahia();
   //await fetchClientsFromCRMEcoportatiles();
 
-  await fetchDocumentFromGP();
-  await fetchDocumentFromGPEcoPatagonico();
-  await fetchDocumentFromGPUruguay();
+  //await fetchDocumentFromGP();
+  //await fetchDocumentFromGPEcoPatagonico();
+  //await fetchDocumentFromGPUruguay();
   await fetchDocumentFromGPEcobahia();
   //await fetchDocumentFromGPEcoportatiles();
 
@@ -31,7 +31,7 @@ const runSyncProcess = async () => {
 };
 
 // Se ejecuta todos los días a las 5 de la mañana
-cron.schedule("00 10 * * *", async () => {
+cron.schedule("41 11 * * *", async () => {
   await runExclusive("SYNC_MASTER", runSyncProcess);
 });
 
