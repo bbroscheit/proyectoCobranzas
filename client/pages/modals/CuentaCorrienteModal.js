@@ -8,14 +8,10 @@ function CuentaCorrienteModal({ showModal, setShowModal, cliente  }) {
     const [ user, setUser ] = useState("");
 
     useEffect(() => {
-
         const userLogin = localStorage.getItem("userCobranzas");
         const userParse = JSON.parse(userLogin);
-    
         setUser(userParse.id);
-          
-    
-      }, [user]);
+      }, []);
 
     const onSubmit = () => {
 

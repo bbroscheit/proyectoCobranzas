@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const estadoDeCuentaTemplate = require("../mailModels/estadoDeCuenta");
 const { getNombreSucursal } = require("../mailModels/sucursales");
 const sendMailgunMessage = require("../helpers/getMailTransporter");
+const reprogramacion = require("../functions/reprogramacion");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
 
@@ -72,6 +73,8 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
       html: bodyHtml,
     });
 
+    // Agendar cliente en +7 días y marcar como llamado (igual que postNewAvisos)
+    await reprogramacion({ id: parseInt(numeroCliente) }, false, user);
     await marcarLLamadoHoy(numeroCliente, user);
 
     await createSystemNote({

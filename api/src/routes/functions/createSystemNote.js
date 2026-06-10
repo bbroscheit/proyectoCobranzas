@@ -6,7 +6,7 @@ const createSystemNote = async ({ clientId, userId, sucursal, detail }) => {
     typecontact: "Sistema",
     user: userId,
     sucursal,
-    clientId,
+    client: clientId,
   });
 };
 

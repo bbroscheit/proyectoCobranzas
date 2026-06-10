@@ -408,53 +408,53 @@ promoterRouter.post("/mailResumenVencido", async (req, res) => {
 
 promoterRouter.post("/sendCuentaCorriente", async (req, res) => {
   const { user , numeroCliente } = req.body;
-      
   try {
     const results = await sendCuentaCorriente( numeroCliente, user );
-    results && results !== "Cliente no encontrado"
+    results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log(e.message);
+    console.log("Error en /sendCuentaCorriente:", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
 promoterRouter.post("/sendPreSuspension", async (req, res) => {
   const { user , numeroCliente } = req.body;
-      
   try {
     const results = await sendPreSuspension( numeroCliente, user );
-    results && results !== "Cliente no encontrado"
+    results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log(e.message);
+    console.log("Error en /sendPreSuspension:", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
 promoterRouter.post("/sendSuspension", async (req, res) => {
   const { user , numeroCliente } = req.body;
-      
   try {
     const results = await sendSuspension( numeroCliente, user );
-    results && results !== "Cliente no encontrado"
+    results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log(e.message);
+    console.log("Error en /sendSuspension:", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
 promoterRouter.post("/sendLegales", async (req, res) => {
   const { user , numeroCliente } = req.body;
-      
   try {
     const results = await sendLegales( numeroCliente, user );
-    results && results !== "Cliente no encontrado"
+    results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log(e.message);
+    console.log("Error en /sendLegales:", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
