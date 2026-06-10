@@ -4,6 +4,13 @@ const queueFacturaEmitida  = require("../routes/functions/email/queueFacturaEmit
 const queueFacturaPorVencer = require("../routes/functions/email/queueFacturaPorVencer");
 const queueFacturaVencida  = require("../routes/functions/email/queueFacturaVencida");
 
+// Para activar los envíos automáticos agregar al .env:  EMAIL_SCHEDULER_ENABLED=true
+if (process.env.EMAIL_SCHEDULER_ENABLED !== "true") {
+  console.log("EmailScheduler DESACTIVADO — para activar: EMAIL_SCHEDULER_ENABLED=true en .env");
+  module.exports = {};
+  return;
+}
+
 // ─── Estado de Cuenta ─────────────────────────────────────────────────────────
 // Todos los días 5 de cada mes a las 09:00 (hora servidor)
 cron.schedule("0 9 5 * *", async () => {
@@ -36,4 +43,4 @@ cron.schedule("0 7 * * *", async () => {
   }
 });
 
-console.log("EmailScheduler cargado — Estado de cuenta: día 5 a las 09:00 | Facturas: diario a las 07:00");
+console.log("EmailScheduler ACTIVO — Estado de cuenta: día 5 a las 09:00 | Facturas: diario a las 07:00");

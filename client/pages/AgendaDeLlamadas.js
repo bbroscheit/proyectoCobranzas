@@ -265,6 +265,7 @@ export default function AgendaDeLlamadas() {
               clientes={e.name}
               cuit={e.cuit}
               contacto={e.contacto}
+              email={e.email}
               deudaAVencer={e.deudaNoVencida}
               deudaVencida={e.deudaVencida}
               deudaTotal={e.deudaTotal}

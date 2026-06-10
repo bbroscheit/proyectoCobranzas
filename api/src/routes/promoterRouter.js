@@ -26,7 +26,7 @@ const postNewAvisos = require("./controllers/postNewAvisos.js")
 const sendCuentaCorriente  = require("./controllers/sendCuentaCorriente.js");
 const sendPreSuspension  = require("./controllers/sendPreSuspension.js");
 const sendSuspension  = require("./controllers/sendSuspension.js");
-const sendLegales  = require("./controllers/sendSuspension.js");
+const sendLegales  = require("./controllers/sendLegales.js");
 const getStatusClient = require("./controllers/getStatusClient.js");
 const getAllClientsBySucursal = require("./controllers/getAllClientsBySucursal.js");
 
@@ -41,6 +41,7 @@ promoterRouter.post("/login", async (req, res) => {
       : res.status(400).json({ state: "failure" });
   } catch (e) {
     console.log("error en ruta post user ", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -51,7 +52,7 @@ promoterRouter.get("/clientByPromoter", async (req, res) => {
       ? res.status(200).json(clientByPromoter)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta getClientByPromoter", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -64,12 +65,11 @@ promoterRouter.get("/lista-llamadas", async (req, res) => {
 
   try {
     let listaDeLlamadas = await getListaDeLlamadas(usuarioId);
-    //console.log("listaDeLlamadas en ruta:", listaDeLlamadas);
     listaDeLlamadas
       ? res.status(200).json(listaDeLlamadas)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta getListaDeLlamadas", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -80,38 +80,35 @@ promoterRouter.get("/allDocuments", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allDocuments", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
 promoterRouter.get("/allClients", async (req, res) => {
   try {
     let results = await getAllClients();
-    //console.log("soy los clientes", results)
     results
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allDocuments", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
 promoterRouter.get("/getAllClientBySucursal", async (req, res) => {
   const { usuarioId } = req.query;
-  console.log("usuarioId recibido en ruta getAllClientBySucursal:", usuarioId);
 
-   if (!usuarioId) {
+  if (!usuarioId) {
     return res.status(400).json({ error: "Falta usuarioId" });
   }
 
   try {
     let results = await getAllClientsBySucursal(usuarioId);
-    //console.log("soy los clientes", results)
     results
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta getAllClientBySucursal", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -122,7 +119,7 @@ promoterRouter.get("/allAlarms", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allAlarms", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -133,7 +130,7 @@ promoterRouter.get("/allNotes", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allNotes", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -146,7 +143,7 @@ promoterRouter.get("/allNotesInMonth", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allNotes", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -159,7 +156,7 @@ promoterRouter.get("/allAlarmsInMonth", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allNotes", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -239,7 +236,7 @@ promoterRouter.get("/allDocumentsByPromoter", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta allDocuments", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -250,7 +247,7 @@ promoterRouter.get("/clientsAccount", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta clientsAccount", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -262,7 +259,7 @@ promoterRouter.get("/recibosByPromoter", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta recibosByPromoter", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -274,7 +271,7 @@ promoterRouter.get("/facturasByPromoter", async (req, res) => {
       ? res.status(200).json(results)
       : res.status(400).json({ state: "failure" });
   } catch (e) {
-    console.log("error en ruta facturasByPromoter", e.message);
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 
@@ -459,7 +456,7 @@ promoterRouter.post("/sendLegales", async (req, res) => {
 });
 
 promoterRouter.get("/changeStatusClient/:clientId", async (req, res) => {
-  const { clientId } = 28343;
+  const { clientId } = req.params;
 
   try {
     let results = await getStatusClient( clientId );

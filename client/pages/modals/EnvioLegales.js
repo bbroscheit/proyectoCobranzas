@@ -10,11 +10,11 @@ function EnvioLegalesModal({ showModal, setShowModal, cliente }) {
   useEffect(() => {
     const userLogin = localStorage.getItem("userCobranzas");
     const userParse = JSON.parse(userLogin);
-
     setUser(userParse.id);
-  }, [user]);
+  }, []);
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     const cuentaCorrienteData = {
       numeroCliente: cliente,
       user: user,

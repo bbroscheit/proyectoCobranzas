@@ -35,7 +35,7 @@ function Gestion({ clienteId }) {
     useState(false);
   const [showEnvioLegalesModal, setShowEnvioLegalesModal] = useState(false);
   const [nota, setNota] = useState("");
-  const [comunicacion, setComunicacion] = useState([]);
+  const [comunicacion, setComunicacion] = useState("");
   const [emailText, setEmailText] = useState("");
   const [cuentaCorriente, setCuentaCorriente] = useState(false);
   const [reprogram, setReprogram] = useState(false);

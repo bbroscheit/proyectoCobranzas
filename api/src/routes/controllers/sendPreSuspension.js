@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const preSuspensionTemplate = require("../mailModels/preSuspension");
 const { getNombreSucursal } = require("../mailModels/sucursales");
 const sendMailgunMessage = require("../helpers/getMailTransporter");
+const reprogramacion = require("../functions/reprogramacion");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
 
@@ -72,6 +73,7 @@ const sendPreSuspension = async (numeroCliente, user) => {
       html: bodyHtml,
     });
 
+    await reprogramacion({ id: parseInt(numeroCliente) }, false, user);
     await marcarLLamadoHoy(numeroCliente, user);
 
     await createSystemNote({
