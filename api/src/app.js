@@ -60,7 +60,8 @@ server.use((err,req,res) => {
 
 if (process.env.RUN_JOBS === "true") {
   require("./jobs/masterJob");
-  //require("./jobs/mailWorker");
+  require("./jobs/mailWorker");
+  require("./jobs/emailScheduler");
 }
 
 module.exports = server; 

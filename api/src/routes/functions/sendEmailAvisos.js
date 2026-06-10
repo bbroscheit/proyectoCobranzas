@@ -1,17 +1,6 @@
 const { Usuario, Listadellamada } = require('../../bd');
 const { Op } = require('sequelize');
-const nodemailer = require('nodemailer');
-
-
-const transporter = nodemailer.createTransport({
-  host: 'mail.basani.com.ar',
-  port: process.env.MAIL_PORT,
-  secure: true, // true para 465, false para otros puertos
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+const sendMailgunMessage = require('../helpers/getMailTransporter');
 
 const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) => {
    function formatearFecha(fecha) {
@@ -98,19 +87,15 @@ const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) 
       }
     }
 
-    // Enviamos mail con nodemailer
-    const mailOptions = {
-      from: `"${usuario.firstname || 'Usuario'}" <${usuario.mail}>`, // usuario que envía
-      //to: cliente.email, // destinatario cliente
-      to: process.env.MAIL_USER,
-      cc: usuario.mail, // copia al usuario
+    const result = await sendMailgunMessage({
+      sucursal: usuario.sucursal,
+      from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
+      to: cliente.email,
+      cc: usuario.mail,
+      replyTo: usuario.mail,
       subject: 'Aviso de Cuenta',
       html: bodyHtml,
-    };
-
-    //console.log('📭 Enviando email con las siguientes opciones:', mailOptions);
-
-    const result = await transporter.sendMail(mailOptions);
+    });
 
     console.log('Aviso enviado:', result.messageId);
     return result;

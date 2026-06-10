@@ -1,6 +1,4 @@
-
-// modelo html de mail para una factura emitida
-function facturaVencidaTemplate({ clienteNombre, gestoraNombre, factura }) {
+function facturaVencidaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -15,24 +13,41 @@ function facturaVencidaTemplate({ clienteNombre, gestoraNombre, factura }) {
       <body style="font-family: Arial, sans-serif;">
         <h2>Área de Cobranzas - ${hoy}</h2>
         <p>Estimado cliente ${clienteNombre}, </p>
-        <p>Por medio de la presente, queremos recordarle que la factura ${factura.numero}, emitida el ${formatearFecha(factura.fechaEmision)}, venció el ${formatearFecha(factura.fechaVencimiento)} y permanece impaga hasta la fecha.</p>
-        <p>Detalles de la factura vencida:</p>
-        <p>Número de factura: ${factura.numero}</p>
-        <p>Monto pendiente: $${factura.montoPendiente}</p>
-        <p>Fecha de Vencimiento: ${formatearFecha(factura.fechavencimiento)}</p>
-          
+        <p>Por medio de la presente, queremos recordarle que las siguientes facturas han vencido y permanecen impagas a la fecha.</p>
+
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr style="background-color:#f2f2f2;">
+              <th>Número</th>
+              <th>Fecha de emisión</th>
+              <th>Fecha de vencimiento</th>
+              <th>Monto pendiente</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${facturas.map(factura => `
+              <tr>
+                <td>${factura.numerodocumento || factura.numero || "-"}</td>
+                <td>${formatearFecha(factura.fechadocumento || factura.fechaEmision)}</td>
+                <td>${formatearFecha(factura.fechavencimiento)}</td>
+                <td>$${Number(factura.montopendiente || factura.montoPendiente || 0).toLocaleString("es-AR")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+
         <p>Con el objetivo de evitar cargos adicionales o interrupciones en nuestros servicios, le solicitamos regularizar el pago dentro de las próximas 48 horas.</p>
         <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos. En caso contrario, puede realizarlo utilizando los siguientes métodos:</p>
         <ul>
           <ol>Transferencia bancaria: </ol>
           <ol>Otros métodos de pago (consulte con nuestro equipo de cobranzas).</ol>
         </ul>
-        <p>Estamos a su disposición para cualquier consulta vía telefónica o Whatsapp [número del gestor de cobranzas].</p>
+        <p>Estamos a su disposición para cualquier consulta vía telefónica o Whatsapp.</p>
         <p>Agradecemos su pronta atención y quedamos atentos a su comunicación.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
         Área de Cobranzas<br/>
-        BASANI S.A.</p>
+        ${sucursalNombre}</p>
       </body>
     </html>
   `;

@@ -1,5 +1,5 @@
 // modelo html de mail para una factura emitida
-function pagoRecibidoTemplate(facturas) {
+function pagoRecibidoTemplate(facturas, sucursalNombre = 'BASANI S.A.') {
   return `
     <html>
       <body>
@@ -22,7 +22,8 @@ function pagoRecibidoTemplate(facturas) {
           `).join('')}
         </table>
         <p>Por favor, regularice su situación a la brevedad.</p>
-        <p>Gracias.</p>
+        <p>Atentamente,</p>
+        <p>Área de Cobranzas<br/>${sucursalNombre}</p>
       </body>
     </html>
   `;

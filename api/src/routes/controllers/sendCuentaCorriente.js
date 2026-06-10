@@ -1,19 +1,10 @@
 const { Usuario, Listadellamada } = require("../../bd");
 const { Op } = require("sequelize");
-const nodemailer = require("nodemailer");
 const estadoDeCuentaTemplate = require("../mailModels/estadoDeCuenta");
+const { getNombreSucursal } = require("../mailModels/sucursales");
+const sendMailgunMessage = require("../helpers/getMailTransporter");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
-
-const transporter = nodemailer.createTransport({
-  host: "mail.basani.com.ar",
-  port: process.env.MAIL_PORT,
-  secure: true, // true para 465, false para otros puertos
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
 
 const sendCuentaCorriente = async (numeroCliente, user) => {
   //console.log('📭 Enviando email aviso a cliente:', numeroCliente, cuentaCorriente);
@@ -68,22 +59,18 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
       clienteNombre: cliente.name,
       gestoraNombre: usuario.firstname + " " + usuario.lastname,
       facturas: docsPendientes,
+      sucursalNombre: getNombreSucursal(usuario.sucursal),
     });
 
-    // Enviamos mail con nodemailer
-    const mailOptions = {
-      from : "mesadeayuda@basani.com.ar",
-      //from: `"${usuario.firstname || "Usuario"}" <${usuario.mail}>`, // usuario que envía
-      //to: cliente.email, // destinatario cliente
-      to: "bernardo.broscheit@basani.com.ar",
-      cc: usuario.mail, // copia al usuario
-      subject: "Aviso de Cuenta",
+    const result = await sendMailgunMessage({
+      sucursal: usuario.sucursal,
+      from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
+      to: cliente.email,
+      cc: usuario.mail,
+      replyTo: usuario.mail,
+      subject: "Estado de Cuenta",
       html: bodyHtml,
-    };
-
-    //console.log('Enviando email con las siguientes opciones:', mailOptions);
-
-    const result = await transporter.sendMail(mailOptions);
+    });
 
     await marcarLLamadoHoy(numeroCliente, user);
 

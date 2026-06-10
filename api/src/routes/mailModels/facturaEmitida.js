@@ -1,5 +1,5 @@
 // modelo html de mail para una factura emitida
-function facturaEmitidaTemplate(facturas) {
+function facturaEmitidaTemplate(facturas, sucursalNombre = 'BASANI S.A.') {
   return `
     <html>
       <body>
@@ -22,7 +22,8 @@ function facturaEmitidaTemplate(facturas) {
             </tr>
           `).join('')}
         </table>
-        <p>Gracias.</p>
+        <p>Atentamente,</p>
+        <p>Área de Cobranzas<br/>${sucursalNombre}</p>
       </body>
     </html>
   `;

@@ -1,4 +1,4 @@
-function retiroTemplate({ clienteNombre, gestoraNombre, facturas }) {
+function retiroTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -49,7 +49,7 @@ function retiroTemplate({ clienteNombre, gestoraNombre, facturas }) {
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
         Área de Cobranzas<br/>
-        BASANI S.A.</p>
+        ${sucursalNombre}</p>
         </body>
     </html>
   `;

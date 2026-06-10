@@ -1,4 +1,4 @@
-function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
+function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = '${sucursalNombre}' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -13,7 +13,7 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
       <body style="font-family: Arial, sans-serif;">
         <h2>Área de Cobranzas - ${hoy}</h2>
         <p>Estimado cliente ${clienteNombre}, </p>
-        <p>En <strong>BASANI S.A.</strong> trabajamos constantemente para ofrecerle el mejor servicio, y como parte de nuestro compromiso, nos gustaría informarle sobre el estado actual de sus cuenta.</p>
+        <p>En <strong>${sucursalNombre}</strong> trabajamos constantemente para ofrecerle el mejor servicio, y como parte de nuestro compromiso, nos gustaría informarle sobre el estado actual de sus cuenta.</p>
         <p>Facturas vencidas y próximas a vencer</p>
         <p>A continuación, detallamos las facturas pendientes de pago para su revisión:</p>
         <br/>
@@ -51,7 +51,7 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas }) {
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
         Área de Cobranzas<br/>
-        BASANI S.A.</p>
+        ${sucursalNombre}</p>
         </body>
     </html>
   `;
