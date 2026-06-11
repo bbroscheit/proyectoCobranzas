@@ -8,10 +8,10 @@ import CardAgendaAVencer from "./CardAgendaAVencer";
 import CardAgendaVencido from "./CardAgendaVencido";
 import CardAgendaAFavor from "./CardAgendaAFavor";
 
-// Separa un string de valores separados por comas y elimina vacíos
+// Separa un string de valores separados por coma o punto y coma
 function parseValues(raw) {
   if (!raw) return [];
-  return String(raw).split(",").map(v => v.trim()).filter(Boolean);
+  return String(raw).split(/[,;]/).map(v => v.trim()).filter(Boolean);
 }
 
 // Si hay un solo valor muestra un <h3>, si hay varios muestra un desplegable nativo
@@ -71,8 +71,10 @@ function CardAgenda({
             <PermContactCalendarIcon />
             <h3>{cuit}</h3>
           </div>
-          <MultiValueField values={contactos} className={styles.cardContact} />
-          <MultiValueField values={emails}    className={styles.cardContact} />
+          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+            <MultiValueField values={contactos} className={styles.cardContact} />
+            <MultiValueField values={emails}    className={styles.cardContact} />
+          </div>
         </div>
       </div>
       {deudaTotal && deudaTotal > 0 ? (

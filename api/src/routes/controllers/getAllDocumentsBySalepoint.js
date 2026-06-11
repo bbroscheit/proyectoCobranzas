@@ -1,6 +1,7 @@
 const {
   Usuario,
   Document,
+  Documentrosario,
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
@@ -31,6 +32,9 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     case 3:
       DocumentoModel = Documentchile;
       break;
+    case 4:
+      DocumentoModel = Documentrosario;
+      break;
     case 5:
       DocumentoModel = Documentecopatagonico;
       break;
@@ -39,7 +43,7 @@ const getAllDocumentsBySalepoint = async (gestor) => {
       break;
     case 7:
       DocumentoModel = Documentecoportatiles;
-    break;
+      break;
     default:
       return null;
   }
@@ -64,20 +68,34 @@ const getAllDocumentsBySalepoint = async (gestor) => {
     facturasVencidas: { cantidad: 0, total: 0 },
   };
 
-  //const documentosFiltrados = filtrarDocumentosValidos(documentos);
-  
+  // Prefijos válidos para sucursales 6 y 7 (documentos viejos sin P + nuevos con P)
+  // Viejos: FAA/FAB (facturas), NDA/NDB (ND), NCA/NCB (NC)
+  // Nuevos: FVPA/FVPB (facturas), NDPA/NDPB (ND), NCPA/NCPB (NC)
+  const PREFIJOS_VALIDOS_6_7 = [
+    "FAA", "FAB",
+    "FVPA", "FVPB",
+    "NDA", "NDB",
+    "NDPA", "NDPB",
+    "NCA", "NCB",
+    "NCPA", "NCPB",
+  ];
+
   const documentosFiltrados = documentos.filter((doc) => {
-    const numero = doc.numerodocumento || "";
-    if(doc.tipodocumento === 9) return true; // dejamos los recibos sin filtrar
-    // quitamos NDI y NCI
-    if (numero.startsWith("NDI") || numero.startsWith("NCI")) {
-      return false;
+    const numero = (doc.numerodocumento || "").trim();
+
+    if (doc.tipodocumento === 9) return true; // recibos siempre pasan
+
+    // NDI / NCI son documentos internos que nunca se muestran
+    if (numero.startsWith("NDI") || numero.startsWith("NCI")) return false;
+
+    // Sucursales 6 y 7: conviven documentos viejos (FAA/FAB/NDA/NDB/NCA/NCB)
+    // y nuevos (FVPA/FVPB). Se acepta cualquiera de esos prefijos.
+    if (usuario.sucursal === 6 || usuario.sucursal === 7) {
+      return PREFIJOS_VALIDOS_6_7.some(p => numero.startsWith(p));
     }
 
-    // quitamos documentos sin la P (no validados por AFIP)
-    if (!numero.includes("P")) {
-      return false;
-    }
+    // Resto de sucursales: solo documentos validados por AFIP (contienen P)
+    if (!numero.includes("P")) return false;
 
     return true;
   });

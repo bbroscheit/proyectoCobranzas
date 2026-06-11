@@ -1,12 +1,14 @@
 const {
   Usuario,
   Document,
+  Documentrosario,
   Documenturuguay,
   Documentchile,
   Documentecopatagonico,
   Documentecobahia,
   Documentecoportatiles,
   Client,
+  Clientrosario,
   Clienturuguay,
   Clientchile,
   Clientecopatagonico,
@@ -44,14 +46,21 @@ const getAllDocumentsByGestor = async (gestor) => {
       DocumentoModel = Documentchile;
       includeAlias = "clientdocumentochile";
       break;
+    case 4:
+      ClienteModel = Clientrosario;
+      DocumentoModel = Documentrosario;
+      includeAlias = "clientdocumentorosario";
+      break;
     case 5:
       ClienteModel = Clientecopatagonico;
       DocumentoModel = Documentecopatagonico;
       includeAlias = "clientdocumentoecopatagonico";
+      break;
     case 6:
       ClienteModel = Clientecobahia;
       DocumentoModel = Documentecobahia;
       includeAlias = "clientdocumentoecobahia";
+      break;
     case 7:
       ClienteModel = Clientecoportatiles;
       DocumentoModel = Documentecoportatiles;

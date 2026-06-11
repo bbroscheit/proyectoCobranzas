@@ -68,13 +68,9 @@ const agregarClientesNuevosConDeuda = async (usuario, listaHoy) => {
       //console.log(`Cliente ${cliente.id} documentos:`, docs.map(d => ({id: d.id, montopendiente: d.montopendiente})));
       const totalDeuda = docs.reduce((acc, d) => acc + (Number(d.montopendiente) || 0), 0);
 
-      if (totalDeuda > 0) {
-        // Agregar cliente a la lista de hoy
+      const yaEnLista = listaHoy.clientes.some(c => Number(c.id) === Number(cliente.id));
+      if (totalDeuda > 0 && !yaEnLista) {
         listaHoy.clientes.push({ id: cliente.id, llamado: false });
-        // console.log(
-        //   `📌 Cliente nuevo ${cliente.id} con deuda agregado a la lista de hoy del gestor ${usuario.firstname} ${usuario.lastname}`
-        // );
-        // Marcar cliente como ya no nuevo
         //await cliente.update({ nuevo: false });
       }
     }

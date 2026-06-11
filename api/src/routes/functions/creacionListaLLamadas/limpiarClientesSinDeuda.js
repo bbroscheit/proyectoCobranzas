@@ -74,19 +74,27 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
       }
     }
 
+    // Deduplicar por id (por si entraron duplicados en pasos anteriores)
+    const seen = new Set();
+    const clientesUnicos = clientesValidados.filter(c => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
+
     // aplicar orden de dos niveles
-    clientesValidados.sort((a, b) => {
+    clientesUnicos.sort((a, b) => {
       if (b.deudaTotal !== a.deudaTotal) {
         return b.deudaTotal - a.deudaTotal;
       }
       return b.deudaNoVencida - a.deudaNoVencida;
     });
 
-    // Actualizamos listado con los clientes enriquecidos
-    listadoHoy.clientes = clientesValidados;
-    await listadoHoy.update({ clientes: clientesValidados });
+    // Actualizamos listado con los clientes enriquecidos y deduplicados
+    listadoHoy.clientes = clientesUnicos;
+    await listadoHoy.update({ clientes: clientesUnicos });
 
-    return clientesValidados; // 👈 devuelve el array limpio y enriquecido
+    return clientesUnicos;
   } catch (error) {
     console.error(`❌ Error limpiando clientes sin deuda:`, error);
   }
