@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const { Mailqueue } = require("../../../bd");
 const { SUCURSAL_MODELS, TIPOS_DEUDA, TIPOS_CREDITO } = require("../../helpers/sucursalModels");
 const estadoDeCuentaTemplate = require("../../mailModels/estadoDeCuenta");
+const { getConfigSucursal } = require("../../mailModels/sucursalConfig");
 
 /**
  * Encola emails de "Estado de Cuenta" para todos los clientes con deuda > 0.
@@ -55,11 +56,14 @@ const queueEstadoCuenta = async () => {
         const cliente = await sucursal.clientModel.findByPk(clientId, { attributes: ["id", "name", "email"] });
         if (!cliente?.email || cliente.email === "Sin asignar") continue;
 
+        const config = getConfigSucursal(sucursal.id);
         const html = estadoDeCuentaTemplate({
           clienteNombre: cliente.name,
           gestoraNombre: "Área de Cobranzas",
           facturas,
           sucursalNombre: sucursal.nombre,
+          cuentas: config.cuentas,
+          telefono: config.telefono,
         });
 
         await Mailqueue.create({

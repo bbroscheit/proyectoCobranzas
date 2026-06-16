@@ -2,6 +2,7 @@ const { Usuario, Listadellamada } = require("../../bd");
 const { Op } = require("sequelize");
 const suspensionTemplate = require("../mailModels/suspension");
 const { getNombreSucursal } = require("../mailModels/sucursales");
+const { getConfigSucursal } = require("../mailModels/sucursalConfig");
 const sendMailgunMessage = require("../helpers/getMailTransporter");
 const reprogramacion = require("../functions/reprogramacion");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
@@ -56,11 +57,14 @@ const sendSuspension = async (numeroCliente, user) => {
       );
     }
 
+    const config = getConfigSucursal(usuario.sucursal);
     const bodyHtml = suspensionTemplate({
       clienteNombre: cliente.name,
       gestoraNombre: usuario.firstname + " " + usuario.lastname,
       facturas: docsPendientes,
       sucursalNombre: getNombreSucursal(usuario.sucursal),
+      cuentas: config.cuentas,
+      telefono: config.telefono,
     });
 
     const result = await sendMailgunMessage({

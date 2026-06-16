@@ -46,7 +46,7 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
         }
       }
 
-      if (deudaTotal > 0) {
+      if (parseFloat(deudaTotal.toFixed(2)) !== 0) {
         clientesValidados.push({
           id: clienteConDocs.id,
           name: clienteConDocs.name,

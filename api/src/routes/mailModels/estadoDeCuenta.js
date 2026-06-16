@@ -1,4 +1,4 @@
-function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = '${sucursalNombre}' }) {
+function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -7,6 +7,8 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
     if (isNaN(f)) return "-";
     return f.toLocaleDateString("es-AR").replaceAll("/", "-");
   }
+
+  const cuentasHtml = cuentas.map(c => `<li>${c}</li>`).join('');
 
   return `
     <html>
@@ -38,15 +40,13 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
           </tbody>
         </table>
 
-        <p style="margin-top:20px;">
-          Opciones de Pago
-        </p>
+        <p style="margin-top:20px;">Opciones de Pago</p>
         <ul>
-              <ol>Transferencia bancaria a la cuenta [número de cuenta].</ol>
-              <ol>Otros métodos de pago(consultar con nuestro equipo de cobranzas).</ol>
+          ${cuentasHtml}
+          <li>Otros métodos de pago (consultar con nuestro equipo de cobranzas).</li>
         </ul>
         <p>Le solicitamos gentilmente realizar el pago de sus facturas vencidas para evitar posibles recargos adicionales o interrupciones en sus servicios.</p>
-        <p>Si ya ha realizado el pago o tiene algún inconveniente, no dude en contactarnos para informarlo y asistirlo. Puede comunicarse con nuestro equipo de cobranzas al [numero de telefono general] o responder este correo.</p>
+        <p>Si ya ha realizado el pago o tiene algún inconveniente, no dude en contactarnos para informarlo y asistirlo. Puede comunicarse con nuestro equipo de cobranzas al ${telefono} o respondiendo este correo.</p>
         <p>Agradecemos su atención y quedamos a su disposición para cualquier consulta.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>

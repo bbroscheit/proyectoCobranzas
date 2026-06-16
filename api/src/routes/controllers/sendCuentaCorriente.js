@@ -2,12 +2,13 @@ const { Usuario, Listadellamada } = require("../../bd");
 const { Op } = require("sequelize");
 const estadoDeCuentaTemplate = require("../mailModels/estadoDeCuenta");
 const { getNombreSucursal } = require("../mailModels/sucursales");
+const { getConfigSucursal } = require("../mailModels/sucursalConfig");
 const sendMailgunMessage = require("../helpers/getMailTransporter");
 const reprogramacion = require("../functions/reprogramacion");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
 
-const sendCuentaCorriente = async (numeroCliente, user) => {
+const sendCuentaCorriente = async (numeroCliente, user, destinatario) => {
   //console.log('📭 Enviando email aviso a cliente:', numeroCliente, cuentaCorriente);
 
   try {
@@ -42,7 +43,8 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
     if (!cliente)
       throw new Error(`Cliente ${numeroCliente} no está en la lista de hoy`);
 
-    if (!cliente.email)
+    const emailDestino = destinatario || cliente.email;
+    if (!emailDestino)
       throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
 
     // Cuerpo del mensaje
@@ -56,17 +58,20 @@ const sendCuentaCorriente = async (numeroCliente, user) => {
       );
     }
 
+    const config = getConfigSucursal(usuario.sucursal);
     const bodyHtml = estadoDeCuentaTemplate({
       clienteNombre: cliente.name,
       gestoraNombre: usuario.firstname + " " + usuario.lastname,
       facturas: docsPendientes,
       sucursalNombre: getNombreSucursal(usuario.sucursal),
+      cuentas: config.cuentas,
+      telefono: config.telefono,
     });
 
     const result = await sendMailgunMessage({
       sucursal: usuario.sucursal,
       from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
-      to: cliente.email,
+      to: emailDestino,
       cc: usuario.mail,
       replyTo: usuario.mail,
       subject: "Estado de Cuenta",

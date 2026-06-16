@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const { Mailqueue } = require("../../../bd");
 const { SUCURSAL_MODELS, TIPOS_DEUDA } = require("../../helpers/sucursalModels");
 const facturaEmitidaTemplate = require("../../mailModels/facturaEmitida");
+const { getConfigSucursal } = require("../../mailModels/sucursalConfig");
 
 /**
  * Encola emails de "Factura Emitida" para clientes cuyas facturas se emitieron ayer.
@@ -54,7 +55,13 @@ const queueFacturaEmitida = async () => {
         const cliente = await sucursal.clientModel.findByPk(clientId, { attributes: ["id", "name", "email"] });
         if (!cliente?.email || cliente.email === "Sin asignar") continue;
 
-        const html = facturaEmitidaTemplate(facturas, sucursal.nombre);
+        const config = getConfigSucursal(sucursal.id);
+        const html = facturaEmitidaTemplate({
+          facturas,
+          sucursalNombre: sucursal.nombre,
+          cuentas: config.cuentas,
+          telefono: config.telefono,
+        });
 
         await Mailqueue.create({
           to: cliente.email,

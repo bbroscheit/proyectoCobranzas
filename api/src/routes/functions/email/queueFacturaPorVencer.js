@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const { Mailqueue } = require("../../../bd");
 const { SUCURSAL_MODELS, TIPOS_DEUDA } = require("../../helpers/sucursalModels");
 const facturaPorVencerTemplate = require("../../mailModels/facturaPorVencer");
+const { getConfigSucursal } = require("../../mailModels/sucursalConfig");
 
 /**
  * Encola emails de "Factura Por Vencer" para facturas que vencen en exactamente 3 días.
@@ -54,7 +55,13 @@ const queueFacturaPorVencer = async () => {
         const cliente = await sucursal.clientModel.findByPk(clientId, { attributes: ["id", "name", "email"] });
         if (!cliente?.email || cliente.email === "Sin asignar") continue;
 
-        const html = facturaPorVencerTemplate(facturas, sucursal.nombre);
+        const config = getConfigSucursal(sucursal.id);
+        const html = facturaPorVencerTemplate({
+          facturas,
+          sucursalNombre: sucursal.nombre,
+          cuentas: config.cuentas,
+          telefono: config.telefono,
+        });
 
         await Mailqueue.create({
           to: cliente.email,

@@ -29,6 +29,8 @@ const sendSuspension  = require("./controllers/sendSuspension.js");
 const sendLegales  = require("./controllers/sendLegales.js");
 const getStatusClient = require("./controllers/getStatusClient.js");
 const getAllClientsBySucursal = require("./controllers/getAllClientsBySucursal.js");
+const getListasGestor = require("./controllers/getListasGestor.js");
+const getClienteEmails = require("./controllers/getClienteEmails.js");
 
 
 promoterRouter.post("/login", async (req, res) => {
@@ -404,9 +406,9 @@ promoterRouter.post("/mailResumenVencido", async (req, res) => {
 });
 
 promoterRouter.post("/sendCuentaCorriente", async (req, res) => {
-  const { user , numeroCliente } = req.body;
+  const { user, numeroCliente, destinatario } = req.body;
   try {
-    const results = await sendCuentaCorriente( numeroCliente, user );
+    const results = await sendCuentaCorriente(numeroCliente, user, destinatario);
     results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
@@ -466,6 +468,26 @@ promoterRouter.get("/changeStatusClient/:clientId", async (req, res) => {
       : res.status(400).json(results);
   } catch (e) {
     console.log("error en ruta getStatusClient", e.message);
+  }
+});
+
+promoterRouter.get("/clienteEmails/:usuarioId/:clienteId", async (req, res) => {
+  const { usuarioId, clienteId } = req.params;
+  try {
+    const emails = await getClienteEmails(usuarioId, clienteId);
+    res.status(200).json({ emails });
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
+promoterRouter.get("/listasGestor/:usuarioId", async (req, res) => {
+  const { usuarioId } = req.params;
+  try {
+    const listas = await getListasGestor(usuarioId);
+    res.status(200).json(listas);
+  } catch (e) {
+    res.status(500).json({ state: "error", message: e.message });
   }
 });
 

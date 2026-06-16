@@ -1,13 +1,14 @@
-// modelo html de mail para una factura emitida
-function facturaPorVencerTemplate(facturas, sucursalNombre = 'BASANI S.A.') {
+function facturaPorVencerTemplate({ facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
+  const cuentasHtml = cuentas.map(c => `<li>${c}</li>`).join('');
+
   return `
     <html>
-      <body>
-        <h2>¡Aviso de facturas pendientes!</h2>
+      <body style="font-family: Arial, sans-serif;">
+        <h2>¡Aviso de facturas próximas a vencer!</h2>
         <p>Estimado cliente,</p>
-        <p>Le informamos que tiene las siguientes facturas se encuentran proximas a vencer:</p>
-        <table border="1" cellpadding="5" cellspacing="0">
-          <tr>
+        <p>Le informamos que las siguientes facturas se encuentran próximas a vencer:</p>
+        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+          <tr style="background-color:#f2f2f2;">
             <th>Número de factura</th>
             <th>Fecha de emisión</th>
             <th>Fecha de vencimiento</th>
@@ -22,7 +23,13 @@ function facturaPorVencerTemplate(facturas, sucursalNombre = 'BASANI S.A.') {
             </tr>
           `).join('')}
         </table>
-        <p>Por favor, regularice su situación a la brevedad.</p>
+        <p>Por favor, regularice su situación a la brevedad para evitar inconvenientes.</p>
+        <p style="margin-top:16px;">Puede realizar el pago a través de:</p>
+        <ul>
+          ${cuentasHtml}
+          <li>Otros métodos de pago (consultar con nuestro equipo de cobranzas).</li>
+        </ul>
+        <p>Ante cualquier consulta, comuníquese al ${telefono} o responda este correo.</p>
         <p>Atentamente,</p>
         <p>Área de Cobranzas<br/>${sucursalNombre}</p>
       </body>

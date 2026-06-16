@@ -1,4 +1,4 @@
-function facturaVencidaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.' }) {
+function facturaVencidaTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -7,6 +7,8 @@ function facturaVencidaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
     if (isNaN(f)) return "-";
     return f.toLocaleDateString("es-AR").replaceAll("/", "-");
   }
+
+  const cuentasHtml = cuentas.map(c => `<li>${c}</li>`).join('');
 
   return `
     <html>
@@ -37,12 +39,12 @@ function facturaVencidaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
         </table>
 
         <p>Con el objetivo de evitar cargos adicionales o interrupciones en nuestros servicios, le solicitamos regularizar el pago dentro de las próximas 48 horas.</p>
-        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos. En caso contrario, puede realizarlo utilizando los siguientes métodos:</p>
+        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos. En caso contrario, puede realizarlo a través de:</p>
         <ul>
-          <ol>Transferencia bancaria: </ol>
-          <ol>Otros métodos de pago (consulte con nuestro equipo de cobranzas).</ol>
+          ${cuentasHtml}
+          <li>Otros métodos de pago (consulte con nuestro equipo de cobranzas).</li>
         </ul>
-        <p>Estamos a su disposición para cualquier consulta vía telefónica o Whatsapp.</p>
+        <p>Estamos a su disposición para cualquier consulta vía telefónica o WhatsApp al ${telefono}.</p>
         <p>Agradecemos su pronta atención y quedamos atentos a su comunicación.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>

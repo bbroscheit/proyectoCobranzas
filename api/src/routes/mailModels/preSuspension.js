@@ -1,4 +1,4 @@
-function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.' }) {
+function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -8,13 +8,15 @@ function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursa
     return f.toLocaleDateString("es-AR").replaceAll("/", "-");
   }
 
+  const cuentasHtml = cuentas.map(c => `<li>${c}</li>`).join('');
+
   return `
     <html>
       <body style="font-family: Arial, sans-serif;">
         <h2>Área de Cobranzas - ${hoy}</h2>
         <p>Estimado cliente ${clienteNombre}, </p>
-        <p>Nos dirigimos a usted para informarle que, a la fecha, su cuenta presenta un saldo pendiente correspondiente al alquilerde equipo / desagote de baños químicos brindados por nuestra empresa. Según nuestros registros, las facturas detalladas a continuación se encuentran impagas:</p>
-        
+        <p>Nos dirigimos a usted para informarle que, a la fecha, su cuenta presenta un saldo pendiente correspondiente al alquiler de equipo / desagote de baños químicos brindados por nuestra empresa. Según nuestros registros, las facturas detalladas a continuación se encuentran impagas:</p>
+
         <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr style="background-color:#f2f2f2;">
@@ -35,17 +37,15 @@ function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursa
             `).join("")}
           </tbody>
         </table>
-        <p>Dado que el plazo estipulado para el pago ha vencido y no hemos recibido respuesta, nos vemos en la necesidad de notificarle que los servicios de desagote quedarán suspendidos o partir del [plazo establecido por configuración], salvo que se regularice el pago correspondiente antes de esa fecha.</p>
-        <p style="margin-top:20px;">
-          Le recordamos que puede realizar el pago a través de:
-        </p>
+        <p>Dado que el plazo estipulado para el pago ha vencido y no hemos recibido respuesta, nos vemos en la necesidad de notificarle que los servicios quedarán suspendidos, salvo que se regularice el pago correspondiente antes de esa fecha.</p>
+        <p style="margin-top:20px;">Le recordamos que puede realizar el pago a través de:</p>
         <ul>
-              <ol>Transferencia bancaria a la cuenta [número de cuenta].</ol>
-              <ol>Otros métodos de pago(consultar con nuestro equipo de cobranzas).</ol>
+          ${cuentasHtml}
+          <li>Otros métodos de pago (consultar con nuestro equipo de cobranzas).</li>
         </ul>
         <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos.</p>
         <p>Entendemos que pueden surgir inconvenientes; por ello, si necesita asistencia adicional o desea discutir alternativas, no dude en contactarnos. Nuestro objetivo es continuar ofreciéndole nuestros servicios de calidad sin interrupciones.</p>
-        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp [número telefónico] o respondiendo este correo electrónico.</p>
+        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefono} o respondiendo este correo electrónico.</p>
         <p>Agradecemos su pronta atención a este asunto.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
