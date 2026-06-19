@@ -68,9 +68,14 @@ const sendCuentaCorriente = async (numeroCliente, user, destinatario) => {
       telefono: config.telefono,
     });
 
+    const fromName =
+      usuario.sucursal === 6
+        ? "Ecobahia - Cobranzas"
+        : `${usuario.firstname} ${usuario.lastname}`;
+
     const result = await sendMailgunMessage({
       sucursal: usuario.sucursal,
-      from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
+      from: `"${fromName}" <${process.env.MAIL_USER}>`,
       to: emailDestino,
       cc: usuario.mail,
       replyTo: usuario.mail,
