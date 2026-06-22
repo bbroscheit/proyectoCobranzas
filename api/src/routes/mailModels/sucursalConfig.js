@@ -1,14 +1,14 @@
 const SUCURSAL_CONFIG = {
   1: {
     nombre: "BASANI S.A.",
-    telefono: "xxxxxx",
+    telefonos: ["xxxxxx"],
     cuentas: [
       "xxxxxx",
     ],
   },
   2: {
     nombre: "Cylius",
-    telefono: "093999820",
+    telefonos: ["093999820"],
     cuentas: [
       "Banco Santander: Cuenta corriente en pesos Nº56472, Suc. 09 a nombre de Cylius SA",
       "BROU: Caja de ahorro pesos Nº 001566695-00001 a nombre de Cylius SA",
@@ -16,35 +16,35 @@ const SUCURSAL_CONFIG = {
   },
   3: {
     nombre: "Baebsa",
-    telefono: "xxxxxx",
+    telefonos: ["xxxxxx"],
     cuentas: [
       "xxxxxx",
     ],
   },
   4: {
     nombre: "Baxpa",
-    telefono: "xxxxxx",
+    telefonos: ["xxxxxx"],
     cuentas: [
       "xxxxxx",
     ],
   },
   5: {
     nombre: "Ecosistemas Patagónicos",
-    telefono: "xxxxxx",
+    telefonos: ["xxxxxx"],
     cuentas: [
       "xxxxxx",
     ],
   },
   6: {
     nombre: "Ecobahia",
-    telefono: "+54 9 2916 44-8993",
+    telefonos: ["+54 9 2916 44-8993", "+54 9 291 643-3857"],
     cuentas: [
       "Banco Credicoop — CBU: 1910120255012000196700",
     ],
   },
   7: {
     nombre: "Ecoportatiles",
-    telefono: "xxxxxx",
+    telefonos: ["xxxxxx"],
     cuentas: [
       "xxxxxx",
     ],

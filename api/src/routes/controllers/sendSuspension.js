@@ -8,7 +8,7 @@ const reprogramacion = require("../functions/reprogramacion");
 const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
 
-const sendSuspension = async (numeroCliente, user) => {
+const sendSuspension = async (numeroCliente, user, destinatario) => {
   //console.log('📭 Enviando email aviso a cliente:', numeroCliente, cuentaCorriente);
 
   try {
@@ -43,7 +43,8 @@ const sendSuspension = async (numeroCliente, user) => {
     if (!cliente)
       throw new Error(`Cliente ${numeroCliente} no está en la lista de hoy`);
 
-    if (!cliente.email)
+    const emailDestino = destinatario || cliente.email;
+    if (!emailDestino)
       throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
 
     // Cuerpo del mensaje
@@ -64,13 +65,13 @@ const sendSuspension = async (numeroCliente, user) => {
       facturas: docsPendientes,
       sucursalNombre: getNombreSucursal(usuario.sucursal),
       cuentas: config.cuentas,
-      telefono: config.telefono,
+      telefonos: config.telefonos,
     });
 
     const result = await sendMailgunMessage({
       sucursal: usuario.sucursal,
       from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
-      to: cliente.email,
+      to: emailDestino,
       cc: usuario.mail,
       replyTo: usuario.mail,
       subject: "Aviso de Suspensión",

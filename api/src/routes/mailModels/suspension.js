@@ -1,4 +1,5 @@
-function suspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
+function suspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefonos = [] }) {
+  const telefonosInline = telefonos.length === 1 ? telefonos[0] : telefonos.join(' / ');
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -43,9 +44,9 @@ function suspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNo
           ${cuentasHtml}
           <li>Otros métodos de pago (consultar con nuestro equipo de cobranzas).</li>
         </ul>
-        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos; o lo envíe mediante WhatsApp al ${telefono}.</p>
+        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos; o lo envíe mediante WhatsApp al ${telefonosInline}.</p>
         <p>Estamos disponibles para discutir opciones de regularización o atender cualquier consulta al respecto.</p>
-        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefono} o respondiendo este correo electrónico.</p>
+        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefonosInline} o respondiendo este correo electrónico.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
         Área de Cobranzas<br/>

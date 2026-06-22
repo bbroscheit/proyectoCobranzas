@@ -419,9 +419,9 @@ promoterRouter.post("/sendCuentaCorriente", async (req, res) => {
 });
 
 promoterRouter.post("/sendPreSuspension", async (req, res) => {
-  const { user , numeroCliente } = req.body;
+  const { user, numeroCliente, destinatario } = req.body;
   try {
-    const results = await sendPreSuspension( numeroCliente, user );
+    const results = await sendPreSuspension(numeroCliente, user, destinatario);
     results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
@@ -432,9 +432,9 @@ promoterRouter.post("/sendPreSuspension", async (req, res) => {
 });
 
 promoterRouter.post("/sendSuspension", async (req, res) => {
-  const { user , numeroCliente } = req.body;
+  const { user, numeroCliente, destinatario } = req.body;
   try {
-    const results = await sendSuspension( numeroCliente, user );
+    const results = await sendSuspension(numeroCliente, user, destinatario);
     results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });
@@ -445,9 +445,9 @@ promoterRouter.post("/sendSuspension", async (req, res) => {
 });
 
 promoterRouter.post("/sendLegales", async (req, res) => {
-  const { user , numeroCliente } = req.body;
+  const { user, numeroCliente, destinatario } = req.body;
   try {
-    const results = await sendLegales( numeroCliente, user );
+    const results = await sendLegales(numeroCliente, user, destinatario);
     results
       ? res.status(201).json({ state: "success" })
       : res.status(400).json({ state: "failure" });

@@ -65,7 +65,7 @@ const sendCuentaCorriente = async (numeroCliente, user, destinatario) => {
       facturas: docsPendientes,
       sucursalNombre: getNombreSucursal(usuario.sucursal),
       cuentas: config.cuentas,
-      telefono: config.telefono,
+      telefonos: config.telefonos,
     });
 
     const fromName =

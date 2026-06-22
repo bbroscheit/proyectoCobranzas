@@ -1,4 +1,5 @@
-function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
+function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefonos = [] }) {
+  const telefonosInline = telefonos.length === 1 ? telefonos[0] : telefonos.join(' / ');
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -45,7 +46,7 @@ function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursa
         </ul>
         <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante de pago para actualizar nuestra base de datos.</p>
         <p>Entendemos que pueden surgir inconvenientes; por ello, si necesita asistencia adicional o desea discutir alternativas, no dude en contactarnos. Nuestro objetivo es continuar ofreciéndole nuestros servicios de calidad sin interrupciones.</p>
-        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefono} o respondiendo este correo electrónico.</p>
+        <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefonosInline} o respondiendo este correo electrónico.</p>
         <p>Agradecemos su pronta atención a este asunto.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>

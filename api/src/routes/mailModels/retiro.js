@@ -1,4 +1,5 @@
-function retiroTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefono = '' }) {
+function retiroTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre = 'BASANI S.A.', cuentas = [], telefonos = [] }) {
+  const telefonosInline = telefonos.length === 1 ? telefonos[0] : telefonos.join(' / ');
   const hoy = new Date().toLocaleDateString("es-AR");
 
   function formatearFecha(fecha) {
@@ -43,7 +44,7 @@ function retiroTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre
           ${cuentasHtml}
           <li>Otros métodos de pago (consultar con nuestro equipo de cobranzas).</li>
         </ul>
-        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante del mismo o lo envíe mediante WhatsApp al ${telefono} de inmediato para detener el avance del proceso.</p>
+        <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante del mismo o lo envíe mediante WhatsApp al ${telefonosInline} de inmediato para detener el avance del proceso.</p>
         <p>Lamentamos llegar a esta instancia, pero es nuestro deber proteger los intereses de la empresa. Quedamos atentos a su pronta respuesta y dispuestos a atender cualquier consulta al respecto.</p>
         <p>Atentamente,</p>
         <p><strong>${gestoraNombre}</strong><br/>
