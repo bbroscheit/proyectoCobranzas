@@ -43,8 +43,7 @@ const reprogramacion = async (client, reprogram, usuarioId) => {
       const existe = clientes.some((c) => c.id === client.id);
 
       if (!existe) {
-        clientes.push(client);
-        await lista.update({ clientes });
+        await lista.update({ clientes: [...clientes, client] });
       }
 
     } else {
