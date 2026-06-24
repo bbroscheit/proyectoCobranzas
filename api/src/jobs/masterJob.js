@@ -31,7 +31,7 @@ const runSyncProcess = async () => {
 };
 
 // Se ejecuta todos los días a las 5 de la mañana
-cron.schedule("18 14 * * *", async () => {
+cron.schedule("33 09 * * *", async () => {
   await runExclusive("SYNC_MASTER", runSyncProcess);
 });
 
