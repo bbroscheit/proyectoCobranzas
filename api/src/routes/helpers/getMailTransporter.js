@@ -48,12 +48,12 @@ async function sendMailgunMessage({ sucursal, from, to, cc, replyTo, subject, ht
   }
   ─────────────────────────────────────────────────────────────────────────── */
 
-  /* ─── SUCURSAL 6 – Ecobahia ──────────────────────────────────────────────
+  
   if (sucursal === 6 && process.env.MAILGUN_DOMAIN_6) {
     const mg6 = mailgun.client({ username: "api", key: process.env.API_KEY_6 || process.env.API_KEY, url: "https://api.mailgun.net" });
     return mg6.messages.create(process.env.MAILGUN_DOMAIN_6, buildPayload({ from: process.env.MAIL_FROM_6 || from, to, cc, replyTo, subject, html }));
   }
-  ─────────────────────────────────────────────────────────────────────────── */
+  
 
   /* ─── SUCURSAL 7 – Ecoportatiles ─────────────────────────────────────────
   if (sucursal === 7 && process.env.MAILGUN_DOMAIN_7) {

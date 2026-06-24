@@ -48,7 +48,7 @@ function suspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNo
         <p>Estamos disponibles para discutir opciones de regularización o atender cualquier consulta al respecto.</p>
         <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefonosInline} o respondiendo este correo electrónico.</p>
         <p>Atentamente,</p>
-        <p><strong>${gestoraNombre}</strong><br/>
+        <p>${gestoraNombre ? `<strong>${gestoraNombre}</strong><br/>` : ''}
         Área de Cobranzas<br/>
         ${sucursalNombre}</p>
         </body>

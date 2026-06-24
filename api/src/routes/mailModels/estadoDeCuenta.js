@@ -31,10 +31,10 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
           <tbody>
             ${facturas.map(factura => `
               <tr>
-                <td>${factura.numero}</td>
-                <td>${formatearFecha(factura.fecha) || "-"}</td>
-                <td>${formatearFecha(factura.fechavencimiento) || "-"}</td>
-                <td>$${Number(factura.montopendiente).toLocaleString("es-AR")}</td>
+                <td style="text-align: center;">${factura.numero}</td>
+                <td style="text-align: center;">${formatearFecha(factura.fecha) || "-"}</td>
+                <td style="text-align: center;">${formatearFecha(factura.fechavencimiento) || "-"}</td>
+                <td style="text-align: center;">$${Number(factura.montopendiente).toLocaleString("es-AR")}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -49,7 +49,7 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
         <p>Si ya ha realizado el pago o tiene algún inconveniente, no dude en contactarnos para informarlo y asistirlo. Puede comunicarse con nuestro equipo de cobranzas ${telefonos.length === 1 ? `al número ${telefonos[0]}` : `a los números:<ul>${telefonos.map(t => `<li>${t}</li>`).join('')}</ul>`} o respondiendo este correo.</p>
         <p>Agradecemos su atención y quedamos a su disposición para cualquier consulta.</p>
         <p>Atentamente,</p>
-        <p><strong>${gestoraNombre}</strong><br/>
+        <p>${gestoraNombre ? `<strong>${gestoraNombre}</strong><br/>` : ''}
         Área de Cobranzas<br/>
         ${sucursalNombre}</p>
         </body>

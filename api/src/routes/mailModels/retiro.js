@@ -47,7 +47,7 @@ function retiroTemplate({ clienteNombre, gestoraNombre, facturas, sucursalNombre
         <p>Si ya ha realizado el pago, le pedimos que adjunte en este correo el comprobante del mismo o lo envíe mediante WhatsApp al ${telefonosInline} de inmediato para detener el avance del proceso.</p>
         <p>Lamentamos llegar a esta instancia, pero es nuestro deber proteger los intereses de la empresa. Quedamos atentos a su pronta respuesta y dispuestos a atender cualquier consulta al respecto.</p>
         <p>Atentamente,</p>
-        <p><strong>${gestoraNombre}</strong><br/>
+        <p>${gestoraNombre ? `<strong>${gestoraNombre}</strong><br/>` : ''}
         Área de Cobranzas<br/>
         ${sucursalNombre}</p>
         </body>

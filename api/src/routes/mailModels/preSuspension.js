@@ -49,7 +49,7 @@ function preSuspensionTemplate({ clienteNombre, gestoraNombre, facturas, sucursa
         <p>Estamos a su disposición para atender cualquier consulta vía telefónica, WhatsApp ${telefonosInline} o respondiendo este correo electrónico.</p>
         <p>Agradecemos su pronta atención a este asunto.</p>
         <p>Atentamente,</p>
-        <p><strong>${gestoraNombre}</strong><br/>
+        <p>${gestoraNombre ? `<strong>${gestoraNombre}</strong><br/>` : ''}
         Área de Cobranzas<br/>
         ${sucursalNombre}</p>
         </body>
