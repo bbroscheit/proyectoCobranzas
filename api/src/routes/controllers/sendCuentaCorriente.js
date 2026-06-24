@@ -61,7 +61,7 @@ const sendCuentaCorriente = async (numeroCliente, user, destinatario) => {
     const config = getConfigSucursal(usuario.sucursal);
     const bodyHtml = estadoDeCuentaTemplate({
       clienteNombre: cliente.name,
-      gestoraNombre: usuario.firstname + " " + usuario.lastname,
+      gestoraNombre: usuario.sucursal === 6 ? "" : `${usuario.firstname} ${usuario.lastname}`,
       facturas: docsPendientes,
       sucursalNombre: getNombreSucursal(usuario.sucursal),
       cuentas: config.cuentas,
@@ -77,7 +77,6 @@ const sendCuentaCorriente = async (numeroCliente, user, destinatario) => {
       sucursal: usuario.sucursal,
       from: `"${fromName}" <${process.env.MAIL_USER}>`,
       to: emailDestino,
-      cc: usuario.mail,
       replyTo: usuario.mail,
       subject: "Estado de Cuenta",
       html: bodyHtml,
