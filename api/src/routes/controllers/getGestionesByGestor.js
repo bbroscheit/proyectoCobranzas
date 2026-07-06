@@ -6,22 +6,18 @@ const getGestionesByGestor = async (usuarioId) => {
   const hoy = new Date();
 
   const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-  const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+  const finDia    = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
 
-  
-  const listaHoy  = await Listadellamada.findOne({
+  const listaHoy = await Listadellamada.findOne({
     where: {
       usuarioId,
-      fecha: {
-        [require("sequelize").Op.gte]: inicioDia,
-      },
+      fecha: { [Op.between]: [inicioDia, finDia] },
     },
   });
 
-  console.log("Lista de llamadas del día:", listaHoy.clientes, );
-
-  // Gestiones creadas hoy (lista de llamadas del día)
-  const gestionesHoy = listaHoy?.clientes?.length || 0;
+  // Solo clientes pendientes (no llamados aún)
+  const gestionesHoy = listaHoy?.clientes?.filter((c) => !c.llamado).length || 0;
 
   const resumenMes = await Gestion.findAll({
     where: {

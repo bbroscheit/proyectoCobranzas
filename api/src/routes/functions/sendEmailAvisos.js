@@ -1,104 +1,105 @@
-const { Usuario, Listadellamada } = require('../../bd');
+const {
+  Usuario,
+  Document, Documenturuguay, Documentchile, Documentecopatagonico, Documentecobahia, Documentecoportatiles, Documentrosario,
+  Client, Clienturuguay, Clientchile, Clientecopatagonico, Clientecobahia, Clientecoportatiles, Clientrosario,
+} = require('../../bd');
 const { Op } = require('sequelize');
 const sendMailgunMessage = require('../helpers/getMailTransporter');
+const estadoDeCuentaTemplate = require('../mailModels/estadoDeCuenta');
+const { getConfigSucursal } = require('../mailModels/sucursalConfig');
+const { TIPOS_DEUDA } = require('../helpers/sucursalModels');
 
-const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente) => {
-   function formatearFecha(fecha) {
-    if (!fecha || fecha === 0) return "-";
-    const f = new Date(fecha);
-    if (isNaN(f)) return "-";
-    return f.toLocaleDateString("es-AR").replaceAll("/", "-");
+function getModels(sucursal) {
+  switch (sucursal) {
+    case 1: return { ClientModel: Client,              DocumentModel: Document };
+    case 2: return { ClientModel: Clienturuguay,       DocumentModel: Documenturuguay };
+    case 3: return { ClientModel: Clientchile,         DocumentModel: Documentchile };
+    case 4: return { ClientModel: Clientrosario,       DocumentModel: Documentrosario };
+    case 5: return { ClientModel: Clientecopatagonico, DocumentModel: Documentecopatagonico };
+    case 6: return { ClientModel: Clientecobahia,      DocumentModel: Documentecobahia };
+    case 7: return { ClientModel: Clientecoportatiles, DocumentModel: Documentecoportatiles };
+    default: return null;
   }
+}
 
-
+const sendEmailAvisos = async (numeroCliente, user, emailText, cuentaCorriente, destinatario) => {
   try {
     if (!emailText || String(emailText).trim() === '') {
       console.log('📭 No se envía email: emailText vacío');
       return null;
     }
 
-    // Buscamos usuario
     const usuario = await Usuario.findByPk(user);
     if (!usuario) throw new Error(`Usuario ${user} no encontrado`);
-    if (!usuario.mail) throw new Error(`Usuario ${user} no tiene email registrado`);
 
-    //Buscamos Lista de LLamadas de hoy del usuario recibido
-    const hoy = new Date();
-    const dayStart = new Date(hoy.setHours(0, 0, 0, 0));
-    const dayEnd = new Date(hoy.setHours(23, 59, 59, 999));
+    const models = getModels(usuario.sucursal);
+    if (!models) throw new Error(`Sucursal ${usuario.sucursal} no soportada`);
+    const { ClientModel, DocumentModel } = models;
 
-    const listaHoy = await Listadellamada.findOne({
-      where: {
-        fecha: { [Op.between]: [dayStart, dayEnd] },
-        usuarioId: user,
-      },
-    });
+    const cliente = await ClientModel.findByPk(numeroCliente);
+    if (!cliente) throw new Error(`Cliente ${numeroCliente} no encontrado`);
 
-    if (!listaHoy) {
-      throw new Error(`No existe lista de llamadas para hoy del usuario ${user}`);
-    }
+    const emailDestino = destinatario || cliente.email;
+    if (!emailDestino) throw new Error(`Sin email de destino para cliente ${numeroCliente}`);
 
-    //Buscamos cliente dentro de la lista de llamadas de hoy
-    const cliente = listaHoy.clientes.find((c) => String(c.id).trim() === String(numeroCliente).trim());
-    if (!cliente) throw new Error(`Cliente ${numeroCliente} no está en la lista de hoy`);
+    const config = getConfigSucursal(usuario.sucursal);
+    const gestoraNombre = usuario.sucursal === 6 ? '' : `${usuario.firstname} ${usuario.lastname}`;
+    const fromName = usuario.sucursal === 6 ? 'Ecobahia - Cobranzas' : `${usuario.firstname} ${usuario.lastname}`;
+    const fromAddress = usuario.sucursal === 6 ? process.env.MAIL_USER_6 : process.env.MAIL_USER;
 
-    if (!cliente.email) throw new Error(`Cliente ${numeroCliente} no tiene email registrado`);
-
-    // Cuerpo del mensaje
-    let bodyHtml = `<p>${emailText}</p>`;
+    let html;
 
     if (cuentaCorriente) {
-      const docsPendientes = (cliente.documentos || []).filter(
-        (d) => parseFloat(d.montopendiente) > 0
-      );
- 
-      
-      console.log(`Documentos pendientes para cliente ${numeroCliente}:`, docsPendientes);
-      console.log(`usuario:`, usuario);
+      const docs = await DocumentModel.findAll({
+        where: {
+          clientId: parseInt(numeroCliente),
+          montopendiente: { [Op.gt]: 0 },
+          tipodocumento: { [Op.in]: TIPOS_DEUDA },
+        },
+      });
 
-      if (docsPendientes.length > 0) {
-        let tabla = `
-          <h3>Estado de Cuenta Corriente</h3>
-          <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
-            <thead>
-              <tr style="background-color:#f2f2f2;">
-                <th>N° Documento</th>
-                <th>Fecha</th>
-                <th>Vencimiento</th>
-                <th>Monto Pendiente</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
+      const facturas = docs.map((d) => {
+        const doc = d.toJSON();
+        // Ecobahia usa numerodocumento/fechadocumento; el resto usa numero/fecha
+        return {
+          ...doc,
+          numero: doc.numero ?? doc.numerodocumento,
+          fecha:  doc.fecha  ?? doc.fechadocumento,
+        };
+      });
 
-        for (const doc of docsPendientes) {
-          tabla += `
-            <tr>
-              <td>${doc.numero}</td>
-              <td>${formatearFecha(doc.fecha || '-')}</td>
-              <td>${formatearFecha(doc.fechavencimiento || '-')}</td>
-              <td>$${Number(doc.montopendiente).toLocaleString("es-AR")}</td>
-            </tr>
-          `;
-        }
-
-        tabla += `</tbody></table>`;
-        bodyHtml += tabla;
-      }
+      html = estadoDeCuentaTemplate({
+        clienteNombre:       cliente.name || cliente.razonsocial || 'Cliente',
+        gestoraNombre,
+        facturas,
+        sucursalNombre:      config.nombre,
+        cuentas:             config.cuentas,
+        telefonos:           config.telefonos,
+        mensajePersonalizado: emailText.trim(),
+      });
+    } else {
+      html = `
+        <html>
+          <body style="font-family: Arial, sans-serif;">
+            <p style="white-space:pre-line;">${emailText.trim()}</p>
+            <br/>
+            <p>Atentamente,</p>
+            <p>${gestoraNombre ? `<strong>${gestoraNombre}</strong><br/>` : ''}Área de Cobranzas<br/>${config.nombre}</p>
+          </body>
+        </html>
+      `;
     }
 
-    const result = await sendMailgunMessage({
-      sucursal: usuario.sucursal,
-      from: `"${usuario.firstname} ${usuario.lastname}" <${process.env.MAIL_USER}>`,
-      to: cliente.email,
-      cc: usuario.mail,
-      replyTo: usuario.mail,
-      subject: 'Aviso de Cuenta',
-      html: bodyHtml,
+    await sendMailgunMessage({
+      sucursal:  usuario.sucursal,
+      from:      `"${fromName}" <${fromAddress}>`,
+      to:        emailDestino,
+      replyTo:   fromAddress,
+      subject:   'Aviso de Cuenta',
+      html,
     });
 
-    console.log('Aviso enviado:', result.messageId);
-    return result;
+    console.log(`✅ Aviso enviado → ${emailDestino}`);
   } catch (error) {
     console.error('Error en sendEmailAviso:', error);
     throw error;

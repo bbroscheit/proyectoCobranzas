@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../modules/notaModal.module.css";
-import { FaLessThanEqual } from "react-icons/fa";
 
 function AvisosModal({
   showModal,
@@ -15,58 +14,81 @@ function AvisosModal({
   setCuentaCorriente,
   reprogram,
   setReprogram,
+  cliente,
   handleSubmit,
 }) {
-  const [showAlarmaForm, setShowAlarmaForm] = useState(false);
-  const [showEmailForm, setShowEmailForm] = useState(false);
-  
-  const handleNotaChange = (e) => {
-    setNota(e.target.value);
-  };
+  const [showAlarmaForm, setShowAlarmaForm]   = useState(false);
+  const [showEmailForm, setShowEmailForm]     = useState(false);
+  const [user, setUser]                       = useState("");
+  const [emails, setEmails]                   = useState([]);
+  const [emailSeleccionado, setEmailSel]      = useState("");
+  const [emailCustom, setEmailCustom]         = useState("");
+  const [loadingEmails, setLoadingEmails]     = useState(false);
 
-  const handleComunicacionChange = (e) => {
-    setComunicacion(e.target.value);
-  };
+  useEffect(() => {
+    const userLogin = localStorage.getItem("userCobranzas");
+    if (userLogin) setUser(JSON.parse(userLogin).id);
+  }, []);
 
-  const handleEmailTextChange = (e) => {
-    setEmailText(e.target.value);
-  };
+  useEffect(() => {
+    if (!showEmailForm || !user || !cliente) return;
 
-  const handleAlarmaFechaChange = (e) => {
-    setReprogram(e.target.value);
+    setLoadingEmails(true);
+    fetch(
+      `http://${process.env.NEXT_PUBLIC_LOCALHOST}:3001/clienteEmails/${user}/${cliente}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const lista = data.emails || [];
+        setEmails(lista);
+        setEmailSel(lista[0] || "otro");
+      })
+      .catch(() => { setEmails([]); setEmailSel("otro"); })
+      .finally(() => setLoadingEmails(false));
+  }, [showEmailForm, user, cliente]);
+
+  const handleCheckboxEmailChange = (e) => {
+    setShowEmailForm(e.target.checked);
+    if (!e.target.checked) {
+      setCuentaCorriente(false);
+    }
   };
 
   const handleCheckboxCuentaCorrienteChange = (e) => {
-    if (cuentaCorriente === false) {
-      setCuentaCorriente(true);
-    } else {
-      setCuentaCorriente(false);
-    }
+    setCuentaCorriente(e.target.checked);
   };
 
   const handleCheckboxChange = (e) => {
     setShowAlarmaForm(e.target.checked);
   };
 
-  const handleCheckboxEmailChange = (e) => {
-    setShowEmailForm(e.target.checked);
-  };
-
   const onSubmit = (e) => {
     e.preventDefault();
+
+    let destinatario = null;
+    if (showEmailForm) {
+      destinatario = emailSeleccionado === "otro" ? emailCustom.trim() : emailSeleccionado;
+    }
+
     handleSubmit({
       nota,
       comunicacion,
-      emailText,
-      cuentaCorriente,
-      reprogram
+      emailText: showEmailForm ? emailText : "",
+      cuentaCorriente: showEmailForm ? cuentaCorriente : false,
+      reprogram,
+      destinatario,
     });
+
     setNota("");
     setComunicacion("");
-    setEmailText("")
-    setReprogram("")
-    setCuentaCorriente(false)
-    setShowAlarmaForm(false)
+    setEmailText("");
+    setReprogram("");
+    setCuentaCorriente(false);
+    setShowAlarmaForm(false);
+    setShowEmailForm(false);
+    setEmails([]);
+    setEmailSel("");
+    setEmailCustom("");
     setShowModal(false);
   };
 
@@ -79,7 +101,7 @@ function AvisosModal({
         <form onSubmit={onSubmit}>
           <textarea
             value={nota}
-            onChange={handleNotaChange}
+            onChange={(e) => setNota(e.target.value)}
             placeholder="Ingrese el detalle de la nota"
             rows="3"
             className={styles.textarea}
@@ -92,7 +114,7 @@ function AvisosModal({
                 name="comunicacion"
                 value="Email"
                 checked={comunicacion === "Email"}
-                onChange={handleComunicacionChange}
+                onChange={(e) => setComunicacion(e.target.value)}
               />
               Email
             </label>
@@ -102,7 +124,7 @@ function AvisosModal({
                 name="comunicacion"
                 value="Telefónico"
                 checked={comunicacion === "Telefónico"}
-                onChange={handleComunicacionChange}
+                onChange={(e) => setComunicacion(e.target.value)}
               />
               Telefónico
             </label>
@@ -112,12 +134,13 @@ function AvisosModal({
                 name="comunicacion"
                 value="WhatsApp"
                 checked={comunicacion === "WhatsApp"}
-                onChange={handleComunicacionChange}
+                onChange={(e) => setComunicacion(e.target.value)}
               />
               WhatsApp
             </label>
           </div>
-          {/* envio de email */}
+
+          {/* Envío de email */}
           <div className={styles.checkboxGroup}>
             <label>
               <input
@@ -127,32 +150,66 @@ function AvisosModal({
               />
               Enviar Email
             </label>
-            {showEmailForm && (
-              <div className={styles.alarmaForm}>
-                <textarea
-                  value={emailText}
-                  onChange={handleEmailTextChange}
-                  placeholder="Ingrese el texto del Email"
-                  rows="3"
-                  className={styles.textarea}
-                />
-              </div>
-            )}
           </div>
-          {/* cuenta corriente si o no */}
+
           {showEmailForm && (
-          <div className={styles.checkboxGroup}>
-            <label>
-              <input
-                type="checkbox"
-                onChange={handleCheckboxCuentaCorrienteChange}
+            <div className={styles.alarmaForm}>
+              {/* Selector de destinatario */}
+              <div style={{ marginBottom: "10px" }}>
+                <label style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}>
+                  Email de destino
+                </label>
+                {loadingEmails ? (
+                  <p>Cargando emails...</p>
+                ) : (
+                  <>
+                    <select
+                      value={emailSeleccionado}
+                      onChange={(e) => setEmailSel(e.target.value)}
+                      style={{ width: "100%", padding: "6px", marginBottom: "6px" }}
+                    >
+                      {emails.map((em) => (
+                        <option key={em} value={em}>{em}</option>
+                      ))}
+                      <option value="otro">Otro...</option>
+                    </select>
+                    {emailSeleccionado === "otro" && (
+                      <input
+                        type="email"
+                        placeholder="ejemplo@empresa.com"
+                        value={emailCustom}
+                        onChange={(e) => setEmailCustom(e.target.value)}
+                        style={{ width: "100%", padding: "6px", boxSizing: "border-box" }}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Cuerpo del mensaje */}
+              <textarea
+                value={emailText}
+                onChange={(e) => setEmailText(e.target.value)}
+                placeholder="Ingrese el texto del Email"
+                rows="4"
+                className={styles.textarea}
               />
-              Adjuntar Cuenta Corriente
-            </label>
-          </div>
+
+              {/* Cuenta corriente */}
+              <div className={styles.checkboxGroup}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={cuentaCorriente}
+                    onChange={handleCheckboxCuentaCorrienteChange}
+                  />
+                  Adjuntar Cuenta Corriente
+                </label>
+              </div>
+            </div>
           )}
-          
-          {/* Apertura de re-llamada */}
+
+          {/* Alarma */}
           <div className={styles.checkboxGroup}>
             <label>
               <input
@@ -168,11 +225,12 @@ function AvisosModal({
               <input
                 type="date"
                 value={reprogram}
-                onChange={handleAlarmaFechaChange}
+                onChange={(e) => setReprogram(e.target.value)}
                 className={styles.input}
               />
             </div>
           )}
+
           <button type="submit" className={styles.button}>
             Guardar
           </button>

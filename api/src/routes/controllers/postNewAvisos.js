@@ -29,7 +29,8 @@ const postNewAvisos = async (
   cuentaCorriente,
   reprogram,
   numeroCliente,
-  user
+  user,
+  destinatario
 ) => {
 
   console.log("📝 nota :" , nota);
@@ -112,7 +113,7 @@ const postNewAvisos = async (
 
     // Envia email si EmailText tiene informacion
      if (emailText && emailText.trim() !== "") {
-       await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente);
+       await sendAvisoEmail(cliente.id, usuario.id, emailText, cuentaCorriente, destinatario);
      }
 
     await reprogramacion(cliente, reprogram, usuario.id);

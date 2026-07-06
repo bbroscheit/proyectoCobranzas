@@ -342,8 +342,9 @@ promoterRouter.post("/newAvisos", async (req, res) => {
     reprogram,
     numeroCliente,
     user,
+    destinatario,
   } = req.body;
-  
+
   try {
     let results = await postNewAvisos(
       nota,
@@ -352,7 +353,8 @@ promoterRouter.post("/newAvisos", async (req, res) => {
       cuentaCorriente,
       reprogram,
       numeroCliente,
-      user
+      user,
+      destinatario
     )
     
     results && results !== "Cliente no encontrado"

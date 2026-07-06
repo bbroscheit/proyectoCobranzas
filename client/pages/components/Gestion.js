@@ -85,6 +85,7 @@ function Gestion({ clienteId }) {
     emailText,
     cuentaCorriente,
     reprogram,
+    destinatario,
   }) => {
     const avisosData = {
       nota,
@@ -92,6 +93,7 @@ function Gestion({ clienteId }) {
       emailText,
       cuentaCorriente,
       reprogram,
+      destinatario,
       numeroCliente: clienteId,
       user: user.id,
     };
@@ -236,6 +238,7 @@ function Gestion({ clienteId }) {
         setCuentaCorriente={setCuentaCorriente}
         reprogram={reprogram}
         setReprogram={setReprogram}
+        cliente={cliente}
         handleSubmit={handleAvisosSubmit}
       />
 
