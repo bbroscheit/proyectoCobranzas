@@ -20,8 +20,8 @@ export function calculaTotales(documentos) {
   let facturasMesTotal = 0;
 
   documentos.forEach((doc) => {
-      const fechaDocumento = new Date(doc.fechadocumento);
-      const fechaVencimiento = new Date(doc.fechavencimiento);
+      const fechaDocumento = new Date(doc.fechadocumento + 'T00:00:00');
+      const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
 
       // Tipo 9: Recibos
       if (doc.tipodocumento === 9) {

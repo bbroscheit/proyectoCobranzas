@@ -52,7 +52,7 @@ export const calcularDiasCallePorGestor = (facturas, usuario) => {
 
   // Filtramos facturas del mes anterior y quitamos documentos con TipoDocumento === 9
   const facturasMesAnterior = todasLasFacturas.filter((factura) => {
-    const fechaFactura = new Date(factura.fechadocumento);
+    const fechaFactura = new Date(factura.fechadocumento + 'T00:00:00');
     return (
       fechaFactura.getMonth() === mesAnterior.getMonth() &&
       fechaFactura.getFullYear() === mesAnterior.getFullYear() &&

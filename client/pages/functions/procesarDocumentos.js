@@ -33,8 +33,8 @@ export function procesarDocumentos(documentos) {
       //const fechaDocumento = new Date(doc.FechaDocumento);
       //const fechaVencimiento = new Date(doc.FechaVencimiento);
 
-      const fechaDocumento = new Date(doc.fechadocumento);
-      const fechaVencimiento = new Date(doc.fechavencimiento);
+      const fechaDocumento = new Date(doc.fechadocumento + 'T00:00:00');
+      const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
 
       // Tipo 9: Recibos
       //8if (doc.TipoDocumento === 9) { 

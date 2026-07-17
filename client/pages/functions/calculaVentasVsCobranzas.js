@@ -7,14 +7,14 @@ export const calculaVentasVsCobranzas = (documentos) => {
 
     documentos.forEach((documento) => {
        
-        const fechaDocumento = new Date(documento.fechadocumento);
+        const fechaDocumento = new Date(documento.fechadocumento + 'T00:00:00');
         const mesIndex = (new Date().getFullYear() - fechaDocumento.getFullYear()) * 12 + new Date().getMonth() - fechaDocumento.getMonth();
-    
+
         if (mesIndex >= 0 && mesIndex < 12) {
           if (documento.tipodocumento === 9) {
             recibosRecibidos[11 - mesIndex] += documento.montooriginal;
           } else if (documento.montopendiente > 0) {
-            if (documento.fechavencimiento && new Date(documento.fechavencimiento) < new Date()) {
+            if (documento.fechavencimiento && new Date(documento.fechavencimiento + 'T00:00:00') < new Date()) {
               facturasVencidas[11 - mesIndex] += documento.montopendiente;
             } else {
               facturasNoVencidas[11 - mesIndex] += documento.montopendiente;

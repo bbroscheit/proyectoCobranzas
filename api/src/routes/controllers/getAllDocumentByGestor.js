@@ -94,8 +94,8 @@ const getAllDocumentsByGestor = async (gestor) => {
     let totalFacturadoMes = 0;
 
     documentos.forEach((doc) => {
-      const fechaDocumento = new Date(doc.fechadocumento);
-      const fechaVencimiento = new Date(doc.fechavencimiento);
+      const fechaDocumento = new Date(doc.fechadocumento + 'T00:00:00');
+      const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
 
       // RECIBOS (código 9) cobrados en el mes actual
       if (doc.tipodocumento === 9) {

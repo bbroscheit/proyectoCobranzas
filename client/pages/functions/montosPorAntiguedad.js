@@ -19,7 +19,7 @@ export function montosPorAntiguedad(facturas) {
 
   facturas.forEach(doc => {
     //const fechaVencimiento = new Date(doc.FechaVencimiento);
-    const fechaVencimiento = new Date(doc.fechavencimiento);
+    const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
     // if (doc.TipoDocumento === 1 || doc.TipoDocumento === 3 || doc.TipoDocumento === 7) {
     //   if (doc.MontoPendiente > 0 && fechaVencimiento >= hoy) {
     //     totalSinVencer += doc.MontoPendiente;
@@ -35,7 +35,7 @@ export function montosPorAntiguedad(facturas) {
   // Luego, procesar las facturas vencidas
   facturas.forEach(doc => {
     //const fechaVencimiento = new Date(doc.FechaVencimiento);
-    const fechaVencimiento = new Date(doc.fechavencimiento);
+    const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
     // if (doc.TipoDocumento === 1 || doc.TipoDocumento === 3 || doc.TipoDocumento === 7) {
     //   if (doc.MontoPendiente > 0 && fechaVencimiento < hoy) {
     if (doc.tipodocumento === 1 || doc.tipodocumento === 3 || doc.tipodocumento === 7) {

@@ -15,7 +15,7 @@ export const calcularDiasCalle = (facturas) => {
     
     // Filtramos facturas del mes anterior y quitamos documentos con TipoDocumento === 9
     const facturasMesAnterior = facturas.filter(factura => {
-      const fechaFactura = new Date(factura.fechadocumento);
+      const fechaFactura = new Date(factura.fechadocumento + 'T00:00:00');
       return fechaFactura.getMonth() === mesAnterior.getMonth() && 
                 fechaFactura.getFullYear() === mesAnterior.getFullYear() &&
                     factura.tipodocumento !== 9;

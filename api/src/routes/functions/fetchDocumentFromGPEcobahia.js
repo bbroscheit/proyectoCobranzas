@@ -4,6 +4,17 @@ const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcobahia.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcobahia.js');
 
+// Extrae la fecha como string YYYY-MM-DD usando UTC para evitar corrimiento
+// de zona horaria: mssql devuelve fechas de GP como Date UTC.
+function toUTCDateString(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 const fetchDocumentFromGPEcobahia =  async () => {
   const t = await sequelize.transaction();
 
@@ -30,10 +41,10 @@ const fetchDocumentFromGPEcobahia =  async () => {
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento.trim(),
         tipodocumento: parseInt(d.TipoDocumento),
-        fechadocumento: d.FechaDocumento,
+        fechadocumento: toUTCDateString(d.FechaDocumento),
         montooriginal: parseFloat(d.MontoOriginal),
         montopendiente: parseFloat(d.MontoPendiente),
-        fechavencimiento: d.FechaVencimiento,
+        fechavencimiento: toUTCDateString(d.FechaVencimiento),
        })); 
 
     console.log(`Documentos a guardar: ${docsParaGuardar.length}`);

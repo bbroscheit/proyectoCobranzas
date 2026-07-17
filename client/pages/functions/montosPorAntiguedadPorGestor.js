@@ -46,7 +46,7 @@ export function montosPorAntiguedadPorGestor(documentos, usuario) {
     if (!docs || docs.length === 0) return;
 
     docs.forEach((doc) => {
-      const fechaVencimiento = new Date(doc.fechavencimiento);
+      const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
       if (
         doc.tipodocumento === 1 ||
         doc.tipodocumento === 3 ||
@@ -65,7 +65,7 @@ export function montosPorAntiguedadPorGestor(documentos, usuario) {
     if (!docs || docs.length === 0) return;
 
     docs.forEach((doc) => {
-      const fechaVencimiento = new Date(doc.fechavencimiento);
+      const fechaVencimiento = new Date(doc.fechavencimiento + 'T00:00:00');
       if (
         doc.tipodocumento === 1 ||
         doc.tipodocumento === 3 ||

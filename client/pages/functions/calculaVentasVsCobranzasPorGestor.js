@@ -34,14 +34,14 @@ export const calculaVentasVsCobranzasPorGestor = (documentos, usuario) => {
 
     docs.forEach((doc) => {
        
-        const fechaDocumento = new Date(doc.fechadocumento);
+        const fechaDocumento = new Date(doc.fechadocumento + 'T00:00:00');
         const mesIndex = (new Date().getFullYear() - fechaDocumento.getFullYear()) * 12 + new Date().getMonth() - fechaDocumento.getMonth();
-    
+
         if (mesIndex >= 0 && mesIndex < 12) {
           if (doc.tipodocumento === 9) {
             recibosRecibidos[11 - mesIndex] += doc.montooriginal;
           } else if (doc.montopendiente > 0) {
-            if (doc.fechavencimiento && new Date(doc.fechavencimiento) < new Date()) {
+            if (doc.fechavencimiento && new Date(doc.fechavencimiento + 'T00:00:00') < new Date()) {
               facturasVencidas[11 - mesIndex] += doc.montopendiente;
             } else {
               facturasNoVencidas[11 - mesIndex] += doc.montopendiente;

@@ -5,7 +5,7 @@ import { formatNumber } from '../functions/formatNumber'
 import { formatDate } from '../functions/formatDate'
 
 function CardFacturaCliente({ factura , nombreCliente }) {
-    const fechaVencimiento = new Date(factura.fechavencimiento)
+    const fechaVencimiento = new Date(factura.fechavencimiento + 'T00:00:00')
     const hoy = new Date()
     const diferenciaDias = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24))
 

@@ -30,10 +30,10 @@ const fetchDocumentFromGPUruguay =  async () => {
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento.trim(),
         tipodocumento: parseInt(d.TipoDocumento),
-        fechadocumento: d.FechaDocumento,
+        fechadocumento: d.FechaDocumento ? d.FechaDocumento.toISOString().slice(0, 10) : null,
         montooriginal: parseFloat(d.MontoOriginal),
         montopendiente: parseFloat(d.MontoPendiente),
-        fechavencimiento: d.FechaVencimiento,
+        fechavencimiento: d.FechaVencimiento ? d.FechaVencimiento.toISOString().slice(0, 10) : null,
        })); 
 
     console.log(`Documentos a guardar: ${docsParaGuardar.length}`);
