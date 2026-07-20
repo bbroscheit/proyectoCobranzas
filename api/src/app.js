@@ -14,7 +14,7 @@ const promoterRouter = require ('../src/routes/promoterRouter.js');
 require('events').EventEmitter.defaultMaxListeners = 20;
 
 // Carga inicial de usuarios
-//seedUsuarios();
+seedUsuarios();
 
 const server = express();
 server.name = 'API';
