@@ -6,7 +6,7 @@ const XLSX = require("xlsx");
 const FormData = require("form-data");
 const Mailgun  = require("mailgun.js");
 
-const EXCEL_PATH = process.argv[2] || "C:\\Users\\broscheitcb\\Desktop\\Envio de facturas con mailgun 2 - desde la casilla de cobranzas de Ecobahia.xlsx";
+const EXCEL_PATH = process.argv[2] || "C:\\Users\\broscheitcb\\Desktop\\Envio de facturas con mailgun - Segundo envío.xlsx";
 
 async function sendDesdeExcel() {
   if (!EXCEL_PATH) {
@@ -33,7 +33,7 @@ async function sendDesdeExcel() {
   const mailgun = new Mailgun(FormData);
   const mg = mailgun.client({
     username: "api",
-    key: process.env.API_KEY,
+    key: process.env.API_KEY_6,
     url: "https://api.mailgun.net",
   });
 
@@ -51,14 +51,20 @@ async function sendDesdeExcel() {
 
     try {
       const destinatarios = String(emailTo)
-        .split(";")
+        .split(/[;,]/)
         .map((e) => e.trim())
         .filter(Boolean);
 
+      if (!destinatarios.length) {
+        console.log(`⚠️  Sin destinatarios válidos, saltando: ${emailTo}`);
+        errores++;
+        continue;
+      }
+
       const messageData = {
         from:          "Ecobahia - Cobranzas <facturacionecobahia@basani.com.ar>",
-        to:            destinatarios,
-        subject:       String(subject).trim(),
+        to:            destinatarios.join(", "),
+        subject:       String(subject).trim().replace(/[\r\n]+/g, " "),
         text:          body ? String(body).trim() : "",
         "h:Reply-To":  process.env.MAIL_USER_6,
       };
@@ -80,16 +86,21 @@ async function sendDesdeExcel() {
         }
       }
 
-      await mg.messages.create(process.env.MAILGUN_DOMAIN, messageData);
+      console.log(`Enviando → ${destinatarios.join(", ")} | ${messageData.subject}`);
+      await mg.messages.create(process.env.MAILGUN_DOMAIN_6, messageData);
 
-      console.log(`Enviado → ${destinatarios.join(", ")} | ${subject}`);
+      console.log(`✅ Enviado`);
       enviados++;
 
       // Pausa breve para no saturar la API de Mailgun
       await new Promise((r) => setTimeout(r, 300));
 
     } catch (err) {
-      console.error(`❌ Error con ${emailTo}: ${err.message}`);
+      console.error(`❌ Error con "${emailTo}":`, {
+        status:  err.status,
+        message: err.message,
+        details: err.details,
+      });
       errores++;
     }
   }

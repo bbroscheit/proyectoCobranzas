@@ -19,19 +19,19 @@ const runSyncProcess = async () => {
   //await fetchClientsFromCRMEcoPatagonico();
   await fetchClientsFromCRMUruguay();
   await fetchClientsFromCRMEcobahia();
-  //await fetchClientsFromCRMEcoportatiles();
+  await fetchClientsFromCRMEcoportatiles();
 
   //await fetchDocumentFromGP();
   //await fetchDocumentFromGPEcoPatagonico();
   await fetchDocumentFromGPUruguay();
   await fetchDocumentFromGPEcobahia();
-  //await fetchDocumentFromGPEcoportatiles();
+  await fetchDocumentFromGPEcoportatiles();
 
   await creacionLista();
 };
 
 // Se ejecuta todos los días a las 5 de la mañana
-cron.schedule("03 15 * * *", async () => {
+cron.schedule("00 07 * * *", async () => {
   await runExclusive("SYNC_MASTER", runSyncProcess);
 });
 

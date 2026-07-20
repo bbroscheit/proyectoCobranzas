@@ -83,19 +83,26 @@ async function seedUsuarios() {
       //   mail:"bernardo.broscheit@basani.com.ar",
       //   sucursal: 2
       // }
-        username: "Jgarcia",
+        // username: "Jgarcia",
+        // password: "123",
+        // firstname: "Jorgelina",
+        // lastname: "Garcia",
+        // mail:"bernardo.broscheit@basani.com.ar",
+        // sucursal: 6
+      // },{
+      //   username: "Anavarro",
+      //   password: "123",
+      //   firstname: "Ana",
+      //   lastname: "Navarro",
+      //   mail:"bernardo.broscheit@basani.com.ar",
+      //   sucursal: 6
+      // },{
+        username: "Mvera",
         password: "123",
-        firstname: "Jorgelina",
-        lastname: "Garcia",
+        firstname: "Mariela",
+        lastname: "Vera",
         mail:"bernardo.broscheit@basani.com.ar",
-        sucursal: 6
-      },{
-        username: "Anavarro",
-        password: "123",
-        firstname: "Ana",
-        lastname: "Navarro",
-        mail:"bernardo.broscheit@basani.com.ar",
-        sucursal: 6
+        sucursal: 7
       }
      
     ];
