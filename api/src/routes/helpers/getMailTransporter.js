@@ -19,18 +19,20 @@ const mailgun = new Mailgun(FormData);
  * @param {string} opts.html
  */
 async function sendMailgunMessage({ sucursal, from, to, cc, replyTo, subject, html }) {
+  // Permite sobrescribir el replyTo por sucursal vía MAIL_REPLY_TO_N en .env
+  const effectiveReplyTo = process.env[`MAIL_REPLY_TO_${sucursal}`] || replyTo;
 
   /* ─── SUCURSAL 2 – Cylius ─────────────────────────────────────────────────
   if (sucursal === 2 && process.env.MAILGUN_DOMAIN_2) {
     const mg2 = mailgun.client({ username: "api", key: process.env.API_KEY_2 || process.env.API_KEY, url: "https://api.mailgun.net" });
-    return mg2.messages.create(process.env.MAILGUN_DOMAIN_2, buildPayload({ from: process.env.MAIL_FROM_2 || from, to, cc, replyTo, subject, html }));
+    return mg2.messages.create(process.env.MAILGUN_DOMAIN_2, buildPayload({ from: process.env.MAIL_FROM_2 || from, to, cc, replyTo: effectiveReplyTo, subject, html }));
   }
   ─────────────────────────────────────────────────────────────────────────── */
 
   /* ─── SUCURSAL 3 – Baebsa ────────────────────────────────────────────────
   if (sucursal === 3 && process.env.MAILGUN_DOMAIN_3) {
     const mg3 = mailgun.client({ username: "api", key: process.env.API_KEY_3 || process.env.API_KEY, url: "https://api.mailgun.net" });
-    return mg3.messages.create(process.env.MAILGUN_DOMAIN_3, buildPayload({ from: process.env.MAIL_FROM_3 || from, to, cc, replyTo, subject, html }));
+    return mg3.messages.create(process.env.MAILGUN_DOMAIN_3, buildPayload({ from: process.env.MAIL_FROM_3 || from, to, cc, replyTo: effectiveReplyTo, subject, html }));
   }
   ─────────────────────────────────────────────────────────────────────────── */
 
@@ -51,7 +53,7 @@ async function sendMailgunMessage({ sucursal, from, to, cc, replyTo, subject, ht
   
   if (sucursal === 6 && process.env.MAILGUN_DOMAIN_6) {
     const mg6 = mailgun.client({ username: "api", key: process.env.API_KEY_6 || process.env.API_KEY, url: "https://api.mailgun.net" });
-    return mg6.messages.create(process.env.MAILGUN_DOMAIN_6, buildPayload({ from: process.env.MAIL_FROM_6 || from, to, cc, replyTo, subject, html }));
+    return mg6.messages.create(process.env.MAILGUN_DOMAIN_6, buildPayload({ from: process.env.MAIL_FROM_6 || from, to, cc, replyTo: effectiveReplyTo, subject, html }));
   }
   
 
@@ -72,7 +74,7 @@ async function sendMailgunMessage({ sucursal, from, to, cc, replyTo, subject, ht
 
   return mgDefault.messages.create(
     process.env.MAILGUN_DOMAIN || "basani.com.ar",
-    buildPayload({ from, to, cc, replyTo, subject, html })
+    buildPayload({ from, to, cc, replyTo: effectiveReplyTo, subject, html })
   );
 }
 

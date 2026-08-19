@@ -76,12 +76,12 @@ async function sendMasivoCuentaCorrienteEcobahia() {
         continue;
       }
 
-      // 4. Buscar documentos con deuda pendiente en Postgres
+      // 4. Buscar documentos con saldo pendiente en Postgres (facturas, ND y NC)
       const docs = await Documentecobahia.findAll({
         where: {
           clientId: parseInt(cliente.codigocliente),
           montopendiente: { [Op.gt]: 0 },
-          tipodocumento: { [Op.in]: TIPOS_DEUDA },
+          tipodocumento: { [Op.in]: [...TIPOS_DEUDA, 8] },
         },
       });
 
@@ -92,7 +92,13 @@ async function sendMasivoCuentaCorrienteEcobahia() {
 
       const facturas = docs.map((d) => {
         const doc = d.toJSON();
-        return { ...doc, numero: doc.numerodocumento, fecha: doc.fechadocumento };
+        const isNC = doc.tipodocumento === 8;
+        return {
+          ...doc,
+          numero: doc.numerodocumento,
+          fecha: doc.fechadocumento,
+          montopendiente: isNC ? -doc.montopendiente : doc.montopendiente,
+        };
       });
       const deudaNeta = facturas.reduce((acc, d) => acc + parseFloat(d.montopendiente), 0);
 

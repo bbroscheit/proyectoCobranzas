@@ -12,11 +12,13 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import GavelIcon from '@mui/icons-material/Gavel';
 import MailLockIcon from '@mui/icons-material/MailLock';
 import EmailIcon from '@mui/icons-material/Email';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import AvisosModal from "../modals/AvisosModal";
 import CuentaCorrienteModal from "../modals/CuentaCorrienteModal";
 import EnvioPreSuspensionModal from "../modals/EnvioPreSuspensionModal";
 import EnvioLegalesModal from "../modals/EnvioLegales";
 import EnvioSuspensionModal from "../modals/EnvioSuspensionModal";
+import RetencionesModal from "../modals/RetencionesModal";
 import { postAvisos } from "../api/postAvisos";
 import useUser from "../hooks/useUser";
 
@@ -34,6 +36,7 @@ function Gestion({ clienteId }) {
   const [showEnvioSuspensionModal, setShowEnvioSuspensionModal] =
     useState(false);
   const [showEnvioLegalesModal, setShowEnvioLegalesModal] = useState(false);
+  const [showRetencionesModal, setShowRetencionesModal] = useState(false);
   const [nota, setNota] = useState("");
   const [comunicacion, setComunicacion] = useState("");
   const [emailText, setEmailText] = useState("");
@@ -138,6 +141,10 @@ function Gestion({ clienteId }) {
     setShowEnvioLegalesModal(true);
   };
 
+  const openRetencionesModal = () => {
+    setShowRetencionesModal(true);
+  };
+
 
   return (
     <div className={styles.timeline}>
@@ -167,6 +174,12 @@ function Gestion({ clienteId }) {
             <GavelIcon className={styles.buttonIcon} />
             <p className={styles.buttonText}>Enviar Legales</p>
           </button>
+          {user?.sucursal === 6 && (
+            <button className={styles.button} onClick={openRetencionesModal} style={{ marginLeft: '16px' }}>
+              <ReceiptLongIcon className={styles.buttonIcon} />
+              <p className={styles.buttonText}>Retenciones</p>
+            </button>
+          )}
         </div>
       </div>
       {currentFacturas.map((item, index) => {
@@ -263,6 +276,12 @@ function Gestion({ clienteId }) {
        <EnvioLegalesModal
         showModal={showEnvioLegalesModal}
         setShowModal={setShowEnvioLegalesModal}
+        cliente={cliente}
+      />
+
+      <RetencionesModal
+        showModal={showRetencionesModal}
+        setShowModal={setShowRetencionesModal}
         cliente={cliente}
       />
         

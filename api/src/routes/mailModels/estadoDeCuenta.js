@@ -32,14 +32,20 @@ function estadoDeCuentaTemplate({ clienteNombre, gestoraNombre, facturas, sucurs
             </tr>
           </thead>
           <tbody>
-            ${facturas.map(factura => `
-              <tr>
-                <td style="text-align: center;">${factura.numero}</td>
+            ${facturas.map(factura => {
+              const monto = Number(factura.montopendiente);
+              const esCredito = monto < 0;
+              const montoHtml = esCredito
+                ? `<span style="color:#1a7a1a; font-weight:bold;">- $${Math.abs(monto).toLocaleString("es-AR")}</span>`
+                : `$${monto.toLocaleString("es-AR")}`;
+              return `
+              <tr${esCredito ? ' style="background-color:#f0fff0;"' : ''}>
+                <td style="text-align: center;">${factura.numero}${esCredito ? ' <em style="font-size:0.8em; color:#1a7a1a;">(NC)</em>' : ''}</td>
                 <td style="text-align: center;">${formatearFecha(factura.fecha) || "-"}</td>
                 <td style="text-align: center;">${formatearFecha(factura.fechavencimiento) || "-"}</td>
-                <td style="text-align: center;">$${Number(factura.montopendiente).toLocaleString("es-AR")}</td>
-              </tr>
-            `).join("")}
+                <td style="text-align: center;">${montoHtml}</td>
+              </tr>`;
+            }).join("")}
           </tbody>
         </table>
 

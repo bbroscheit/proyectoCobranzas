@@ -27,6 +27,7 @@ const sendCuentaCorriente  = require("./controllers/sendCuentaCorriente.js");
 const sendPreSuspension  = require("./controllers/sendPreSuspension.js");
 const sendSuspension  = require("./controllers/sendSuspension.js");
 const sendLegales  = require("./controllers/sendLegales.js");
+const sendRetenciones  = require("./controllers/sendRetenciones.js");
 const getStatusClient = require("./controllers/getStatusClient.js");
 const getAllClientsBySucursal = require("./controllers/getAllClientsBySucursal.js");
 const getListasGestor = require("./controllers/getListasGestor.js");
@@ -455,6 +456,19 @@ promoterRouter.post("/sendLegales", async (req, res) => {
       : res.status(400).json({ state: "failure" });
   } catch (e) {
     console.log("Error en /sendLegales:", e.message);
+    res.status(500).json({ state: "error", message: e.message });
+  }
+});
+
+promoterRouter.post("/sendRetenciones", async (req, res) => {
+  const { user, numeroCliente, destinatario, fechaPago } = req.body;
+  try {
+    const results = await sendRetenciones(numeroCliente, user, destinatario, fechaPago);
+    results
+      ? res.status(201).json({ state: "success" })
+      : res.status(400).json({ state: "failure" });
+  } catch (e) {
+    console.log("Error en /sendRetenciones:", e.message);
     res.status(500).json({ state: "error", message: e.message });
   }
 });
