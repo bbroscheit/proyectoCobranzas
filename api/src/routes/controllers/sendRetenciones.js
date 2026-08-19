@@ -2,8 +2,6 @@ const { Usuario, Listadellamada } = require("../../bd");
 const { Op } = require("sequelize");
 const retencionesTemplate = require("../mailModels/retenciones");
 const sendMailgunMessage = require("../helpers/getMailTransporter");
-const reprogramacion = require("../functions/reprogramacion");
-const marcarLLamadoHoy = require("../functions/marcarLlamadoHoy");
 const createSystemNote = require("../functions/createSystemNote");
 
 const sendRetenciones = async (numeroCliente, user, destinatario, fechaPago) => {
@@ -49,14 +47,11 @@ const sendRetenciones = async (numeroCliente, user, destinatario, fechaPago) => 
       html: bodyHtml,
     });
 
-    await reprogramacion({ id: parseInt(numeroCliente) }, false, user);
-    await marcarLLamadoHoy(numeroCliente, user);
-
     await createSystemNote({
       clientId: numeroCliente,
       userId: user,
       sucursal: usuario.sucursal,
-      detail: `Se envió solicitud de retenciones por pago del ${fechaPago}`,
+      detail: `Se envió solicitud de retenciones por pago del ${fechaPago.split("-").reverse().join("/")}`,
     });
 
     console.log("Retenciones enviado:", result.messageId);
