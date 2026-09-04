@@ -36,6 +36,12 @@ const fetchDocumentFromGPEcobahia =  async () => {
     // 3. Mapear documentos a formato de inserción
     const docsParaGuardar = docs
       .filter(d => mapClientes.has(String(d.NumeroCliente).trim()))
+      .filter(d => {
+        // Recibos (tipo 9) no llevan "P" en el nombre → siempre pasan
+        if (parseInt(d.TipoDocumento) === 9) return true;
+        // Los demás deben tener "P" en el nombre para ser documentos válidos (pasaron por impuestos)
+        return String(d.NumeroDocumento).trim().includes("P");
+      })
       .map(d => ({
         clientId: parseInt(String(d.NumeroCliente).trim(), 10),
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),

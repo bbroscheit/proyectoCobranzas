@@ -36,13 +36,17 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
           ? new Date(doc.fechavencimiento)
           : null;
 
-        if (TIPOS_DEUDA.includes(doc.tipodocumento)) deudaTotal += monto;
-        if (TIPOS_CREDITO.includes(doc.tipodocumento)) deudaTotal -= monto;
-
-        // Clasificar deuda vencida / no vencida
-        if (vencimiento) {
-          if (vencimiento < hoy) deudaVencida += monto;
-          else deudaNoVencida += monto;
+        if (TIPOS_DEUDA.includes(doc.tipodocumento)) {
+          deudaTotal += monto;
+          // Clasificar en vencida / no vencida según fecha de vencimiento
+          if (vencimiento) {
+            if (vencimiento < hoy) deudaVencida += monto;
+            else deudaNoVencida += monto;
+          }
+        } else if (TIPOS_CREDITO.includes(doc.tipodocumento)) {
+          // NC y recibos restan de la deuda total y siempre de la vencida
+          deudaTotal -= monto;
+          deudaVencida -= monto;
         }
       }
 
