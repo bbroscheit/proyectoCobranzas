@@ -30,23 +30,25 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
         (doc) => parseFloat(doc.montopendiente || 0) > 0
       );
 
+      console.log(`  Cliente ${clienteConDocs.id}: ${clienteConDocs.documents.length} docs totales, ${documentosConDeuda.length} con saldo pendiente`);
+
       for (const doc of documentosConDeuda) {
         const monto = parseFloat(doc.montopendiente);
         const vencimiento = doc.fechavencimiento
           ? new Date(doc.fechavencimiento)
           : null;
+        const esCredito = TIPOS_CREDITO.includes(doc.tipodocumento);
+        console.log(`    doc tipo=${doc.tipodocumento}(${typeof doc.tipodocumento}) monto=${monto} esCredito=${esCredito} esDeuda=${TIPOS_DEUDA.includes(doc.tipodocumento)}`);
 
-        if (TIPOS_DEUDA.includes(doc.tipodocumento)) {
-          deudaTotal += monto;
-          // Clasificar en vencida / no vencida según fecha de vencimiento
-          if (vencimiento) {
-            if (vencimiento < hoy) deudaVencida += monto;
-            else deudaNoVencida += monto;
-          }
-        } else if (TIPOS_CREDITO.includes(doc.tipodocumento)) {
-          // NC y recibos restan de la deuda total y siempre de la vencida
-          deudaTotal -= monto;
+        if (TIPOS_DEUDA.includes(doc.tipodocumento)) deudaTotal += monto;
+        if (esCredito) deudaTotal -= monto;
+
+        // NC y recibos restan de deudaVencida; facturas/ND se clasifican por fecha
+        if (esCredito) {
           deudaVencida -= monto;
+        } else if (vencimiento) {
+          if (vencimiento < hoy) deudaVencida += monto;
+          else deudaNoVencida += monto;
         }
       }
 
