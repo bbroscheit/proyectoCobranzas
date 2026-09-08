@@ -30,15 +30,12 @@ const limpiarClientesSinDeuda = async (listadoHoy, datosConDocumentos) => {
         (doc) => parseFloat(doc.montopendiente || 0) > 0
       );
 
-      console.log(`  Cliente ${clienteConDocs.id}: ${clienteConDocs.documents.length} docs totales, ${documentosConDeuda.length} con saldo pendiente`);
-
       for (const doc of documentosConDeuda) {
         const monto = parseFloat(doc.montopendiente);
         const vencimiento = doc.fechavencimiento
           ? new Date(doc.fechavencimiento)
           : null;
         const esCredito = TIPOS_CREDITO.includes(doc.tipodocumento);
-        console.log(`    doc tipo=${doc.tipodocumento}(${typeof doc.tipodocumento}) monto=${monto} esCredito=${esCredito} esDeuda=${TIPOS_DEUDA.includes(doc.tipodocumento)}`);
 
         if (TIPOS_DEUDA.includes(doc.tipodocumento)) deudaTotal += monto;
         if (esCredito) deudaTotal -= monto;
