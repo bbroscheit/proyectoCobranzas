@@ -4,6 +4,15 @@ const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcoPatagonicos.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcoPatagonicos.js');
 
+function toUTCDateString(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 const fetchDocumentFromGPEcoPatagonico =  async () => {
   const t = await sequelize.transaction();
 
@@ -30,10 +39,10 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
         numerocliente: parseInt(String(d.NumeroCliente).trim(), 10),
         numerodocumento: d.NumeroDocumento.trim(),
         tipodocumento: parseInt(d.TipoDocumento),
-        fechadocumento: d.FechaDocumento ? d.FechaDocumento.toISOString().slice(0, 10) : null,
+        fechadocumento: toUTCDateString(d.FechaDocumento),
         montooriginal: parseFloat(d.MontoOriginal),
         montopendiente: parseFloat(d.MontoPendiente),
-        fechavencimiento: d.FechaVencimiento ? d.FechaVencimiento.toISOString().slice(0, 10) : null,
+        fechavencimiento: toUTCDateString(d.FechaVencimiento),
        })); 
 
     console.log(`Documentos a guardar: ${docsParaGuardar.length}`);
@@ -49,7 +58,7 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
     if (docsParaGuardar.length > 0) {
       // 🚀 Usamos ON CONFLICT para actualizar solo "montopendiente" si ya existe
       const query = `
-        INSERT INTO "Documentecopatagonico" 
+        INSERT INTO "documentecopatagonico"
           ("clientId", "numerocliente", "numerodocumento", "tipodocumento", "fechadocumento", 
            "montooriginal", "montopendiente", "fechavencimiento", "createdAt", "updatedAt")
         VALUES ${docsParaGuardar

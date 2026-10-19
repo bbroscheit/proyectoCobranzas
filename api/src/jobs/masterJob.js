@@ -16,13 +16,13 @@ const creacionLista = require("../routes/functions/creacionLista");
 
 const runSyncProcess = async () => {
   //await fetchClientsFromCRM();
-  //await fetchClientsFromCRMEcoPatagonico();
+  await fetchClientsFromCRMEcoPatagonico();
   await fetchClientsFromCRMUruguay();
   await fetchClientsFromCRMEcobahia();
   await fetchClientsFromCRMEcoportatiles();
 
   //await fetchDocumentFromGP();
-  //await fetchDocumentFromGPEcoPatagonico();
+  await fetchDocumentFromGPEcoPatagonico();
   await fetchDocumentFromGPUruguay();
   await fetchDocumentFromGPEcobahia();
   await fetchDocumentFromGPEcoportatiles();
