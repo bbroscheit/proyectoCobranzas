@@ -1,17 +1,19 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { FacturacionContext } from "../pages/context/FacturacionContext";
 import { formatNumber } from "../pages/functions/formatNumber";
+import { getDocumentosPendientes, TIPOS_CREDITO } from "./functions/getDocumentosPendientes";
+import { exportarExcel } from "./functions/exportarExcel";
+import useUser from "./hooks/useUser";
 import { sendMailResumenVencido } from "./api/sendMailResumenVencido";
 import Modal from "react-modal";
 import styles from "./modules/resumenVencido.module.css";
 
-Modal.setAppElement("#__next"); // Necesario para accesibilidad
+Modal.setAppElement("#__next"); // Necesario para accesibilidad (?) vaya a saber dios quien lo usa
 
 function ResumenVencido() {
   const router = useRouter();
   const { id } = router.query;
-  const { facturas } = useContext(FacturacionContext);
+  const [user] = useUser();
   const [facturasVencidas, setFacturasVencidas] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [emailData, setEmailData] = useState({
@@ -39,14 +41,22 @@ function ResumenVencido() {
   const [tableHTML, setTableHTML] = useState("");
 
   useEffect(() => {
-    if (facturas && id) {
+    if (!user?.id || !id) return;
+    getDocumentosPendientes(user.id, id)
+      .then((documentos) => {
       const hoy = new Date();
-      const facturasFiltradas = facturas.filter(
-        (factura) =>
-          factura.NumeroCliente.toString().trim() === id.toString().trim() &&
-          factura.MontoPendiente > 0 &&
-          new Date(factura.FechaVencimiento) < hoy
-      );
+      // Misma lógica que la agenda: facturas/ND vencidas suman, NC y recibos restan
+      const facturasFiltradas = documentos
+        .filter(
+          (factura) =>
+            TIPOS_CREDITO.includes(factura.TipoDocumento) ||
+            (factura.FechaVencimiento && new Date(factura.FechaVencimiento) < hoy)
+        )
+        .map((factura) =>
+          TIPOS_CREDITO.includes(factura.TipoDocumento)
+            ? { ...factura, MontoPendiente: -factura.MontoPendiente }
+            : factura
+        );
       setFacturasVencidas(facturasFiltradas);
 
       // Crear la tabla en formato HTML
@@ -83,8 +93,9 @@ function ResumenVencido() {
         </table>
       `;
       setTableHTML(tableHTML);
-    }
-  }, [facturas, id]);
+      })
+      .catch((error) => console.error("Error al obtener documentos:", error));
+  }, [user, id]);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -112,6 +123,31 @@ function ResumenVencido() {
     };
     sendMailResumenVencido(updatedEmailData);
   }
+
+  const handleExportar = () => {
+    const filas = facturasVencidas.map((factura) => {
+      const diasVencidos = Math.floor(
+        (new Date() - new Date(factura.FechaVencimiento)) / (1000 * 60 * 60 * 24)
+      );
+      return {
+        ...factura,
+        Anticuacion: Number.isNaN(diasVencidos) ? null : diasVencidos,
+      };
+    });
+    exportarExcel({
+      nombreArchivo: `Vencido_cliente_${id}_${new Date().toISOString().slice(0, 10)}`,
+      titulo: `Documentos vencidos - Cliente ${id}`,
+      columnas: [
+        { header: "Fecha", key: "FechaDocumento", tipo: "fecha", width: 14 },
+        { header: "Documento", key: "NumeroDocumento", tipo: "texto", width: 22 },
+        { header: "Monto Original", key: "MontoOriginal", tipo: "moneda", width: 20 },
+        { header: "Monto Pendiente", key: "MontoPendiente", tipo: "moneda", width: 20 },
+        { header: "Vencimiento", key: "FechaVencimiento", tipo: "fecha", width: 14 },
+        { header: "Anticuación", key: "Anticuacion", tipo: "numero", width: 14 },
+      ],
+      filas,
+    }).catch((error) => console.error("Error al exportar a Excel:", error));
+  };
 
   return (
     <div className={styles.container}>
@@ -147,9 +183,14 @@ function ResumenVencido() {
         </tbody>
       </table>
 
-      <button onClick={openModal} className={styles.button}>
-        Enviar Correo
-      </button>
+      <div className={styles.buttons}>
+        <button onClick={handleExportar} className={styles.button}>
+          Exportar a Excel
+        </button>
+        <button onClick={openModal} className={styles.button}>
+          Enviar Correo
+        </button>
+      </div>
 
       <Modal
         isOpen={modalIsOpen}

@@ -1,7 +1,9 @@
-import React, {useEffect, useContext, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useRouter } from "next/router";
-import { FacturacionContext } from '../pages/context/FacturacionContext';
 import { formatNumber } from '../pages/functions/formatNumber';
+import { getDocumentosPendientes, TIPOS_DEUDA } from './functions/getDocumentosPendientes';
+import { exportarExcel } from './functions/exportarExcel';
+import useUser from './hooks/useUser';
 import { sendMailResumenVencido } from "./api/sendMailResumenVencido";
 import Modal from 'react-modal';
 import styles from './modules/resumenAVencer.module.css';
@@ -9,7 +11,7 @@ import styles from './modules/resumenAVencer.module.css';
 function ResumenAVencer() {
   const router = useRouter();
   const { id } = router.query;
-  const { facturas } = useContext(FacturacionContext)
+  const [user] = useUser();
   const [facturasNoVencidas, setFacturasNoVencidas] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [emailData, setEmailData] = useState({
@@ -39,11 +41,13 @@ function ResumenAVencer() {
   //console.log("facturas vencidas", facturas, "id", id);
 
   useEffect(() => {
-    if (facturas && id) {
+    if (!user?.id || !id) return;
+    getDocumentosPendientes(user.id, id)
+      .then((documentos) => {
       const hoy = new Date();
-      const facturasFiltradas = facturas.filter(factura => 
-        factura.NumeroCliente.toString().trim() === id.toString().trim() &&
-        factura.MontoPendiente > 0 &&
+      const facturasFiltradas = documentos.filter(factura =>
+        TIPOS_DEUDA.includes(factura.TipoDocumento) &&
+        factura.FechaVencimiento &&
         new Date(factura.FechaVencimiento) >= hoy
       );
       setFacturasNoVencidas(facturasFiltradas);
@@ -82,8 +86,9 @@ function ResumenAVencer() {
               </table>
             `;
             setTableHTML(tableHTML);
-    }
-  }, [facturas, id]);
+      })
+      .catch((error) => console.error("Error al obtener documentos:", error));
+  }, [user, id]);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -113,6 +118,21 @@ function ResumenAVencer() {
   };
 
   //console.log("facturas vencidas", facturasNoVencidas);
+
+  const handleExportar = () => {
+    exportarExcel({
+      nombreArchivo: `AVencer_cliente_${id}_${new Date().toISOString().slice(0, 10)}`,
+      titulo: `Documentos a vencer - Cliente ${id}`,
+      columnas: [
+        { header: "Fecha", key: "FechaDocumento", tipo: "fecha", width: 14 },
+        { header: "Documento", key: "NumeroDocumento", tipo: "texto", width: 22 },
+        { header: "Monto Original", key: "MontoOriginal", tipo: "moneda", width: 20 },
+        { header: "Monto Pendiente", key: "MontoPendiente", tipo: "moneda", width: 20 },
+        { header: "Vencimiento", key: "FechaVencimiento", tipo: "fecha", width: 14 },
+      ],
+      filas: facturasNoVencidas,
+    }).catch((error) => console.error("Error al exportar a Excel:", error));
+  };
 
   return (
     <div className={styles.container}>
@@ -146,7 +166,10 @@ function ResumenAVencer() {
                 </tbody>
       </table>
 
-      <button onClick={openModal} className={styles.button}>Enviar Correo</button>
+      <div className={styles.buttons}>
+        <button onClick={handleExportar} className={styles.button}>Exportar a Excel</button>
+        <button onClick={openModal} className={styles.button}>Enviar Correo</button>
+      </div>
 
       <Modal
         isOpen={modalIsOpen}

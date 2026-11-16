@@ -47,3 +47,24 @@
     margin-top: 2rem;
     color: #3a3838;
 }
+
+.buttons{
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.button{
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #3a3838;
+    background-color: #b2d4f3;
+    border: 1px solid #3a3838;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: #9cc5ec;
+}
