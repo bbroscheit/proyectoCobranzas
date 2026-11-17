@@ -1,8 +1,9 @@
 // Regenera las listas de llamadas del día con los documentos actualizados de GP.
 // Conserva los clientes ya llamados y no duplica la gestión del día.
-// Uso (desde la carpeta api):  node scripts/regenerarListasHoy.js
+// Uso:  node scripts/regenerarListasHoy.js  (desde la carpeta api, o desde cualquier carpeta con la ruta al script)
 //   --sin-sync  → no vuelve a traer documentos de GP, solo regenera las listas
-require("dotenv").config();
+// El .env se busca en la carpeta api aunque el script se ejecute desde otra carpeta
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 const { sequelize } = require("../src/bd.js");
 const fetchDocumentFromGPEcoPatagonico = require("../src/routes/functions/fetchDocumentGPEcoPatagonico");
 const fetchDocumentFromGPUruguay = require("../src/routes/functions/fetchDocumentGPUruguay");
