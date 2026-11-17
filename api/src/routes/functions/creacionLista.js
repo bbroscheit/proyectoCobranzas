@@ -54,25 +54,30 @@ const creacionLista = async () => {
         (lista.clientes || []).forEach(c => enListaFutura.add(Number(c.id)));
       }
 
-      // 3. Filtrar: deuda neta != 0 y sin agenda futura
+      // 3. Crear o encontrar la lista de hoy. Si ya existía (lista regenerada en el día),
+      // se conservan los clientes ya llamados
+      const listadoHoy = await crearListaDeLlamadas(usuario);
+      if (!listadoHoy) continue;
+
+      const yaLlamados = new Set(
+        (listadoHoy.clientes || []).filter(c => c.llamado === true).map(c => Number(c.id))
+      );
+
+      // 4. Filtrar: deuda neta != 0 y sin agenda futura, y poblar la lista
       const clientesParaHoy = datosConDocumentos.clientes
         .filter(cliente => {
           if (enListaFutura.has(Number(cliente.id))) return false;
           const deudaNeta = parseFloat(calcularDeudaNeta(cliente.documents).toFixed(2));
           return deudaNeta !== 0;
         })
-        .map(cliente => ({ id: cliente.id, llamado: false }));
-
-      // 4. Crear o encontrar la lista de hoy y poblarla
-      const listadoHoy = await crearListaDeLlamadas(usuario);
-      if (!listadoHoy) continue;
+        .map(cliente => ({ id: cliente.id, llamado: yaLlamados.has(Number(cliente.id)) }));
 
       await listadoHoy.update({ clientes: clientesParaHoy });
 
       // 5. Enriquecer con datos completos, deduplicar y ordenar
       await limpiarClientesSinDeuda(listadoHoy, datosConDocumentos);
 
-      // 6. Crear gestión del día
+      // 6. Crear (o actualizar) gestión del día
       await crearGestionDelDia(usuario, listadoHoy);
 
     } catch (error) {
