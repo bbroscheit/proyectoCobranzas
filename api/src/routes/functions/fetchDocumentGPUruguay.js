@@ -3,6 +3,8 @@ const { Documenturuguay, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsUruguay.js');
 const getAllDocuments = require('../controllers/getAllDocumentsUruguay.js');
+const { esDocumentoExcluido } = require('../helpers/documentosExcluidos.js');
+const cerrarDocumentosAusentesEnGP = require('../helpers/cerrarDocumentosAusentesEnGP.js');
 
 const fetchDocumentFromGPUruguay =  async () => {
   const t = await sequelize.transaction();
@@ -11,7 +13,7 @@ const fetchDocumentFromGPUruguay =  async () => {
     console.log('Sincronizando documentos GP → Postgres', new Date());
 
     // 1. Obtener documentos de GP
-    const docs = await getAllDocuments();
+    const docs = (await getAllDocuments()).filter(d => !esDocumentoExcluido(d.NumeroDocumento));
     console.log(`Documentos obtenidos: ${docs.length}`);
     //console.log('Muestra de documento obtenido:', docs[0]);
 
@@ -86,7 +88,10 @@ const fetchDocumentFromGPUruguay =  async () => {
         transaction: t,
       });
     }
-    // 5. Limpieza anual
+    // 5. Saldo en 0 para los documentos que GP ya no devuelve
+    await cerrarDocumentosAusentesEnGP({ tabla: "documenturuguays", docsGP: docs, transaction: t, etiqueta: "Uruguay" });
+
+    // 6. Limpieza anual
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {
       const cutoff = new Date(hoy.getFullYear() - 2, 0, 1);

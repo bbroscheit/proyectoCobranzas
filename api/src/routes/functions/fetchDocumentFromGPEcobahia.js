@@ -3,6 +3,8 @@ const { Documentecobahia, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcobahia.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcobahia.js');
+const { esDocumentoExcluido } = require('../helpers/documentosExcluidos.js');
+const cerrarDocumentosAusentesEnGP = require('../helpers/cerrarDocumentosAusentesEnGP.js');
 
 // Extrae la fecha como string YYYY-MM-DD usando UTC para evitar corrimiento
 // de zona horaria: mssql devuelve fechas de GP como Date UTC.
@@ -22,7 +24,7 @@ const fetchDocumentFromGPEcobahia =  async () => {
     console.log('Sincronizando documentos GP → Postgres', new Date());
 
     // 1. Obtener documentos de GP
-    const docs = await getAllDocuments();
+    const docs = (await getAllDocuments()).filter(d => !esDocumentoExcluido(d.NumeroDocumento));
     console.log(`Documentos obtenidos: ${docs.length}`);
     //console.log('Muestra de documento obtenido:', docs[0]);
 
@@ -103,7 +105,12 @@ const fetchDocumentFromGPEcobahia =  async () => {
         transaction: t,
       });
     }
-    // 5. Limpieza anual
+    // 5. Saldo en 0 para los documentos que GP ya no devuelve.
+    // Se compara contra todo lo que devuelve GP (no solo los que tienen "P") para no cerrar
+    // documentos sin "P" importados antes del filtro que siguen abiertos en GP
+    await cerrarDocumentosAusentesEnGP({ tabla: "documentecobahia", docsGP: docs, transaction: t, etiqueta: "Ecobahia" });
+
+    // 6. Limpieza anual
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {
       const cutoff = new Date(hoy.getFullYear() - 2, 0, 1);

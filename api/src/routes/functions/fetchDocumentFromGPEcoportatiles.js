@@ -2,6 +2,8 @@ const { Documentecoportatiles, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcoportatiles.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcoportatiles.js');
+const { esDocumentoExcluido } = require('../helpers/documentosExcluidos.js');
+const cerrarDocumentosAusentesEnGP = require('../helpers/cerrarDocumentosAusentesEnGP.js');
 
 const fetchDocumentFromGPEcoportatiles = async () => {
   const t = await sequelize.transaction();
@@ -9,7 +11,7 @@ const fetchDocumentFromGPEcoportatiles = async () => {
   try {
     console.log('Sincronizando documentos GP → Postgres Ecoportatiles', new Date());
 
-    const docs = await getAllDocuments();
+    const docs = (await getAllDocuments()).filter(d => !esDocumentoExcluido(d.NumeroDocumento));
     console.log(`Ecoportatiles - Documentos obtenidos: ${docs.length}`);
 
     const clientes = await getAllClients();
@@ -71,6 +73,9 @@ const fetchDocumentFromGPEcoportatiles = async () => {
 
       await sequelize.query(query, { replacements, transaction: t });
     }
+
+    // Saldo en 0 para los documentos que GP ya no devuelve
+    await cerrarDocumentosAusentesEnGP({ tabla: "documentecoportatiles", docsGP: docs, transaction: t, etiqueta: "Ecoportatiles" });
 
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {

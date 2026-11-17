@@ -3,6 +3,8 @@ const { Documentecopatagonico, sequelize } = require('../../bd.js');
 const { Op } = require('sequelize');
 const getAllClients = require('../controllers/getAllClientsEcoPatagonicos.js');
 const getAllDocuments = require('../controllers/getAllDocumentsEcoPatagonicos.js');
+const { esDocumentoExcluido } = require('../helpers/documentosExcluidos.js');
+const cerrarDocumentosAusentesEnGP = require('../helpers/cerrarDocumentosAusentesEnGP.js');
 
 function toUTCDateString(date) {
   if (!date) return null;
@@ -20,7 +22,7 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
     console.log('Sincronizando documentos GP → Postgres', new Date());
 
     // 1. Obtener documentos de GP
-    const docs = await getAllDocuments();
+    const docs = (await getAllDocuments()).filter(d => !esDocumentoExcluido(d.NumeroDocumento));
     console.log(`Documentos obtenidos: ${docs.length}`);
     //console.log('Muestra de documento obtenido:', docs[0]);
 
@@ -58,7 +60,7 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
     if (docsParaGuardar.length > 0) {
       // 🚀 Usamos ON CONFLICT para actualizar solo "montopendiente" si ya existe
       const query = `
-        INSERT INTO "documentecopatagonico"
+        INSERT INTO "documentecopatagonicos"
           ("clientId", "numerocliente", "numerodocumento", "tipodocumento", "fechadocumento", 
            "montooriginal", "montopendiente", "fechavencimiento", "createdAt", "updatedAt")
         VALUES ${docsParaGuardar
@@ -94,7 +96,10 @@ const fetchDocumentFromGPEcoPatagonico =  async () => {
         transaction: t,
       });
     }
-    // 5. Limpieza anual
+    // 5. Saldo en 0 para los documentos que GP ya no devuelve
+    await cerrarDocumentosAusentesEnGP({ tabla: "documentecopatagonicos", docsGP: docs, transaction: t, etiqueta: "EcoPatagonicos" });
+
+    // 6. Limpieza anual
     const hoy = new Date();
     if (hoy.getDate() === 1 && hoy.getMonth() === 0) {
       const cutoff = new Date(hoy.getFullYear() - 2, 0, 1);
