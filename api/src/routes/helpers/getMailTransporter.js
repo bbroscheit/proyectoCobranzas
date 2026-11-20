@@ -1,7 +1,15 @@
 const FormData = require("form-data");
 const Mailgun = require("mailgun.js");
 
+const { SUCURSAL_CONFIG } = require("../mailModels/sucursalConfig");
+
 const mailgun = new Mailgun(FormData);
+
+// Reemplaza la dirección del remitente conservando el nombre visible: "Nombre" <direccion>
+function conDireccion(from, direccion) {
+  if (!from) return direccion;
+  return /<[^>]*>/.test(from) ? from.replace(/<[^>]*>/, `<${direccion}>`) : direccion;
+}
 
 /**
  * Envía un email via Mailgun según la sucursal.
@@ -19,8 +27,13 @@ const mailgun = new Mailgun(FormData);
  * @param {string} opts.html
  */
 async function sendMailgunMessage({ sucursal, from, to, cc, replyTo, subject, html }) {
+  // Si la sucursal tiene casilla de cobranzas propia (sucursalConfig.mailCobranzas),
+  // los mails salen desde esa casilla y las respuestas van a ella
+  const mailCobranzas = SUCURSAL_CONFIG[sucursal]?.mailCobranzas;
+  if (mailCobranzas) from = conDireccion(from, mailCobranzas);
+
   // Permite sobrescribir el replyTo por sucursal vía MAIL_REPLY_TO_N en .env
-  const effectiveReplyTo = process.env[`MAIL_REPLY_TO_${sucursal}`] || replyTo;
+  const effectiveReplyTo = process.env[`MAIL_REPLY_TO_${sucursal}`] || mailCobranzas || replyTo;
 
   /* ─── SUCURSAL 2 – Cylius ─────────────────────────────────────────────────
   if (sucursal === 2 && process.env.MAILGUN_DOMAIN_2) {

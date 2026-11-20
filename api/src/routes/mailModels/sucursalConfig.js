@@ -8,7 +8,9 @@ const SUCURSAL_CONFIG = {
   },
   2: {
     nombre: "Cylius",
-    telefonos: ["093999820"],
+    // Casilla desde la que salen los mails de la sucursal y a la que responden los clientes
+    mailCobranzas: "cobranzas.cylius@basani.com.ar",
+    telefonos: ["095889366"],
     cuentas: [
       "Banco Santander: Cuenta corriente en pesos Nº56472, Suc. 09 a nombre de Cylius SA",
       "BROU: Caja de ahorro pesos Nº 001566695-00001 a nombre de Cylius SA",
